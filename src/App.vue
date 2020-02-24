@@ -1,28 +1,58 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <v-app ref="app" id="App">
+    <v-content>
+      <keep-alive v-if="keepAlive">
+        <router-view/>
+      </keep-alive>
+      <router-view v-if="!keepAlive"/>
+      <bottomNav/> 
+      <loading/> 
+    </v-content>
+  </v-app>
 </template>
+<style lang="scss">
+  #App{
+   background: transparent;
+   ul{
+     padding-left: 0;
+   }
+  }
+  .v-text-field__slot{
+    >input{
+      text-align: center!important;
+    }
+  }
+  .v-textarea textarea{
+    text-indent: 2em!important;
+  }
+  .el-vue-search-box-container{
 
+    .search-tips{
+        left: 0!important;
+        right: 0!important;
+    }
+    }
+</style>
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 
+import bottomNav from './components/public/bottomNav';
+import loading from './components/public/RequestLoading'
+// import { Promise } from 'q';
 export default {
   name: 'App',
   components: {
-    HelloWorld
+      bottomNav,
+      loading
+  },
+  data(){
+    return{
+      exitState: 0
+    }
+  },
+  computed: {
+    keepAlive(){
+      return this.$route.meta.keepAlive
+    }
   }
-}
+};
 </script>
-
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
