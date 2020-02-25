@@ -31,7 +31,10 @@
         left: 0!important;
         right: 0!important;
     }
-    }
+  }
+  .pb50{
+    padding-bottom: 50px;
+  }
 </style>
 <script>
 

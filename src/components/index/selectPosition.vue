@@ -3,11 +3,16 @@
         <iHeader @doSomething="$emit('hide')" text="搜索地址"></iHeader>
         <v-text-field
             name="name"
+            outlined
+            rounded
+            dense
+            class="mt-4"
             id="searchBox"
             prepend-icon="mdi-book"
             @input="lodashInput"
             v-model="key"
         ></v-text-field>
+        <div style="width: 375px; height: 5px" class="red"></div>
         <v-list>
             <v-list-item-group v-model="selected" color="primary">
                 <v-list-item

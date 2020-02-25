@@ -1,5 +1,5 @@
 <template>
-    <div class="xxx-cpnt grey lighten-2 px-2">
+    <div class="indexPage white">
         <iHeader @doSomething="$emit('hide')">
             <template  v-slot:center>
                 <div @click="showAreaPicker=true">
@@ -11,15 +11,141 @@
                 <v-icon @click="showMsg=true">mdi-bell-outline</v-icon>
             </template>
         </iHeader>
-        <div id="container"></div>
+        <v-carousel 
+        class="pink"
+        hide-delimiter-background
+        hide-delimiter
+        height="183" 
+        >
+            <v-carousel-item
+                v-for="(banner,i) in banners"
+                :key="i"
+                :src="banner.pic"
+            ></v-carousel-item>
+        </v-carousel>
+        <div class="my-2 d-flex flex-wrap align-center">
+            <div 
+            style="width: 20%"
+            @click="$router.push({path:'/category',query: {type: i}})"
+            class="d-flex flex-column align-center my-2" 
+            v-for="(item,i) in icons" 
+            :key="i">
+                <v-avatar
+                    size="42.5"
+                >
+                    <img :src="item.img">
+                </v-avatar>
+                <span class="mt-2 caption text--primary">{{item.text}}</span>
+            </div>
+        </div>
+        <!-- 热销 -->
+        <div class="title text-center py-2">
+            热销产品
+        </div>
+        <div class="d-flex flex-wrap justify-space-between mx-4">
+
+            <div class="d-flex flex-column pa-2" style="width: 100%" v-for="(item,i) in hotProducts" :key="i">
+                <!-- <v-avatar
+                    size="100"
+                    tile
+                >
+                    <img :src="item.pic">
+                </v-avatar> -->
+                <!-- <div class="d-flex align-center">
+                    <v-img height="110" aspect-ratio="2" class="flex-fill mr-2" :src="item.details[0].attrPic"></v-img>
+                    <div class="d-flex flex-column">
+                        <v-img height="55" aspect-ratio="2" class="flex-fill mr-2" :src="item.details[0].attrPic"></v-img>
+                        <v-img height="55" aspect-ratio="2" class="flex-fill mr-2" :src="item.details[0].attrPic"></v-img>
+                    </div>
+                </div> -->
+                <v-row no-gutters>
+                    <v-col v-if="item.details.length=1" class="pa-0 ma-0" cols="12">
+                        <v-img 
+                        height="110" 
+                        width="100%" 
+                        aspect-ratio="2" 
+                        class="flex-fill mr-2" 
+                        @click="toDetail(item.details[0].itemId)"
+                        :src="item.details[0].attrPic">
+                        </v-img>
+                    </v-col>
+                    <v-col v-if="item.details.length>1" class="pa-0 ma-0" cols="8">
+                        <v-img 
+                        height="110" 
+                        width="100%" 
+                        aspect-ratio="2" 
+                        class="flex-fill mr-2" 
+                        @click="toDetail(item.details[0].itemId)"
+                        :src="item.details[0].attrPic">
+                        </v-img>
+                    </v-col>
+                    <v-col v-if="item.details.length>1" class="pa-0 ma-0" cols="4">
+                        <v-img 
+                        style="margin-bottom: 5%" 
+                        width="100%" height="47.5%" 
+                        aspect-ratio="2" 
+                        class="flex-fill mr-2" 
+                        @click="toDetail(item.details[1].itemId)"
+                        :src="item.details[1].attrPic">
+                        </v-img>
+                        <v-img 
+                        v-if="item.details.length>2" 
+                        width="100%" height="47.5%" 
+                        aspect-ratio="2" 
+                        class="flex-fill mr-2" 
+                        @click="toDetail(item.details[2].itemId)"
+                        :src="item.details[2].attrPic">
+                        </v-img>
+                    </v-col>
+                </v-row>
+                <div class="d-flex align-center justify-space-between">
+                    <div class="d-flex flex-column">
+
+                        <span class="mt-1 px-1 subtitle-1 text--primary">{{item.itemName}}</span>
+                        <span class="px-1 caption text--secondary">{{item.intro}}</span>
+                    </div>
+                    <span class="px-1 pb-2 subtitle-2 orange--text">{{item.currentPrice}}元</span>
+                </div>
+                <v-divider class="mt-2"></v-divider>
+                <!-- <v-img cover max-height="100" :src="item.pic"></v-img> -->
+
+            </div> 
+        </div>
+        <!-- 畅销 -->
+        <div class="title text-center py-2">
+            畅销单品
+        </div>
+        <div class="d-flex flex-wrap justify-space-between pb50 mx-4">
+
+            <div 
+            class="d-flex flex-column pa-2" 
+            style="width: 45%" 
+            @click="toDetail(item.itemId)"
+            v-for="(item,i) in bestSellings" 
+            :key="i">
+                <v-avatar
+                    size="100"
+                    tile
+                >
+                    <img :src="item.pic">
+                </v-avatar>
+                <!-- <v-img :src="item.pic"></v-img> -->
+                <span class="mt-1 px-1 subtitle-1 text--primary">{{item.itemName}}</span>
+                <span class="px-1 caption text--secondary">{{item.intro}}</span>
+                <span class="px-1 subtitle-2 orange--text">{{item.currentPrice}}元</span>
+
+            </div> 
+        </div>
         <!-- <el-amap-search-box :events="searchEvents" ref="searchBox" style="max-width: 100%" class="search-box mt-2 caption" :search-option="searchOption" :on-search-result="onSearchResult"></el-amap-search-box> -->
-        <el-amap class="indexMap" 
-            ref="mapIndex"
-            :amap-manager="amapManager" 
-            :events="events"
+        <el-amap 
+        v-show="notShow" 
+        class="indexMap" 
+        ref="mapIndex"
+        :amap-manager="amapManager" 
+        :events="events"
         >
         </el-amap>   
-        <!-- <v-dialog
+        <v-dialog
             v-model="showPositionDia"
             persistent 
             max-width="500px"
@@ -35,8 +161,9 @@
                     <v-btn @click="showAreaPicker=true" class="flex-fill" dark color="primary">确认</v-btn>
                 </v-card-actions>
             </v-card>
-        </v-dialog>     -->
+        </v-dialog>    
         <msg @hide="showMsg=false" v-if="showMsg"/>
+        <goodsDetails :id="goodsId" @hide="showDetails=false" v-if="showDetails"/>
         <position @hide="showAreaPicker=false" v-if="showAreaPicker"/>
     </div>
 </template>
@@ -44,6 +171,7 @@
 <script>
 import iHeader from '../components/public/header'
 import position from '../components/index/selectPosition'
+import goodsDetails from './productDetails'
 import msg from '../components/index/msgCenter'
 import VueAMap from 'vue-amap'
 import { AMapManager } from 'vue-amap'
@@ -51,10 +179,12 @@ import { AMapManager } from 'vue-amap'
 
 const amapManager = new VueAMap.AMapManager()
 export default {
+    name: 'index',
     components: {
         iHeader,
         position,
-        msg
+        msg,
+        goodsDetails
     },
     data() {
         let view = this
@@ -64,26 +194,42 @@ export default {
             notShow: false,
             showPositionDia: false,
             showAreaPicker: false,
+            showDetails: false,
             showMsg: false,
+            goodsId: 0,
             searchOption: {
                 city: '福州',
                 citylimit: true
             },            
-            // searchEvents: {
-            //     init: (auto, place) => {
-            //         // console.log(view.zoom)
-            //         console.log('sss')
-            //         console.log(auto)
-            //         console.log(place)
-            //     },
-            // },  
+            icons: [
+                {
+                    img: require('../assets/img/icon01.png'),
+                    text: '住家保姆'
+                },
+                {
+                    img: require('../assets/img/icon02.png'),
+                    text: '非住家保姆'
+                },
+                {
+                    img: require('../assets/img/icon03.png'),
+                    text: '月嫂'
+                },
+                {
+                    img: require('../assets/img/icon04.png'),
+                    text: '护工'
+                },
+                {
+                    img: require('../assets/img/icon05.png'),
+                    text: '育儿嫂'
+                },
+            ],
             events: {
                 init: (map) => {
                     // console.log(view.zoom)
                     map.getCity(result => {
                         console.log(result)
                         const cityName = result.city + result.district
-                        view.showPositionDia = true
+                        // view.showPositionDia = true
                         view.$store.commit('SET_SINGLE_STATE', ['positionCity', cityName])
                     })
                 },
@@ -94,75 +240,135 @@ export default {
 
     },
     computed: {
-        positionCity(){
+        positionCity() {
             return this.$store.state.app.positionCity
         },
-        sessionId(){
+        userId() {
+            return this.$store.state.app.userId
+        },
+        sessionId() {
             return 1
+        },
+        communityList() {
+            return this.$store.state.app.communityList
+        },
+        banners() {
+            return this.$store.state.app.indexBanners
+        },
+        cateList() {
+            return this.$store.state.app.cateList
+        },
+        indexCates() {
+            return this.$store.state.app.indexCates
+        },
+        bestSellings() {
+            return this.$store.state.app.bestSelling
+        },
+        hotProducts() {
+            return this.$store.state.app.hotProduct
         },
     },
     mounted() {
-        this.getPosition()
-        this.appLogin()
+        if(!this.positionCity){
+
+            this.showPositionDia = true
+        }
+        this.init()
     },
     methods: {
-        getPosition() {
-            // let o = new AMap.Geolocation({
-            //     enableHighAccuracy: true,//是否使用高精度定位，默认:true
-            //     timeout: 10000,          //超过10秒后停止定位，默认：无穷大
-            //     maximumAge: 0,           //定位结果缓存0毫秒，默认：0
-            //     convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
-            //     showButton: true,        //显示定位按钮，默认：true
-            //     buttonPosition: 'LB',    //定位按钮停靠位置，默认：'LB'，左下角
-            //     buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
-            //     showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
-            //     showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
-            //     panToLocation: true,     //定位成功后将定位到的位置作为地图中心点，默认：true
-            //     zoomToAccuracy:true      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
-            // });
-            // o.getCurrentPosition((status, result) => {
-            //     console.log('v-amap定位插件,定位中。。。');
-            //     console.log(status,result);
-            //     if (result && result.position) {
-            //     this.center = [result.position.O, result.position.P];
-            //     // this.addressDesc = result.formattedAddress
-            //     console.log(this)
-            //     console.log(this.addressDesc)
-            //     let geoCoder = new AMap.Geocoder()
-            //     geoCoder.getAddress(
-            //         this.center,
-            //         (status,result)=>{
-            //         if (status === 'complete'&&result.regeocode) {
-            //             console.info(result)
-            //         }else{
-            //             console.error('根据经纬度查询地址失败')
-            //         }              
-            //         }
-            //     )
-            //     }
-            // })     
-          
-        },
-        onSearchResult(pois) {
-            console.log(pois)
-            console.log(this.$refs.searchBox)
+        init() {
+            this.appLogin()
+            // this.findIndexCates()
+            this.findCates()
+            this.findBanners()
+            this.findCommunitys()
+            this.hotProduct()
+            this.bestSelling()
         },
         appLogin() {
+            if(this.userId){
+                return
+            }
             const params = {
                 sessionId: this.sessionId
             }
             this.$http.get('/user/applogin',{params})
             .then(res=>{
-                console.log(res)
+                if (res.data.success&&res.data.obj) {
+                    let obj = res.data.obj
+                    this.$store.commit('SET_SINGLE_STATE', ['sex', obj.sex])
+                    this.$store.commit('SET_SINGLE_STATE', ['userId', obj.userId])
+                    this.$store.commit('SET_SINGLE_STATE', ['userName', obj.userName])
+                    this.$store.commit('SET_SINGLE_STATE', ['realName', obj.realName])
+                }
             })
         },
+        async findCommunitys() {
+            // if(!this.communityList){
+            //     return
+            // }
+            let res = await this.$http.get('/user/findCommunitys')
+            if(res.data){
+
+                this.$store.commit('SET_SINGLE_STATE', ['communityList', res.data.obj])
+            }
+            console.log(res,'rrr')
+        },
+        async findBanners() {
+            // if(!this.banners){
+            //     return
+            // }
+            let res = await this.$http.get('/service/findBanners')
+            if(res.data){
+
+                this.$store.commit('SET_SINGLE_STATE', ['indexBanners', res.data.obj])
+            }
+            console.log(res,'rrr')
+        },
+        async findCates() {
+            // if(!this.cateList){
+            //     return
+            // }
+            let res = await this.$http.get('/service/findCates')
+            if(res.data){
+
+                this.$store.commit('SET_SINGLE_STATE', ['cateList', res.data.obj])
+            }
+            console.log(res,'rrr')
+        },
+        async bestSelling() {
+            // if(!this.indexCates){
+            //     return
+            // }
+            let res = await this.$http.get('/service/findCxiao')
+            if(res.data){
+
+                this.$store.commit('SET_SINGLE_STATE', ['bestSelling', res.data.obj])
+            }
+            console.log(res,'rrr')
+        },
+        async hotProduct() {
+            // if(!this.indexCates){
+            //     return
+            // }
+            let res = await this.$http.get('/service/findHot')
+            if(res.data){
+
+                this.$store.commit('SET_SINGLE_STATE', ['hotProduct', res.data.obj])
+            }
+            console.log(res,'rrr')
+        },
+        toDetail(id) {
+            this.goodsId = id
+            this.showDetails = true
+        }
     }
 };
 </script>
 
 <style scoped lang="scss">
 
-   .xxx-cpnt{
+   .indexPage{
        overflow-y: auto;
        min-height: 100vh;
        padding-top: 45px;

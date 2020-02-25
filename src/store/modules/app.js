@@ -4,6 +4,16 @@ const app = {
       sessionId: localStorage.getItem('sessionId'),
       token: localStorage.getItem('token'),
       positionCity: localStorage.getItem('positionCity'),
+      userId: localStorage.getItem('userId'),
+      sex: localStorage.getItem('sex'),
+      userName: localStorage.getItem('userName'),
+      realName: localStorage.getItem('realName'),
+      communityList: JSON.parse(localStorage.getItem('communityList')),
+      indexBanners: JSON.parse(localStorage.getItem('indexBanners')),
+      cateList: JSON.parse(localStorage.getItem('cateList')),
+      indexCates: JSON.parse(localStorage.getItem('indexCates')),
+      bestSelling: JSON.parse(localStorage.getItem('bestSelling')),
+      hotProduct: JSON.parse(localStorage.getItem('hotProduct')),
     },
     mutations: {
       SET_LOADING: (state, status) => {
@@ -15,14 +25,12 @@ const app = {
         state[x] = y
         let beArray = [
             // 'memberList',
-            'cityHistory',
-            'noticeList',
-            'houseList',
-            'bannerList',
-            'appList',
-            'headLines',
-            'propertyHL',
-            'expBanners'
+            'communityList',
+            'indexBanners',
+            'cateList',
+            'indexCates',
+            'bestSelling',
+            'hotProduct'
         ]
         if (beArray.includes(x)) {
           localStorage.setItem(x, JSON.stringify(y))

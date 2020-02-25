@@ -4,7 +4,7 @@
     height="50"
     grow
     v-if="active"
-    color="light-blue accent-4"
+    color="#04c0af"
   >
     <v-btn to='/index'>
       <span>首页</span>
@@ -13,7 +13,7 @@
 
     <v-btn to='/category'>
       <span>分类</span>
-      <v-icon>mdi-clock-outline</v-icon>
+      <v-icon>mdi-store</v-icon>
     </v-btn>
 
     <v-btn to="/order">
