@@ -1,5 +1,5 @@
 <template>
-    <div class="searchBox-cpnt grey lighten-2 mx-2">
+    <div class="searchBox-cpnt white px-2">
         <iHeader @doSomething="$emit('hide')" text="搜索地址"></iHeader>
         <v-text-field
             name="name"
@@ -8,11 +8,10 @@
             dense
             class="mt-4"
             id="searchBox"
-            prepend-icon="mdi-book"
+            prepend-inner-icon="mdi-magnify"
             @input="lodashInput"
             v-model="key"
         ></v-text-field>
-        <div style="width: 375px; height: 5px" class="red"></div>
         <v-list>
             <v-list-item-group v-model="selected" color="primary">
                 <v-list-item

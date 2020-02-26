@@ -26,10 +26,11 @@
         <div class="my-2 d-flex flex-wrap align-center">
             <div 
             style="width: 20%"
-            @click="$router.push({path:'/category',query: {type: i}})"
             class="d-flex flex-column align-center my-2" 
+            @click="iconsClick(i)"
             v-for="(item,i) in icons" 
             :key="i">
+            <!-- @click="$router.push({path:'/category',query: {type: i}})" -->
                 <v-avatar
                     size="42.5"
                 >
@@ -44,7 +45,12 @@
         </div>
         <div class="d-flex flex-wrap justify-space-between mx-4">
 
-            <div class="d-flex flex-column pa-2" style="width: 100%" v-for="(item,i) in hotProducts" :key="i">
+            <div 
+            class="d-flex flex-column pa-2" 
+            style="width: 100%" 
+            v-for="(item,i) in hotProducts" 
+            @click="toDetail(item)"
+            :key="i">
                 <!-- <v-avatar
                     size="100"
                     tile
@@ -59,23 +65,20 @@
                     </div>
                 </div> -->
                 <v-row no-gutters>
-                    <v-col v-if="item.details.length=1" class="pa-0 ma-0" cols="12">
+                    <v-col v-if="item.details.length==1" class="pa-0 ma-0" cols="12">
                         <v-img 
                         height="110" 
                         width="100%" 
                         aspect-ratio="2" 
                         class="flex-fill mr-2" 
-                        @click="toDetail(item.details[0].itemId)"
                         :src="item.details[0].attrPic">
                         </v-img>
                     </v-col>
-                    <v-col v-if="item.details.length>1" class="pa-0 ma-0" cols="8">
+                    <v-col v-if="item.details.length>1" class="pa-0 ma-0 pr-2" cols="8">
                         <v-img 
-                        height="110" 
                         width="100%" 
                         aspect-ratio="2" 
-                        class="flex-fill mr-2" 
-                        @click="toDetail(item.details[0].itemId)"
+                        class="flex-fill mr-2 fill-height" 
                         :src="item.details[0].attrPic">
                         </v-img>
                     </v-col>
@@ -85,7 +88,6 @@
                         width="100%" height="47.5%" 
                         aspect-ratio="2" 
                         class="flex-fill mr-2" 
-                        @click="toDetail(item.details[1].itemId)"
                         :src="item.details[1].attrPic">
                         </v-img>
                         <v-img 
@@ -93,7 +95,6 @@
                         width="100%" height="47.5%" 
                         aspect-ratio="2" 
                         class="flex-fill mr-2" 
-                        @click="toDetail(item.details[2].itemId)"
                         :src="item.details[2].attrPic">
                         </v-img>
                     </v-col>
@@ -104,7 +105,7 @@
                         <span class="mt-1 px-1 subtitle-1 text--primary">{{item.itemName}}</span>
                         <span class="px-1 caption text--secondary">{{item.intro}}</span>
                     </div>
-                    <span class="px-1 pb-2 subtitle-2 orange--text">{{item.currentPrice}}元</span>
+                    <span class="px-1 subtitle-2 orange--text">{{item.currentPrice}}元</span>
                 </div>
                 <v-divider class="mt-2"></v-divider>
                 <!-- <v-img cover max-height="100" :src="item.pic"></v-img> -->
@@ -120,15 +121,18 @@
             <div 
             class="d-flex flex-column pa-2" 
             style="width: 45%" 
-            @click="toDetail(item.itemId)"
+            @click="toDetail(item)"
             v-for="(item,i) in bestSellings" 
             :key="i">
-                <v-avatar
-                    size="100"
-                    tile
-                >
-                    <img :src="item.pic">
-                </v-avatar>
+                <div class="d-flex justify-center">
+
+                    <v-avatar
+                        size="100"
+                        tile
+                    >
+                        <img :src="item.pic">
+                    </v-avatar>
+                </div>
                 <!-- <v-img :src="item.pic"></v-img> -->
                 <span class="mt-1 px-1 subtitle-1 text--primary">{{item.itemName}}</span>
                 <span class="px-1 caption text--secondary">{{item.intro}}</span>
@@ -163,7 +167,8 @@
             </v-card>
         </v-dialog>    
         <msg @hide="showMsg=false" v-if="showMsg"/>
-        <goodsDetails :id="goodsId" @hide="showDetails=false" v-if="showDetails"/>
+        <nurseList @hide="showNurse=false" v-if="showNurse"/>
+        <goodsDetails :obj="editItem" @hide="showDetails=false" v-if="showDetails"/>
         <position @hide="showAreaPicker=false" v-if="showAreaPicker"/>
     </div>
 </template>
@@ -172,6 +177,7 @@
 import iHeader from '../components/public/header'
 import position from '../components/index/selectPosition'
 import goodsDetails from './productDetails'
+import nurseList from './nurseList'
 import msg from '../components/index/msgCenter'
 import VueAMap from 'vue-amap'
 import { AMapManager } from 'vue-amap'
@@ -184,7 +190,8 @@ export default {
         iHeader,
         position,
         msg,
-        goodsDetails
+        goodsDetails,
+        nurseList
     },
     data() {
         let view = this
@@ -193,10 +200,11 @@ export default {
             amapManager,
             notShow: false,
             showPositionDia: false,
+            showNurse: false,
             showAreaPicker: false,
             showDetails: false,
             showMsg: false,
-            goodsId: 0,
+            editItem: {},
             searchOption: {
                 city: '福州',
                 citylimit: true
@@ -267,12 +275,15 @@ export default {
         hotProducts() {
             return this.$store.state.app.hotProduct
         },
+        // defaultAddress() {
+        //     return this.$store.state.app.defaultAddress
+        // },
     },
     mounted() {
         if(!this.positionCity){
-
             this.showPositionDia = true
         }
+        // console.log(JSON.parse(this.defaultAddress))
         this.init()
     },
     methods: {
@@ -284,6 +295,7 @@ export default {
             this.findCommunitys()
             this.hotProduct()
             this.bestSelling()
+            // this.getDefaultAddress()
         },
         appLogin() {
             if(this.userId){
@@ -302,6 +314,11 @@ export default {
                     this.$store.commit('SET_SINGLE_STATE', ['realName', obj.realName])
                 }
             })
+        },
+        iconsClick(e) {
+            if(!e){
+                this.showNurse = true
+            }
         },
         async findCommunitys() {
             // if(!this.communityList){
@@ -358,8 +375,19 @@ export default {
             }
             console.log(res,'rrr')
         },
-        toDetail(id) {
-            this.goodsId = id
+        // async getDefaultAddress() {
+        //     // if(!this.defaultAddress){
+        //     //     return
+        //     // }
+        //     let res = await this.$http.get('/user/findDefaultAddrByUserId',{params: {userId: this.userId}})
+        //     if(res.data){
+
+        //         this.$store.commit('SET_SINGLE_STATE', ['defaultAddress', res.data.obj])
+        //     }
+        //     console.log(res,'rrr')
+        // },
+        toDetail(item) {
+            this.editItem = item
             this.showDetails = true
         }
     }

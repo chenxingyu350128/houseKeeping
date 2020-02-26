@@ -8,6 +8,7 @@ const app = {
       sex: localStorage.getItem('sex'),
       userName: localStorage.getItem('userName'),
       realName: localStorage.getItem('realName'),
+      defaultAddress: JSON.parse(localStorage.getItem('defaultAddress')),
       communityList: JSON.parse(localStorage.getItem('communityList')),
       indexBanners: JSON.parse(localStorage.getItem('indexBanners')),
       cateList: JSON.parse(localStorage.getItem('cateList')),
@@ -23,23 +24,24 @@ const app = {
         let x = status[0]
         let y = status[1]
         state[x] = y
-        let beArray = [
+        let isObject = [
             // 'memberList',
             'communityList',
             'indexBanners',
             'cateList',
             'indexCates',
             'bestSelling',
-            'hotProduct'
-        ]
-        if (beArray.includes(x)) {
+            'hotProduct',
+            'defaultAddress'      
+          ]
+        if (isObject.includes(x)) {
           localStorage.setItem(x, JSON.stringify(y))
         }else{
           localStorage.setItem(x,y)
         }
       },
       CLEAR_SINGLE_STATE: (state, name) => {
-        let beArray = [
+        let isObject = [
           // 'memberList',
           'cityHistory',
           'noticeList',
@@ -54,7 +56,7 @@ const app = {
           'rankAgeStart',
           'houseIndex'
         ]      
-        if (beArray.includes(name)) {
+        if (isObject.includes(name)) {
           state[name] = []
         }
         else if (defaultZero.includes(name)) {
@@ -74,7 +76,7 @@ const app = {
         localStorage.setItem(name,'')
       },
       CLEAR_STATE: (state) => {
-        let beArray = [
+        let isObject = [
           // 'memberList',
           'cityHistory',
           'noticeList',
@@ -93,7 +95,7 @@ const app = {
         for(let x in state){
           localStorage.clear()
   
-          if (beArray.includes(x)){
+          if (isObject.includes(x)){
             state[x] = []
           }
           else if (defaultZero.includes(x)){
@@ -115,7 +117,7 @@ const app = {
         localStorage.setItem('guideOver', true)
       },
       SET_EACH_STATE: (state,status) => {
-        let beArray = [
+        let isObject = [
           // 'memberList',
           'cityHistory',
           'noticeList',
@@ -128,7 +130,7 @@ const app = {
         ]
         for (let x in status) {
           state[x] = status[x]
-          if (beArray.includes(x)) {
+          if (isObject.includes(x)) {
             localStorage.setItem(x, JSON.stringify(state[x]))
           } else {
             localStorage.setItem(x, state[x])

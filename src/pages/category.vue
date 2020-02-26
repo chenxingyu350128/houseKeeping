@@ -12,11 +12,15 @@
                 {{cate.cateName}}
             </v-tab>
             <v-tab-item class="pa-2" v-for="(cate,i) in cateList" :key="i">
+
                 <v-row>
+                    <v-col v-if="cate.cateImage" class="pa-0" cols="12">
+                        <v-img aspect-ratio="3"  :src="cate.cateImage"></v-img>
+                    </v-col>
                     <v-col 
-                    column 
+                    class="d-flex flex-column align-center px-0" 
                     v-for="(item,index) in cate.items" 
-                    @click="toDetail(item.itemId)"
+                    @click="toDetail(item)"
                     :key="index" 
                     cols="4">
                         <v-avatar
@@ -30,7 +34,7 @@
                 </v-row>
             </v-tab-item>
         </v-tabs>
-        <goodsDetails :id="goodsId" @hide="showDetails=false" v-if="showDetails"/>
+        <goodsDetails :obj="editItem" @hide="showDetails=false" v-if="showDetails"/>
     </div>
 </template>
 
@@ -39,6 +43,7 @@ import iHeader from '../components/public/header'
 import goodsDetails from './productDetails'
 
 export default {
+    name: 'category',
     components: {
         iHeader,
         goodsDetails
@@ -47,7 +52,7 @@ export default {
     data: ()=>({
         tab: 0,
         showDetails: false,
-        goodsId: 0
+        editItem: {}
     }),
     created() {
 
@@ -65,8 +70,8 @@ export default {
             console.log(e)
             window.scrollTo(0,0)
         },
-        toDetail(id) {
-            this.goodsId = id
+        toDetail(item) {
+            this.editItem = item
             this.showDetails = true
         }
     }
