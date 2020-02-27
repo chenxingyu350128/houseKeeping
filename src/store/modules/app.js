@@ -12,9 +12,11 @@ const app = {
       communityList: JSON.parse(localStorage.getItem('communityList')),
       indexBanners: JSON.parse(localStorage.getItem('indexBanners')),
       cateList: JSON.parse(localStorage.getItem('cateList')),
+      couponList: JSON.parse(localStorage.getItem('couponList')),
       indexCates: JSON.parse(localStorage.getItem('indexCates')),
       bestSelling: JSON.parse(localStorage.getItem('bestSelling')),
       hotProduct: JSON.parse(localStorage.getItem('hotProduct')),
+      evalsList: JSON.parse(localStorage.getItem('evalsList')),
     },
     mutations: {
       SET_LOADING: (state, status) => {
@@ -32,7 +34,9 @@ const app = {
             'indexCates',
             'bestSelling',
             'hotProduct',
-            'defaultAddress'      
+            'defaultAddress',
+            'couponList',
+            'evalsList'   
           ]
         if (isObject.includes(x)) {
           localStorage.setItem(x, JSON.stringify(y))

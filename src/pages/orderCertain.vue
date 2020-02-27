@@ -97,6 +97,9 @@ export default {
         userId() {
             return this.$store.state.app.userId
         },
+        couponList() {
+            return this.$store.state.app.couponList
+        },
         finalConsignee() {
             if(this.selectedAddress){
 
@@ -129,7 +132,8 @@ export default {
         }
     },
     mounted() {
-
+        this.findCoupon()
+        this.getDefaultAddress()
     },
     methods: {
         getDefaultAddress() {
@@ -137,6 +141,18 @@ export default {
             .then(res=>{
                 if(res.data.success){
                     this.$store.commit('SET_SINGLE_STATE', ['defaultAddress', res.data.obj])
+                }
+            })
+        },
+        findCoupon() {
+            const params = {
+                userId: this.userId,
+                goodsId: this.item.detailId
+            }
+            this.$http.get('/user/findCoupon',{params})
+            .then(res=>{
+                if(res.data.success){
+                    this.$store.commit('SET_SINGLE_STATE', ['couponList', res.data.obj])
                 }
             })
         },

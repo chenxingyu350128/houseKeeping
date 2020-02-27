@@ -167,7 +167,7 @@
             </v-card>
         </v-dialog>    
         <msg @hide="showMsg=false" v-if="showMsg"/>
-        <nurseList @hide="showNurse=false" v-if="showNurse"/>
+        <nurseList :type="nannyType" @hide="showNurse=false" v-if="showNurse"/>
         <goodsDetails :obj="editItem" @hide="showDetails=false" v-if="showDetails"/>
         <position @hide="showAreaPicker=false" v-if="showAreaPicker"/>
     </div>
@@ -205,6 +205,7 @@ export default {
             showDetails: false,
             showMsg: false,
             editItem: {},
+            nannyType: '',
             searchOption: {
                 city: '福州',
                 citylimit: true
@@ -316,9 +317,9 @@ export default {
             })
         },
         iconsClick(e) {
-            if(!e){
-                this.showNurse = true
-            }
+            this.nannyType = e
+            this.showNurse = true
+
         },
         async findCommunitys() {
             // if(!this.communityList){

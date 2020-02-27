@@ -32,7 +32,7 @@
             </div>
             <v-icon>mdi-chevron-right</v-icon>
         </div>
-        <div class="px-4 py-2 d-flex align-center justify-space-between subtitle-2 white">
+        <div @click="getAllEvals" class="px-4 py-2 d-flex align-center justify-space-between subtitle-2 white">
             <div>全部评价({{goodsSales}})</div>
             <v-icon>mdi-chevron-right</v-icon>
         </div>
@@ -104,11 +104,13 @@
             <v-btn @click="buyNow" depressed class="flex-fill" rounded dark color="primary">立即购买</v-btn>
         </v-footer>
         <orderCertain :type="goodsType" :item="editItem" @hide="showOrderCertain=false" v-if="showOrderCertain"/>
+        <goodsEvals @hide="showEvals=false" v-if="showEvals" :id="id" />
     </div>
 </template>
 
 <script>
 import iHeader from '../components/public/header'
+import goodsEvals from '../components/product/goodsEvals'
 import orderCertain from './orderCertain'
 export default {
     name: 'goodsDetail',
@@ -125,7 +127,8 @@ export default {
     },
     components: {
        iHeader,
-       orderCertain
+       orderCertain,
+       goodsEvals
     },
     data: ()=>({
         details: [
@@ -151,6 +154,7 @@ export default {
         type: '',
         choice: '',
         showBS: false,
+        showEvals: false,
         selectedAddress: '',
         showOrderCertain: false
 
@@ -179,7 +183,7 @@ export default {
         }
     },
     mounted() {
-        // this.init()
+        this.init()
     },
     methods: {
         init() {
@@ -223,6 +227,13 @@ export default {
             //     return
             // }
             this.showOrderCertain = true
+        },
+        getAllEvals() {
+            if(!this.goodsSales){
+                this.$toast('暂无评价！')
+                return
+            }
+            this.showEvals = true
         }
     }
 };
