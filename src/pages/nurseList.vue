@@ -10,7 +10,7 @@
         >
             <v-tab 
             style="min-width: unset!important" 
-            class="px-0" 
+            class="px-0 caption" 
             @click="tabClick(i,$event)"
             v-for="(tab,i) in tabs" 
             :key="i">
@@ -144,11 +144,15 @@ export default {
                 reverse: false
             },
             {
-                title: '经验',
+                title: '学历',
                 reverse: false
             },
             {
                 title: '年龄',
+                reverse: false
+            },
+            {
+                title: '经验',
                 reverse: false
             },
             {
@@ -418,8 +422,8 @@ export default {
             this.$http.get('/nanny/findNannys',{params})
             .then(res=>{
                 if(res.data.success){
-                    let rows = res.data.obj.rows
-                    this.allLoaded = res.data.obj.currentPage === res.data.obj.totalPages
+                    let rows = res.data.rows
+                    this.allLoaded = res.data.pager.currentPage === res.data.pager.totalPages
                     this.nannys = y?this.nannys.concat(rows):rows
                 }
             })

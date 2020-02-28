@@ -49,7 +49,7 @@
             class="d-flex flex-column pa-2" 
             style="width: 100%" 
             v-for="(item,i) in hotProducts" 
-            @click="toDetail(item)"
+            @click="toDetail(item.itemId)"
             :key="i">
                 <!-- <v-avatar
                     size="100"
@@ -121,7 +121,7 @@
             <div 
             class="d-flex flex-column pa-2" 
             style="width: 45%" 
-            @click="toDetail(item)"
+            @click="toDetail(item.itemId)"
             v-for="(item,i) in bestSellings" 
             :key="i">
                 <div class="d-flex justify-center">
@@ -168,7 +168,7 @@
         </v-dialog>    
         <msg @hide="showMsg=false" v-if="showMsg"/>
         <nurseList :type="nannyType" @hide="showNurse=false" v-if="showNurse"/>
-        <goodsDetails :obj="editItem" @hide="showDetails=false" v-if="showDetails"/>
+        <goodsDetails :id="editId" @hide="showDetails=false" v-if="showDetails"/>
         <position @hide="showAreaPicker=false" v-if="showAreaPicker"/>
     </div>
 </template>
@@ -204,7 +204,7 @@ export default {
             showAreaPicker: false,
             showDetails: false,
             showMsg: false,
-            editItem: {},
+            editId: 0,
             nannyType: '',
             searchOption: {
                 city: '福州',
@@ -387,8 +387,8 @@ export default {
         //     }
         //     console.log(res,'rrr')
         // },
-        toDetail(item) {
-            this.editItem = item
+        toDetail(id) {
+            this.editId = id
             this.showDetails = true
         }
     }

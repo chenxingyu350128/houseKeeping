@@ -97,8 +97,8 @@
                 <v-icon dense color="primary">mdi-bank</v-icon>
                 <span>首页</span>
             </div>
-            <div class="d-flex flex-column align-center caption mr-4">
-                <v-icon dense color="primary">mdi-star-outline</v-icon>
+            <div @click="changeCollect" class="d-flex flex-column align-center caption mr-4">
+                <v-icon dense color="primary">{{collect?'mdi-star':'mdi-star-outline'}}</v-icon>
                 <span>收藏</span>
             </div>
             <v-btn @click="buyNow" depressed class="flex-fill" rounded dark color="primary">立即购买</v-btn>
@@ -117,13 +117,12 @@ export default {
     props: {
         id: {
             type: Number,
-            default: 1
-            // required: true
-        },
-        obj: {
-            type: Object,
             required: true
-        }
+        },
+        // obj: {
+        //     type: Object,
+        //     required: true
+        // }
     },
     components: {
        iHeader,
@@ -146,6 +145,7 @@ export default {
         indexType: '',
         intro: '简介',
         itemName: '商品名称',
+        itemId: 0,
         originalPrice: 699,
         pic: '',
         process: '',
@@ -156,6 +156,7 @@ export default {
         showBS: false,
         showEvals: false,
         selectedAddress: '',
+        collect: false,
         showOrderCertain: false
 
 
@@ -167,6 +168,9 @@ export default {
         images() {
             return this.pic.split(',')
 
+        },
+        userId() {
+            return this.$store.state.app.userId
         },
         sheetAvatar() {
             return this.images[this.index]
@@ -188,6 +192,7 @@ export default {
     methods: {
         init() {
             const params = {
+                userId: this.userId,
                 itemId: this.id
             }
             this.$http.get('/service/findDetailByItemId',{params})
@@ -198,13 +203,42 @@ export default {
                     for(let x in obj){
                         this[x] = obj[x]
                     }
+                    this.ifCollected()
                     // this.images = this.pic.split(',')
+                }
+            })
+        },
+        ifCollected() {
+            const params = {
+                userId: this.userId,
+                goodsId: this.itemId
+            }
+            this.$http.get('/service/isCollect',{params})
+            .then(res=>{
+                if(res.data.success){
+                    this.collect = res.data.obj
+                }
+            })
+        },
+        changeCollect() {
+            let url = this.collect?'/service/delServiceCollect':'/service/addServiceCollect'
+            const data = {
+                userId: this.userId,
+                goodsId: this.itemId
+            }
+            this.$http.post(url,data)
+            .then(res=>{
+                if(res.data.success){
+                    this.collect = !this.collect
                 }
             })
         },
         toIndex() {
             this.$emit('hide')
-            this.$router.push('/index')
+            console.log(this.$route)
+            if(this.$route.path!='/index'){
+                this.$router.push('/index')
+            }
         },
         itemOrder(item,i) {
             this.index = i

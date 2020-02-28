@@ -17,7 +17,7 @@
                 <div class="red--text flex-fill d-flex justify-end">{{item.price}}元</div>
             </div>
             <v-divider></v-divider>
-            <div class="d-flex align-center py-4">
+            <div class="d-flex align-center py-4 subtitle-2">
                 <v-icon class="mr-4" color="primary">mdi-map-marker</v-icon>
                 <div v-if="defaultAddress||selectedAddress" class="d-flex flex-column">
                     <span>
@@ -29,25 +29,22 @@
                 <div v-else class="flex-fill text-center text--secondary">+添加服务地址</div>
             </div>
         </div>
-        <div v-if="type" class="d-flex align-center px-4 py-3 mb-2 white">
+        <div v-if="type" @click="showTimePage=true" class="d-flex align-center px-4 py-3 mb-2 white">
             <v-icon class="mdi-rotate-225" color="primary">mdi-clock-outline</v-icon>
-            <div class="flex-fill ml-3">{{dateStr}}</div>
+            <div class="flex-fill ml-3 text--secondary text-right">{{dateStr||'请选择服务时间'}}</div>
             <v-icon  class="mr-4">mdi-chevron-right</v-icon>
         </div>
-        <div v-if="discount" class="d-flex align-center px-4 py-3 mb-2 white">
+        <div v-if="discount" @click="showCouponPage=true" class="d-flex align-center px-4 py-3 mb-2 white">
             <v-icon class="mdi-rotate-225" color="primary">mdi-label</v-icon>
             <div class="flex-fill ml-3">{{discountStr}}</div>
             <v-icon  class="mr-4">mdi-chevron-right</v-icon>
         </div>
         <v-card tile flat>
-            
+            <div class="pa-4">备注信息</div>
             <v-textarea
-            filled
+            outlined
             auto-grow
             class="pa-0 ma-0 px-2 white"
-            label="备注信息"
-            rows="2"
-            row-height="20"
             ></v-textarea>  
             <div class="caption px-4 pb-2 text--secondary">服务人员由系统自动分配</div>      
         </v-card>
@@ -61,11 +58,15 @@
                 <span class="caption text--secondary">已优惠：￥{{discount}}</span>
             </div>
         </v-footer>
+        <couponsPage :price="price" @select="selectCoupon" @hide="showCouponPage=false" v-if="showCouponPage"/>
+        <timePage :id="finalCommunityId" @hide="showTimePage=false" v-if="showTimePage"/>
     </div>
 </template>
 
 <script>
 import iHeader from '../components/public/header'
+import couponsPage from '../components/product/couponList'
+import timePage from '../components/product/timePage'
 export default {
     name: 'orderCertain',
     props: {
@@ -79,13 +80,17 @@ export default {
         }
     },
     components: {
-       iHeader
+       iHeader,
+       couponsPage,
+       timePage
     },
     data: ()=>({
         selectedAddress: null,
-        discount: 0.01,
+        discount: 0,
         discountStr: '',
         dateStr: '',
+        showCouponPage: false,
+        showTimePage: false
     }),
     created() {
 
@@ -99,6 +104,19 @@ export default {
         },
         couponList() {
             return this.$store.state.app.couponList
+        },
+        availabelCoupons() {
+           return this.couponList
+           .filter(res=>{
+                let state1 = res.state==1
+                let state2 = res.pull<this.price
+                let timeFit = Date.parse(new Date())>Date.parse(res.beginTime)&&Date.parse(new Date())<Date.parse(res.endTime)
+                return state1&&state2&&timeFit
+            })
+            .sort((a,b)=>{
+                return a.pull - b.pull
+            })
+            
         },
         finalConsignee() {
             if(this.selectedAddress){
@@ -124,7 +142,18 @@ export default {
                 return this.selectedAddress.communityName + this.selectedAddress.address
             }
             if(this.defaultAddress&&!this.selectedAddress){
-                return this.defaultAddress.communityName + this.selectedAddress.address
+                console.log(this.defaultAddress)
+                return this.defaultAddress.communityName + this.defaultAddress.address
+            }            
+        },
+        finalCommunityId() {
+            if(this.selectedAddress){
+
+                return this.selectedAddress.communityId
+            }
+            if(this.defaultAddress&&!this.selectedAddress){
+                console.log(this.defaultAddress)
+                return this.defaultAddress.communityId 
             }            
         },
         finalPrice(){
@@ -133,7 +162,7 @@ export default {
     },
     mounted() {
         this.findCoupon()
-        this.getDefaultAddress()
+        // this.getDefaultAddress()
     },
     methods: {
         getDefaultAddress() {
@@ -155,6 +184,9 @@ export default {
                     this.$store.commit('SET_SINGLE_STATE', ['couponList', res.data.obj])
                 }
             })
+        },
+        selectCoupon(e) {
+            console.log(e)
         },
         payIt(){
             if(!this.selectedAddress&&!this.defaultAddress){

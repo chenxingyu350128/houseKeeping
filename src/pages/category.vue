@@ -20,7 +20,7 @@
                     <v-col 
                     class="d-flex flex-column align-center px-0" 
                     v-for="(item,index) in cate.items" 
-                    @click="toDetail(item)"
+                    @click="toDetail(item.itemId)"
                     :key="index" 
                     cols="4">
                         <v-avatar
@@ -34,7 +34,7 @@
                 </v-row>
             </v-tab-item>
         </v-tabs>
-        <goodsDetails :obj="editItem" @hide="showDetails=false" v-if="showDetails"/>
+        <goodsDetails :id="editId" @hide="showDetails=false" v-if="showDetails"/>
     </div>
 </template>
 
@@ -52,7 +52,7 @@ export default {
     data: ()=>({
         tab: 0,
         showDetails: false,
-        editItem: {}
+        editId: 0
     }),
     created() {
 

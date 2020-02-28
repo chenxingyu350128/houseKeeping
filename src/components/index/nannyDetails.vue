@@ -1,8 +1,8 @@
 <template>
     <div class="nannyDetails white subtitle-2">
-        <iHeader @doSomething="$emit('hide')" :text="nannyName">
+        <iHeader @doSomething="$emit('hide')" :text="newName||nannyName">
             <template v-slot:right>
-                <v-icon @click="changeCollectState">{{isCollect?'mdi-star':'mdi-star-outline'}}</v-icon>
+                <v-icon color="purple accent-4" @click="changeCollectState">{{isCollect?'mdi-star':'mdi-star-outline'}}</v-icon>
                 <v-icon>mdi-share</v-icon>
             </template>
         </iHeader>
@@ -11,7 +11,7 @@
                 size="75"
                 tile
             >
-                <img src="headImg" alt="alt">
+                <img src="headImg">
             </v-avatar>
             <div class="d-flex flex-column flex-fill justify-space-around ml-2">
                 <span class="d-flex">
@@ -30,7 +30,7 @@
             </div>
         </div>
         <v-divider></v-divider>
-        <div v-if="!showMore" class="d-flex px-2 py-1 flex-wrap">
+        <div v-if="!showMore&&labels.length" class="d-flex px-2 py-1 flex-wrap">
             <v-btn 
             v-for="(item,i) in labels.slice(0,2)" 
             :key="i" 
@@ -45,7 +45,7 @@
             <v-spacer></v-spacer>
             <v-btn @click="showMore=true" small depressed dark rounded color="grey">+更多</v-btn>
         </div>
-        <div v-else class="d-flex px-2 py-1 flex-wrap">
+        <div v-if="showMore&&labels.length" class="d-flex px-2 py-1 flex-wrap">
             <v-btn 
             v-for="(item,i) in labels" 
             :key="i" 
@@ -133,10 +133,10 @@
         <v-list 
         class="py-0"
         three-line
-        v-for="(item,index) in similar.slice(0,2)" 
+        v-for="(item,index) in similar.slice(0,3)" 
         :key="index"
         :value="index"                
-        @click.native="toDetails(item.name,item.nannyId)"
+        @click.native="toSimilar(item.name,item.nannyId)"
         
         >
             <v-list-item
@@ -198,17 +198,19 @@
             <v-divider></v-divider>                     
         </v-list>  
         <v-footer class="white py-6">
-            <v-btn depressed color="primary">联系客服</v-btn>
+            <v-btn @click="callService" depressed color="primary">联系客服</v-btn>
             <v-spacer></v-spacer>
-            <v-btn depressed color="primary">立即预约</v-btn>
+            <v-btn @click="showReservation=true" depressed color="primary">立即预约</v-btn>
         </v-footer>      
         <evals nannyEval="Yo" :id="id" @hide="showEvals=false" v-if="showEvals"/>
+        <reservation :userId="userId" :nannyId="nannyId" @hide="showReservation=false" v-if="showReservation"/>
     </div>
 </template>
 
 <script>
 import iHeader from '../public/header'
 import evals from '../product/goodsEvals'
+import reservation from '../product/reservation'
 export default {
     name: 'nannyDetail',
     props: {
@@ -223,13 +225,18 @@ export default {
     },
     components: {
        iHeader,
-       evals
+       evals,
+       reservation
     },
     data: ()=>({
         isCollect: false,
+        showReservation: false,
         showMore: false,
         showEvals: false,
         age: 29,
+        newName: '',
+        nannyId: 0,
+        compId: 0,
         city: '福州',
         collectCount: 3,
         evalsList: [
@@ -438,6 +445,7 @@ export default {
         state: 0,
         subscribeCount: 6,
         type: 0,
+        servicePhone: '',
         updateTime: {
             "date": 26,
             "day": 3,
@@ -468,22 +476,22 @@ export default {
             return this.updateTime.year+'-'+this.updateTime.month+'-'+this.updateTime.date+' '+this.updateTime.hours+':'+this.updateTime.minutes+':'+this.updateTime.seconds
         },
         percent(){
+            if(!this.onDutyCount){
+                return 0
+            }
             return Number(this.goodEvalCount/this.onDutyCount*100).toFixed(2)
         },
         
     },
     mounted() {
-        this.init()
-        this.saveOrNot()
-        this.findEvalsList()
-        this.findSimilarity()
+        const params = {
+            id: this.id
+        }
+        this.findNanny(params)
         // this.findEvalsByNanny()
     },
     methods: {
-        init(){
-            const params = {
-                id: this.id
-            }   
+        findNanny(params) {
             this.$http.get('/nanny/findNanny',{params})  
             .then(res=>{
                 if(res.data.success){
@@ -491,8 +499,22 @@ export default {
                     for(let x in obj){
                         this[x] = obj[x]
                     }
+                    this.findSimilarity()
+                    this.saveOrNot()
+                    this.findEvalsList()
                 }
-            })       
+            })   
+        },
+        callService() {
+            console.log('yoyoyo')
+            location.href='tel: ' + this.servicePhone
+        },
+        toSimilar(name,id) {
+            this.newName = name
+            const params = {
+                id
+            }
+            this.findNanny(params)
         },
         toShowEvals() {
             if(!this.onDutyCount){
@@ -503,7 +525,7 @@ export default {
         },
         findEvalsList() {
             const params = {
-                nannyId: this.id,
+                nannyId: this.nannyId,
                 type: 1//好评
             }
             // const url = this.type?
@@ -516,8 +538,9 @@ export default {
         },
         findSimilarity() {
             const params = {
-                compId: this.id
+                compId: this.compId
             }
+            console.info(params)
             this.$http.get('/nanny/findSimilarity',{params})
             .then(res=>{
                 if(res.data.success){
@@ -529,7 +552,7 @@ export default {
         saveOrNot() {
             const params = {
                 userId: this.userId,
-                nannyId: this.id
+                nannyId: this.nannyId
             }
             this.$http.get('/nanny/isCollect',{params})
             .then(res=>{
@@ -539,10 +562,15 @@ export default {
             })
         },
         changeCollectState() {
-            let url = this.isCollect?'/nanny/delNannyCollect':'/addNannyCollect'
+            let url = this.isCollect?'/nanny/delNannyCollect':'/nanny/addNannyCollect'
             const data = {
-                userId: this.userId,
-                nanny: this.id
+                userId: this.userId
+            }
+            if(this.isCollect){
+                data.nannyId = this.nannyId
+            }else{
+                data.nanny = this.nannyId
+
             }
             this.$http.post(url,data)
             .then(res=>{
