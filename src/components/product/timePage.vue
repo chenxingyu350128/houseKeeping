@@ -5,6 +5,7 @@
              v-model="tab"
              color="primary"
              grow
+             @change="tabChange"
              class="px-0 caption"
              slider-color="primary"
          >
@@ -15,6 +16,22 @@
                  </div>
              </v-tab>
          </v-tabs>
+         <v-tabs-items v-model="tab">
+             <v-row class="pa-0 ma-0">
+                 <v-col v-for="(item,i) in times" :key="i" cols="4">
+
+                    <v-btn 
+                    :dark="!item.status"
+                    small
+                    block
+                    depressed
+                    @click="timeSelect(i)"
+                    :disabled="!!item.status"
+                    v-text="item.time"
+                    :color="timeIndex===i?'teal accent-2':'primary'"></v-btn>
+                 </v-col>
+             </v-row>
+         </v-tabs-items>
     </div>
 </template>
 
@@ -30,7 +47,10 @@ export default {
        iHeader
     },
     data: ()=>({
-        tab: 0
+        tab: 0,
+        times: null,
+        fullDateTimes: null,
+        timeIndex: null
     }),
     created() {
 
@@ -83,6 +103,7 @@ export default {
                 console.log(i,m,d)
                 arr[i].longStr = longStr
                 arr[i].cn = cn
+                arr[i].en = en
                 arr[i].day = i==0?'今天':i==1?'明天':weekDays[day]
             })
             console.log(arr)
@@ -102,11 +123,40 @@ export default {
             .then(res=>{
                 if(res.data.success){
                     let obj = res.data.obj
-                    for(let x in obj) {
-                        
+                    let keys = Object.keys(obj)
+                    this.fullDateTimes = keys
+                    let times = keys.map(res=>{
+                        return res.split(' ')[1]
+                    })
+                    let values = Object.values(obj)
+                    let status = values.map(res=>{
+                        return Number(res)
+                    })
+                    console.log(times,status)
+                    let x = []
+                    let len = times.length
+                    for(let i=0;i<len;i++){
+                        x.push({
+                            time: times[i],
+                            status: status[i]                            
+                        })
                     }
+                    this.times = x.concat(
+                        [{
+                            time: 'wer',
+                            status: 1                           
+                    }])
                 }
             })
+        },
+        tabChange(i) {
+            console.log(i)
+            console.log(this.tab)
+            this.init()
+        },
+        timeSelect(e) {
+            this.timeIndex = e
+            this.$emit('timeSelect',this.fullDateTimes[this.timeIndex])
         }
     }
 };

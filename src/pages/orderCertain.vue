@@ -29,7 +29,7 @@
                 <div @click="showAddress=true" v-else class="flex-fill text-center text--secondary">+添加服务地址</div>
             </div>
         </div>
-        <div v-if="type" @click="toTimePage" class="d-flex align-center px-4 py-3 mb-2 white">
+        <div v-if="type" @click="toTimePage" class="d-flex align-center px-4 py-3 mb-2 white subtitle-2">
             <v-icon class="mdi-rotate-225" color="primary">mdi-clock-outline</v-icon>
             <div class="flex-fill ml-3 text--secondary text-right">{{dateStr||'请选择服务时间'}}</div>
             <v-icon  class="mr-4">mdi-chevron-right</v-icon>
@@ -59,7 +59,8 @@
             </div>
         </v-footer>
         <couponsPage :price="price" @select="selectCoupon" @hide="showCouponPage=false" v-if="showCouponPage"/>
-        <timePage :id="finalCommunityId" @hide="showTimePage=false" v-if="showTimePage"/>
+        <timePage @timeSelect="timeSelect" :id="finalCommunityId" @hide="showTimePage=false" v-if="showTimePage"/>
+        <addressList @addressSelect="addressSelect"  @hide="showAddress=false" v-if="showAddress"/>
     </div>
 </template>
 
@@ -67,6 +68,7 @@
 import iHeader from '../components/public/header'
 import couponsPage from '../components/product/couponList'
 import timePage from '../components/product/timePage'
+import addressList from '../components/product/addressList'
 export default {
     name: 'orderCertain',
     props: {
@@ -82,7 +84,8 @@ export default {
     components: {
        iHeader,
        couponsPage,
-       timePage
+       timePage,
+       addressList
     },
     data: ()=>({
         selectedAddress: null,
@@ -200,6 +203,16 @@ export default {
                 return
             }
             this.showTimePage=true
+        },
+        timeSelect(e) {
+            this.showTimePage = false
+            console.log(e)
+            this.dateStr = e
+        },
+        addressSelect(e) {
+            this.showAddress = false
+            console.log(e)
+            this.selectedAddress = e
         }
     }
 };
