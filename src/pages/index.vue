@@ -238,7 +238,9 @@ export default {
                     map.getCity(result => {
                         console.log(result)
                         const cityName = result.city + result.district
-                        // view.showPositionDia = true
+                        if(!cityName){
+                            view.showPositionDia = true
+                        }                        
                         view.$store.commit('SET_SINGLE_STATE', ['positionCity', cityName])
                     })
                 },
@@ -256,7 +258,7 @@ export default {
             return this.$store.state.app.userId
         },
         sessionId() {
-            return 1
+            return '1'
         },
         communityList() {
             return this.$store.state.app.communityList
@@ -281,9 +283,10 @@ export default {
         // },
     },
     mounted() {
-        if(!this.positionCity){
-            this.showPositionDia = true
-        }
+        this.$nextTick(()=>{
+
+
+        })
         // console.log(JSON.parse(this.defaultAddress))
         this.init()
     },
