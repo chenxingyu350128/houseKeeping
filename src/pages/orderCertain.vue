@@ -1,5 +1,5 @@
 <template>
-    <div class="xxx-cpnt grey lighten-3">
+    <div class="orderCertain grey lighten-3">
         <iHeader @doSomething="$emit('hide')" text="订单确认"></iHeader>
         <div class="px-4 white mb-2">
 
@@ -19,17 +19,17 @@
             <v-divider></v-divider>
             <div class="d-flex align-center py-4 subtitle-2">
                 <v-icon class="mr-4" color="primary">mdi-map-marker</v-icon>
-                <div v-if="defaultAddress||selectedAddress" class="d-flex flex-column">
+                <div @click="showAddress=true" v-if="defaultAddress||selectedAddress" class="d-flex flex-column">
                     <span>
                         {{finalConsignee}}
                         <span class="ml-4">{{finalTel}}</span>
                     </span>
                     <span>{{finalAddress}}</span>
                 </div>
-                <div v-else class="flex-fill text-center text--secondary">+添加服务地址</div>
+                <div @click="showAddress=true" v-else class="flex-fill text-center text--secondary">+添加服务地址</div>
             </div>
         </div>
-        <div v-if="type" @click="showTimePage=true" class="d-flex align-center px-4 py-3 mb-2 white">
+        <div v-if="type" @click="toTimePage" class="d-flex align-center px-4 py-3 mb-2 white">
             <v-icon class="mdi-rotate-225" color="primary">mdi-clock-outline</v-icon>
             <div class="flex-fill ml-3 text--secondary text-right">{{dateStr||'请选择服务时间'}}</div>
             <v-icon  class="mr-4">mdi-chevron-right</v-icon>
@@ -90,6 +90,7 @@ export default {
         discountStr: '',
         dateStr: '',
         showCouponPage: false,
+        showAddress: false,
         showTimePage: false
     }),
     created() {
@@ -192,6 +193,13 @@ export default {
             if(!this.selectedAddress&&!this.defaultAddress){
                 this.$toast('请选择服务地址！')
             }
+        },
+        toTimePage() {
+            if(!this.selectedAddress&&!this.defaultAddress) {
+                this.$toast('请先选择服务地址')
+                return
+            }
+            this.showTimePage=true
         }
     }
 };
@@ -199,7 +207,7 @@ export default {
 
 <style scoped lang="scss">
 
-   .xxx-cpnt{
+   .orderCertain{
        position: fixed;
        left: 0;
        right: 0;

@@ -257,9 +257,6 @@ export default {
         userId() {
             return this.$store.state.app.userId
         },
-        sessionId() {
-            return '1'
-        },
         communityList() {
             return this.$store.state.app.communityList
         },
@@ -302,22 +299,25 @@ export default {
             // this.getDefaultAddress()
         },
         appLogin() {
-            if(this.userId){
-                return
-            }
-            const params = {
-                sessionId: this.sessionId
-            }
-            this.$http.get('/user/applogin',{params})
-            .then(res=>{
-                if (res.data.success&&res.data.obj) {
-                    let obj = res.data.obj
-                    this.$store.commit('SET_SINGLE_STATE', ['sex', obj.sex])
-                    this.$store.commit('SET_SINGLE_STATE', ['userId', obj.userId])
-                    this.$store.commit('SET_SINGLE_STATE', ['userName', obj.userName])
-                    this.$store.commit('SET_SINGLE_STATE', ['realName', obj.realName])
-                }
-            })
+            //测试用
+            this.$store.commit('SET_SINGLE_STATE', ['userId', 1])
+            // if(this.userId){
+            //     return
+            // }
+            // const sessionId = window.location.hash.split('sessionId=')[1]
+            // const params = {
+            //     sessionId
+            // }
+            // this.$http.get('/user/applogin',{params})
+            // .then(res=>{
+            //     if (res.data.success&&res.data.obj) {
+            //         let obj = res.data.obj
+            //         this.$store.commit('SET_SINGLE_STATE', ['sex', obj.sex])
+            //         this.$store.commit('SET_SINGLE_STATE', ['userId', obj.userId])
+            //         this.$store.commit('SET_SINGLE_STATE', ['userName', obj.userName])
+            //         this.$store.commit('SET_SINGLE_STATE', ['realName', obj.realName])
+            //     }
+            // })
         },
         iconsClick(e) {
             this.nannyType = e
