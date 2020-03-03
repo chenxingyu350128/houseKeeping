@@ -141,11 +141,7 @@ export default {
                             status: status[i]                            
                         })
                     }
-                    this.times = x.concat(
-                        [{
-                            time: 'wer',
-                            status: 1                           
-                    }])
+                    this.times = x
                 }
             })
         },

@@ -169,7 +169,7 @@
         <msg @hide="showMsg=false" v-if="showMsg"/>
         <nurseList :type="nannyType" @hide="showNurse=false" v-if="showNurse"/>
         <goodsDetails :id="editId" @hide="showDetails=false" v-if="showDetails"/>
-        <position @hide="showAreaPicker=false" v-if="showAreaPicker"/>
+        <position @adcodeGet="postAdcode" @hide="showAreaPicker=false" v-if="showAreaPicker"/>
     </div>
 </template>
 
@@ -182,7 +182,23 @@ import msg from '../components/index/msgCenter'
 import VueAMap from 'vue-amap'
 import { AMapManager } from 'vue-amap'
 // import AMap from "amap-js";
-
+VueAMap.initAMapApiLoader({
+  key: "71a4fe9e16a9e93d6653175b5f6693c8",
+  plugin: [
+    "AMap.Geolocation",
+    "AMap.Autocomplete",
+    "AMap.PlaceSearch",
+    "AMap.Scale",
+    "AMap.OverView",
+    "AMap.ToolBar",
+    "AMap.MapType",
+    "AMap.PolyEditor",
+    "AMap.CircleEditor",
+    "AMap.Geocoder",
+    "AMap.DistrictSearch",
+  ],
+  v: "1.4.4"
+});
 const amapManager = new VueAMap.AMapManager()
 export default {
     name: 'index',
@@ -205,6 +221,7 @@ export default {
             showDetails: false,
             showMsg: false,
             editId: 0,
+            areasId: 0,
             nannyType: '',
             searchOption: {
                 city: '福州',
@@ -238,6 +255,8 @@ export default {
                     map.getCity(result => {
                         console.log(result)
                         const cityName = result.city + result.district
+                        console.log('event init')
+                        view.districtSearch(result.city, result.district)
                         if(!cityName){
                             view.showPositionDia = true
                         }                        
@@ -280,23 +299,45 @@ export default {
         // },
     },
     mounted() {
-        this.$nextTick(()=>{
-
-
-        })
-        // console.log(JSON.parse(this.defaultAddress))
         this.init()
     },
     methods: {
         init() {
+            console.log('init')
             this.appLogin()
             // this.findIndexCates()
-            this.findCates()
             this.findBanners()
             this.findCommunitys()
+            // this.getDefaultAddress()
+        },
+        districtSearch(city,district) {
+            let that = this
+            console.log(city)
+            let dSearch = new AMap.DistrictSearch({
+                level: 'city',
+                subdistrict: 1,   //返回下一级行政区
+                showbiz:false  //最后一级返回街道信息
+            })
+            dSearch.search(city,(status,res)=>{
+                console.log(status,res)
+                if(status=='complete'){
+
+                    let list = res.districtList[0].districtList
+                    list.forEach(res=>{
+                        if(res.name == district){
+                            that.postAdcode(res.adcode)
+                        }
+                    })
+                }
+            })
+        },
+        postAdcode(adcode) {
+            this.showAreaPicker=false
+            this.areasId = adcode
+            this.findCates()
             this.hotProduct()
             this.bestSelling()
-            // this.getDefaultAddress()
+            console.log('***',adcode)
         },
         appLogin() {
             //测试用
@@ -350,7 +391,7 @@ export default {
             // if(!this.cateList){
             //     return
             // }
-            let res = await this.$http.get('/service/findCates')
+            let res = await this.$http.get('/service/findCates',{params: {areasId: this.areasId}})
             if(res.data){
 
                 this.$store.commit('SET_SINGLE_STATE', ['cateList', res.data.obj])
@@ -361,7 +402,7 @@ export default {
             // if(!this.indexCates){
             //     return
             // }
-            let res = await this.$http.get('/service/findCxiao')
+            let res = await this.$http.get('/service/findCxiao',{params: {areasId: this.areasId}})
             if(res.data){
 
                 this.$store.commit('SET_SINGLE_STATE', ['bestSelling', res.data.obj])
@@ -372,7 +413,7 @@ export default {
             // if(!this.indexCates){
             //     return
             // }
-            let res = await this.$http.get('/service/findHot')
+            let res = await this.$http.get('/service/findHot',{params: {areasId: this.areasId}})
             if(res.data){
 
                 this.$store.commit('SET_SINGLE_STATE', ['hotProduct', res.data.obj])

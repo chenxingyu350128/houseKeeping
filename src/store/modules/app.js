@@ -17,6 +17,7 @@ const app = {
       bestSelling: JSON.parse(localStorage.getItem('bestSelling')),
       hotProduct: JSON.parse(localStorage.getItem('hotProduct')),
       evalsList: JSON.parse(localStorage.getItem('evalsList')),
+      addressList: JSON.parse(localStorage.getItem('addressList')),
     },
     mutations: {
       SET_LOADING: (state, status) => {
@@ -36,7 +37,8 @@ const app = {
             'hotProduct',
             'defaultAddress',
             'couponList',
-            'evalsList'   
+            'evalsList',
+            'addressList'   
           ]
         if (isObject.includes(x)) {
           localStorage.setItem(x, JSON.stringify(y))

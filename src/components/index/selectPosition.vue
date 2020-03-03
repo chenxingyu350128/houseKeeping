@@ -102,14 +102,15 @@ export default {
             geoCoder.getAddress(
                 center,
                 (status,result)=>{
-                if (status === 'complete'&&result.regeocode) {
-                    console.info(result)
-                    const area = result.regeocode.addressComponent.city + result.regeocode.addressComponent.district
-                    that.$store.commit('SET_SINGLE_STATE', ['positionCity', area])
-                    that.$emit('hide')
-                }else{
-                    console.error('根据经纬度查询地址失败')
-                }              
+                    if (status === 'complete'&&result.regeocode) {
+                        console.info(result)
+                        const area = result.regeocode.addressComponent.city + result.regeocode.addressComponent.district
+                        that.$store.commit('SET_SINGLE_STATE', ['positionCity', area])
+                        // that.$emit('hide')
+                        that.$emit('adcodeGet',result.regeocode.addressComponent.adcode)
+                    }else{
+                        console.error('根据经纬度查询地址失败')
+                    }              
                 }
             )
         }

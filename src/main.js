@@ -32,22 +32,32 @@ Vue.use(IndexBar).use(IndexAnchor).use(Cell).use(Picker).use(DatetimePicker).use
 Vue.use(VueAMap);
 Vue.config.productionTip = false;
 // 高德地图配置
-VueAMap.initAMapApiLoader({
-  key: "71a4fe9e16a9e93d6653175b5f6693c8",
-  plugin: [
-    "AMap.Geolocation",
-    "AMap.Autocomplete",
-    "AMap.PlaceSearch",
-    "AMap.Scale",
-    "AMap.OverView",
-    "AMap.ToolBar",
-    "AMap.MapType",
-    "AMap.PolyEditor",
-    "AMap.CircleEditor",
-    "AMap.Geocoder"
-  ],
-  v: "1.4.4"
-});
+// VueAMap.initAMapApiLoader({
+//   key: "71a4fe9e16a9e93d6653175b5f6693c8",
+//   plugin: [
+//     "AMap.Geolocation",
+//     "AMap.Autocomplete",
+//     "AMap.PlaceSearch",
+//     "AMap.Scale",
+//     "AMap.OverView",
+//     "AMap.ToolBar",
+//     "AMap.MapType",
+//     "AMap.PolyEditor",
+//     "AMap.CircleEditor",
+//     "AMap.Geocoder"
+//   ],
+//   v: "1.4.4"
+// });
+
+//重定义sessionStorage.setItem()，用来接收app的数据
+sessionStorage.setItem = function (key, newVal) {
+  let setItemEvent = new Event('setItemEvent')
+  setItemEvent.key = key
+  setItemEvent.newVal = newVal
+  console.log(key, newVal);
+
+  document.dispatchEvent(setItemEvent)
+}
 
 new Vue({
   router,

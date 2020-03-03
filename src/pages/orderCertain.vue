@@ -17,7 +17,7 @@
                 <div class="red--text flex-fill d-flex justify-end">{{item.price}}元</div>
             </div>
             <v-divider></v-divider>
-            <div class="d-flex align-center py-4 subtitle-2">
+            <div class="d-flex align-center justify-space-between py-4 subtitle-2">
                 <v-icon class="mr-4" color="primary">mdi-map-marker</v-icon>
                 <div @click="showAddress=true" v-if="defaultAddress||selectedAddress" class="d-flex flex-column">
                     <span>
@@ -26,7 +26,7 @@
                     </span>
                     <span>{{finalAddress}}</span>
                 </div>
-                <div @click="showAddress=true" v-else class="flex-fill text-center text--secondary">+添加服务地址</div>
+                <div @click="showAddress=true" v-else class="flex-fill text-right text--secondary pr-6">+添加服务地址</div>
             </div>
         </div>
         <div v-if="type" @click="toTimePage" class="d-flex align-center px-4 py-3 mb-2 white subtitle-2">
@@ -34,9 +34,9 @@
             <div class="flex-fill ml-3 text--secondary text-right">{{dateStr||'请选择服务时间'}}</div>
             <v-icon  class="mr-4">mdi-chevron-right</v-icon>
         </div>
-        <div v-if="discount" @click="showCouponPage=true" class="d-flex align-center px-4 py-3 mb-2 white">
+        <div @click="showCouponPage=true" class="d-flex align-center px-4 py-3 mb-2 white">
             <v-icon class="mdi-rotate-225" color="primary">mdi-label</v-icon>
-            <div class="flex-fill ml-3">{{discountStr}}</div>
+            <div class="flex-fill ml-3 text-right subtitle-2 text--secondary">{{discountStr||'请选择优惠方式'}}</div>
             <v-icon  class="mr-4">mdi-chevron-right</v-icon>
         </div>
         <v-card tile flat>
@@ -58,9 +58,16 @@
                 <span class="caption text--secondary">已优惠：￥{{discount}}</span>
             </div>
         </v-footer>
-        <couponsPage :price="price" @select="selectCoupon" @hide="showCouponPage=false" v-if="showCouponPage"/>
+        <couponsPage 
+            :selectedId="selectedCouponId" 
+            :price="item.price" 
+            @unset="showCouponPage=false;couponUnset=true"
+            @couponGet="selectCoupon"
+            @hide="showCouponPage=false" 
+            v-if="showCouponPage"
+        />
         <timePage @timeSelect="timeSelect" :id="finalCommunityId" @hide="showTimePage=false" v-if="showTimePage"/>
-        <addressList @addressSelect="addressSelect"  @hide="showAddress=false" v-if="showAddress"/>
+        <addressList :type="type" @addressSelect="addressSelect"  @hide="showAddress=false" v-if="showAddress"/>
     </div>
 </template>
 
@@ -89,12 +96,15 @@ export default {
     },
     data: ()=>({
         selectedAddress: null,
-        discount: 0,
-        discountStr: '',
+        selectedCoupon: null,
+        selectedCouponId: 15,
+        // discount: 0.01,
+        // discountStr: '',
         dateStr: '',
         showCouponPage: false,
         showAddress: false,
-        showTimePage: false
+        showTimePage: false,
+        couponUnset: false,
     }),
     created() {
 
@@ -109,17 +119,50 @@ export default {
         couponList() {
             return this.$store.state.app.couponList
         },
+        finalCoupon() {
+            if(this.couponUnset){
+                return null
+            }
+            return this.selectedCoupon||this.availabelCoupons[0]
+        },
+        discountStr() {
+            if(this.finalCoupon){
+
+                return this.finalCoupon.couponName+'满'+this.finalCoupon.pull+'减'+this.finalCoupon.money
+            }
+        },
+        discount() {
+            if(this.finalCoupon){
+
+                return this.finalCoupon.money
+            }
+            return 0
+        },
         availabelCoupons() {
-           return this.couponList
-           .filter(res=>{
-                let state1 = res.state==1
-                let state2 = res.pull<this.price
-                let timeFit = Date.parse(new Date())>Date.parse(res.beginTime)&&Date.parse(new Date())<Date.parse(res.endTime)
-                return state1&&state2&&timeFit
-            })
-            .sort((a,b)=>{
-                return a.pull - b.pull
-            })
+            return [
+            {
+                "beginTime": "2020-01-12 08:20:00", //有效期开始时间
+                "couponId": 14, 
+                "couponName": "通用券", //名称
+                "createTime": "2020-01-12 08:20:00", //创建时间
+                "endTime": "2020-05-12 08:20:00", //有效期结束时间
+                "goodsId": 0, //商品ID
+                "money": 30, //优惠券金额
+                "pull": 50, //优惠券满减条件(满50-30)
+                "state": 1, //状态 0无效 1有效 2已使用
+                "userId": 1 //用户ID
+            },                
+            ]
+        //    return this.couponList
+        //    .filter(res=>{
+        //         let state1 = res.state==1
+        //         let state2 = res.pull<this.price
+        //         let timeFit = Date.parse(new Date())>Date.parse(res.beginTime)&&Date.parse(new Date())<Date.parse(res.endTime)
+        //         return state1&&state2&&timeFit
+        //     })
+        //     .sort((a,b)=>{
+        //         return a.pull - b.pull
+        //     })
             
         },
         finalConsignee() {
@@ -186,16 +229,49 @@ export default {
             .then(res=>{
                 if(res.data.success){
                     this.$store.commit('SET_SINGLE_STATE', ['couponList', res.data.obj])
+                    //computed结果availabelCoupons的第一项为最大的优惠券
+                    //将其作为页面的显示参数
+                    // this.selectedCouponId = this.availabelCoupons[0].couponId
                 }
             })
         },
         selectCoupon(e) {
+            this.showCouponPage = false
             console.log(e)
+            this.selectedCoupon = e
+            this.selectedCouponId = e.couponId
         },
         payIt(){
-            if(!this.selectedAddress&&!this.defaultAddress){
+            if(!this.finalAddress){
                 this.$toast('请选择服务地址！')
+                return
             }
+            if(this.type&&!this.dateStr){
+                this.$toast('请选择服务时间！')
+                return
+            }
+            const data = {
+                userId: this.userId,
+                totalMoney: this.item.price,
+                prices: this.item.price,
+                pics: this.item.attrPic,
+                nums: 1,
+                actualPayment: this.finalPrice,
+                remark: this.remark,
+                dtIds: this.item.detailId,
+                names: this.item.type,
+                discounts: this.discount,
+
+            }
+            if(this.type){
+                data.serviceTime = this.dateStr
+            }
+            this.$http.post('/order/addOrder',data)
+            .then(res=>{
+                if(res.data.success){
+                    console.log(res)
+                }
+            })
         },
         toTimePage() {
             if(!this.selectedAddress&&!this.defaultAddress) {
