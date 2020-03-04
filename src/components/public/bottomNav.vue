@@ -1,7 +1,7 @@
 <template>
   <v-bottom-navigation
     fixed
-    height="50"
+    height="48"
     grow
     v-if="active"
     color="#04c0af"

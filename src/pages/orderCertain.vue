@@ -19,7 +19,7 @@
             <v-divider></v-divider>
             <div class="d-flex align-center justify-space-between py-4 subtitle-2">
                 <v-icon class="mr-4" color="primary">mdi-map-marker</v-icon>
-                <div @click="showAddress=true" v-if="defaultAddress||selectedAddress" class="d-flex flex-column">
+                <div @click="showAddress=true" v-if="defaultAddress||selectedAddress" class="d-flex flex-column text--secondary">
                     <span>
                         {{finalConsignee}}
                         <span class="ml-4">{{finalTel}}</span>
@@ -48,7 +48,7 @@
             ></v-textarea>  
             <div class="caption px-4 pb-2 text--secondary">服务人员由系统自动分配</div>      
         </v-card>
-        <v-footer fixed bottom class="pa-0 ma-0 d-flex flex-row-reverse">
+        <v-footer fixed bottom class="pa-0 ma-0 d-flex flex-row-reverse white">
             <v-btn @click="payIt" depressed tile large color="primary">立即支付</v-btn>
             <div class="d-flex flex-column justify-space-around subtitle-2 mr-2">
                 <span>
@@ -66,8 +66,9 @@
             @hide="showCouponPage=false" 
             v-if="showCouponPage"
         />
-        <timePage @timeSelect="timeSelect" :id="finalCommunityId" @hide="showTimePage=false" v-if="showTimePage"/>
+        <timePage :type="type" @timeSelect="timeSelect" :id="finalCommunityId" @hide="showTimePage=false" v-if="showTimePage"/>
         <addressList :type="type" @addressSelect="addressSelect"  @hide="showAddress=false" v-if="showAddress"/>
+        <payPage :fromAdd="isTrue" :price="item.price" :discount="discount" :finalPrice="finalPrice" :obj="postObj" @hide="showPayPage=false" v-if="showPayPage"/>
     </div>
 </template>
 
@@ -76,6 +77,7 @@ import iHeader from '../components/public/header'
 import couponsPage from '../components/product/couponList'
 import timePage from '../components/product/timePage'
 import addressList from '../components/product/addressList'
+import payPage from './payPage'
 export default {
     name: 'orderCertain',
     props: {
@@ -92,7 +94,8 @@ export default {
        iHeader,
        couponsPage,
        timePage,
-       addressList
+       addressList,
+       payPage
     },
     data: ()=>({
         selectedAddress: null,
@@ -104,7 +107,10 @@ export default {
         showCouponPage: false,
         showAddress: false,
         showTimePage: false,
+        showPayPage: false,
         couponUnset: false,
+        isTrue: true,
+        postObj: null
     }),
     created() {
 
@@ -257,8 +263,8 @@ export default {
                 pics: this.item.attrPic,
                 nums: 1,
                 actualPayment: this.finalPrice,
-                remark: this.remark,
                 dtIds: this.item.detailId,
+                itemId: this.item.itemId,
                 names: this.item.type,
                 discounts: this.discount,
 
@@ -266,10 +272,14 @@ export default {
             if(this.type){
                 data.serviceTime = this.dateStr
             }
+            if(this.remark) {
+                data.remark = this.remark
+            }
             this.$http.post('/order/addOrder',data)
             .then(res=>{
                 if(res.data.success){
-                    console.log(res)
+                   this.postObj = res.data.obj.orderServices[0]
+                   this.showPayPage = true
                 }
             })
         },

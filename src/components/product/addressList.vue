@@ -12,9 +12,9 @@
                     <v-icon @click.stop="editAddress(item,item.auId)" dense>mdi-square-edit-outline</v-icon>
                 </div>
                 <v-divider></v-divider>
-                <div class="px-4 py-2 d-flex">
-                    <v-icon color="white"></v-icon>
-                    <span class="ml-2 subtitle-2">{{item.region+item.communityName+item.address}}</span>
+                <div class="px-4 py-2 d-flex flex-column">
+                    <span class="ml-2 subtitle-2">{{item.region.split('-').join('')}}</span>
+                    <span class="ml-2 subtitle-2">{{item.communityName+item.address}}</span>
                 </div>
             </v-card>
         </div>
@@ -27,7 +27,7 @@
         <v-footer class="pa-0 ma-0" bottom fixed>
             <v-btn @click="addAddress" large depressed tile block color="primary" dark>添加</v-btn>
         </v-footer>
-        <addressEdit :item="editItem" :id="editId" @hide="showEdit=false" v-if="showEdit"/>
+        <addressEdit :type="type" :item="editItem" :id="editId" @hide="showEdit=false" v-if="showEdit"/>
     </div>
 </template>
 
@@ -70,7 +70,7 @@ export default {
         getList() {
             const params = {
                 userId: this.userId,
-                type: this.type
+                goodsType: this.type
             }
             this.$http.get('/user/findAddress',{params})
             .then(res=>{

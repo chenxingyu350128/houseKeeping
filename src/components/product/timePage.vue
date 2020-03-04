@@ -17,7 +17,7 @@
              </v-tab>
          </v-tabs>
          <v-tabs-items v-model="tab">
-             <v-row class="pa-0 ma-0">
+             <v-row v-if="type==2" class="pa-0 ma-0">
                  <v-col v-for="(item,i) in times" :key="i" cols="4">
 
                     <v-btn 
@@ -31,6 +31,17 @@
                     :color="timeIndex===i?'teal accent-2':'primary'"></v-btn>
                  </v-col>
              </v-row>
+             <div class="pa-4" v-else>
+                 <v-btn block @click="showBS = true" color="primary">{{timeStr||'请选择时间'}}</v-btn>
+                 <v-btn @click="selectCertain" class="mt-2" block color="primary">确认</v-btn>
+             </div>
+             <v-bottom-sheet v-model="showBS">
+                <van-datetime-picker
+                type="time"
+                @cancel="showBS=false"
+                @confirm="onConfirm"
+                />                 
+             </v-bottom-sheet>
          </v-tabs-items>
     </div>
 </template>
@@ -40,8 +51,15 @@ import iHeader from '../public/header'
 export default {
     name: 'timePage',
     props: {
-        id: Number,
-        required: true
+        id: {
+            type: Number,
+            default: 0
+        },
+        type: {
+            type: Number,
+            required: true
+        },
+
     },
     components: {
        iHeader
@@ -50,7 +68,9 @@ export default {
         tab: 0,
         times: null,
         fullDateTimes: null,
-        timeIndex: null
+        timeIndex: null,
+        showBS: false,
+        timeStr: ''
     }),
     created() {
 
@@ -115,6 +135,9 @@ export default {
     },
     methods: {
         init() {
+            if(this.type!==2) {
+                return
+            }
             const params = {
                 id: this.id,
                 time: this.tabItems[this.tab].longStr
@@ -153,6 +176,18 @@ export default {
         timeSelect(e) {
             this.timeIndex = e
             this.$emit('timeSelect',this.fullDateTimes[this.timeIndex])
+        },
+        onConfirm(e){
+            this.showBS = false
+            this.timeStr= this.tabItems[this.tab].en+' '+e+':00'
+            console.log(e)
+        },
+        selectCertain() {
+            if(!this.timeStr) {
+                this.$toast('请选择服务时间')
+                return
+            }
+            this.$emit('timeSelect',this.timeStr)
         }
     }
 };

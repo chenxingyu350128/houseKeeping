@@ -1,0 +1,213 @@
+<template>
+    <div class="orderDetails grey lighten-2 subtitle-2 pb-44">
+        <iHeader @doSomething="$emit('hide')" text="订单详情"></iHeader>
+        <!-- 抢单 -->
+        <div v-if="orderType==2"></div>
+        <!-- 非抢单 -->
+        <div v-else>
+          <div v-if="state!==''" :class="state==1||state==2?'white--text cyan lighten-2':'red--text' " class="px-4 py-2 text-center">{{status}}</div>
+          <div class="px-4 py-2 white text--secondary mb-2">
+              <div>
+                <span class="mr-4">{{customer}}</span>
+                <span>{{phone}}</span>
+              </div>
+              <div>{{address}}</div>
+          </div>
+          <div class="white px-4 py-2 mb-2 text--secondary">
+            <div class="d-flex pb-2">
+              <v-avatar
+                tile
+                size="65"
+              >
+                <v-img :src="orderServices[0].pic"></v-img>
+              </v-avatar>
+              <div class="ml-2 flex-fill d-flex flex-column justify-space-between align-end">
+                <div class="d-flex justify-space-between">
+                  <span>{{itemName}}</span>
+                  <span>{{totalMoney}}</span>
+                </div>
+                <span>x1</span>
+              </div>
+            </div>
+            <v-divider></v-divider>
+            <div class="py-2">
+              <div class="d-flex justify-space-between">
+                <span>商品总价</span>
+                <span>￥{{totalMoney}}</span>
+              </div>
+              <div class="d-flex justify-space-between">
+                <span>优惠券</span>
+                <span>-￥{{discounts}}</span>
+              </div>
+              <div class="d-flex justify-space-between">
+                <span>应付款</span>
+                <span>￥{{totalMoney-discounts}}</span>
+              </div>
+            </div>
+          </div>
+          <div v-if="remark" class="white text--primary mb-2">
+            <div class="px-4 py-2">备注信息</div>
+            <div class="px-4 py-2">{{remark}}</div>
+          </div>
+          <div class="px-4 py-2 white text--secondary caption">
+            <div>订单编号：{{orderNumber}}</div>
+            <div>下单时间：{{createTime}}</div>
+            <div v-if="payTime">付款时间：{{payTime}}</div>
+            <div v-if="completeTime">完成时间：{{completeTime}}</div>
+            <div v-if="evaluateTime">评价时间：{{evaluateTime}}</div>
+          </div>
+
+        </div>
+        <v-footer class="pa-0 ma-0 d-flex flex-row-reverse" fixed bottom>
+          <v-row class="pa-0 ma-0">
+            <v-col v-if="state==1" class="py-1" cols="6">
+              <v-btn dark outlined color="red" block depressed>取消订单</v-btn>
+            </v-col>
+            <v-col v-if="state==1" class="py-1" cols="6">
+              <v-btn @click="toPay(orderServices[0])" dark color="primary" block depressed>去支付</v-btn>
+            </v-col>
+            <v-col v-if="state==3&&!evaluateTime" class="py-1" cols="6">
+              <v-btn dark color="primary" block depressed>去评价</v-btn>
+            </v-col>
+            <!-- <v-col class="py-1" cols="6">
+              <v-btn dark color="primary" block depressed>去评价</v-btn>
+            </v-col>
+            <v-col class="py-1" cols="6">
+              <v-btn dark color="primary" block depressed>去评价</v-btn>
+            </v-col> -->
+          </v-row>
+        </v-footer>
+        <payPage @paySuccess="init" :price="totalMoney" :discount="discounts" :finalPrice="totalMoney-discounts" :obj="postObj" @hide="showPayPage" v-if="showPayPage"/>
+    </div>
+</template>
+
+<script>
+import iHeader from '../components/public/header'
+import payPage from './payPage'
+export default {
+    name: 'orderDetails',
+    props: {
+      pOrderId: {
+        type: Number,
+        required: true
+      },
+      orderType: {
+        type: Number,
+        default: 1
+      }
+    },
+    components: {
+       iHeader,
+       payPage
+    },
+    data: ()=>({
+      "actualPayment": 0.1,
+      "address": "海西佰悦城15号楼1503",
+      "attemperStatus": 0,
+      "auntId": 0,
+      "auntModel": null,
+      "beginTime": "2020-02-20 11:00:00",
+      "cancelCause": "",
+      "nannyId": 1,//保姆ID
+      // "orderType": 1, //类型 0单次收费 1定金商品 2抢单
+      "compModel": {
+        "compId": 1, //公司ID
+        "compName": "中青家政服务",//公司名称
+        "servicePhone": "0591-33030033" //客服电话
+        },
+      "completeTime": "", //完成时间
+      "createTime": "2020-02-19 16:15:22",
+      "customer": "张三",
+      "discounts": 0,
+      "endTime": "",
+      "evaluateTime": "",
+      "itemId": 16,
+      "itemName": "新测试商品",
+      "orderId": 354,
+      "orderNumber": "2002191615229486",
+      "orderServices": [{
+        "detailModel": null,
+        "dtId": 20,
+        "name": "卫生间",
+        "num": 1,
+        "orderId": 354,
+        "osId": 354,
+        "pic": "http://yinafimg.oss-cn-hangzhou.aliyuncs.com/201901/0315/1901031554246355.jpg",
+        "price": 0.1
+      }],
+      "origin": 3,
+      "payNum": "",
+      "payStatus": false,
+      "payTime": "",
+      "payType": 0,
+      "payWay": false,
+      "phone": "18120829818",
+      "region": "福建省福州市仓山区",
+      "remark": "",
+      "serviceTime": "2020-02-20 11:00:00",
+      "state": '', //订单状态(0关闭 1待支付 2进行中 3已完成 4取消)
+      "totalMoney": 0.1,
+      "updateTime": "",
+      "postObj": null,
+      "showPayPage": false
+    }),
+    created() {
+
+    },
+    computed: {
+      status() {
+        switch(this.state) {
+          case 0:
+            return '已关闭'
+            break;
+          case 1:
+            return '待支付'
+            break;
+          case 2:
+            return '进行中'
+            break;
+          case 3:
+            return '已完成'
+            break;
+          case 4:
+            return '已取消'
+            break;
+        }
+      }
+    },
+    mounted() {
+      this.init()
+    },
+    methods: {
+      async init() {
+        const params = {
+          orderId: this.pOrderId
+        }
+        let res = await this.$http.get('/order/findOrderById',{params})
+        let obj = res.data.obj
+        for(let x in obj) {
+          this[x] = obj[x]
+        }
+      },
+      toPay(e) {
+        this.postObj = e
+        this.showPayPage = true
+      }
+    }
+};
+</script>
+
+<style scoped lang="scss">
+
+   .orderDetails{
+       position: fixed;
+       left: 0;
+       right: 0;
+       top: 0;
+       bottom: 0;
+       height: 100vh;
+       padding-top: 45px;
+       overflow-y: auto;
+       z-index: 99; 
+   } 
+</style>

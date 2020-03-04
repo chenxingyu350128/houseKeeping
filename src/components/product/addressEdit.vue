@@ -1,5 +1,5 @@
 <template>
-    <div class="addressEdit white pb-11 text--primary">
+    <div class="addressEdit white pb-11 subtitle-2 text--primary">
         <iHeader @doSomething="$emit('hide')" :text="id?'编辑地址':'添加地址'">
           <template v-if="id" v-slot:right>
             <v-icon @click="deleteAddress">mdi-delete-outline</v-icon>
@@ -23,9 +23,13 @@
             v-model="phone"
             placeholder="请填写手机号码"
           ></v-text-field> 
-          <div class="d-flex align-center justify-space-between">
-            <span>所在地：</span>
-            <div @click="showBS=true" class="d-flex align-center ">{{region||'请选择'}} <v-icon class="ml-2">mdi-chevron-right</v-icon> </div>
+          <div class="d-flex align-center justify-space-between py-2">
+            <span style="min-width: 5em">所在地：</span>
+            <div @click="showBS=true" class="d-flex align-center">{{region||'请选择'}} <v-icon class="ml-2">mdi-chevron-right</v-icon> </div>
+          </div>
+          <div v-if="type==2" class="d-flex align-center justify-space-between py-2">
+            <span style="min-width: 5em">小区选择：</span>
+            <div @click="showCommunity=true" class="d-flex align-center">{{communityName||'请选择'}} <v-icon class="ml-2">mdi-chevron-right</v-icon> </div>
           </div>
           <div class="py-2 mt-2">详细地址：</div>
           <v-textarea outlined v-model="address" placeholder="详细地址：如7号楼一单元1208"></v-textarea>
@@ -46,13 +50,23 @@
           @change="onChange"
           @confirm="onConfirm" />
         </v-bottom-sheet>
-        
+        <v-bottom-sheet v-model="showCommunity">
+          <van-picker 
+          show-toolbar  
+          @cancel="showBS=false"
+          :default-index="defaultIndex1"  
+          :columns="columns1"
+          @change="onChange1"
+          @confirm="onConfirm1" />
+        </v-bottom-sheet>
+        <alertBox @certain="deleteCertain" @cancel="showAlert=false" title="是否确认删除该地址？" :showIt="showAlert"/>
     </div>
 </template>
 
 <script>
 import data from '../../assets/regions.json'
 import iHeader from '../public/header'
+import alertBox from '../public/alertBox'
 export default {
     name: 'addressEdit',
     props: {
@@ -60,13 +74,18 @@ export default {
         type: Number,
         default: 0
       },
+      type: {
+        type: Number,
+        required: true
+      },
       item: {
         type: Object,
         default: null
       }
     },
     components: {
-       iHeader
+       iHeader,
+       alertBox
     },
     data: ()=>({
       tab0: 0,
@@ -75,6 +94,7 @@ export default {
       address: '',
       auId: 0,
       defaultIndex: 0,
+      defaultIndex1: 0,
       selectIndex: null,
       communityId: 0,
       communityName: '',
@@ -85,7 +105,9 @@ export default {
       region: '',
       updateTime: '',
       zipcode: '',
-      showBS: false
+      showBS: false,
+      showCommunity: false,
+      showAlert: false,
     }),
     created() {
 
@@ -124,7 +146,12 @@ export default {
             defaultIndex: this.tab2
           },
         ]
-      },      
+      },  
+      columns1() {
+        return this.communityList.map(res=>{
+          return res.name
+        })
+      },   
       itemGet() {
         if(this.selectIndex===null) {
           return null
@@ -133,7 +160,6 @@ export default {
       }
     },
     mounted() {
-      this.getRegion()
       if(this.id){
         this.init()
       }
@@ -141,7 +167,8 @@ export default {
     methods: {
       init() {
         const params = {
-          auId: this.id
+          auId: this.id,
+          goodsType: this.type
         }
         this.$http.get('/user/findAddressById',{params})
         .then(res=>{
@@ -162,6 +189,12 @@ export default {
         this.showBS = false
         this.region = x.join('-')
         this.selectIndex = y
+      },
+      onConfirm1(x,y) {
+        console.log(x,y)
+        this.showCommunity = false
+        this.communityName = x
+        this.communityId = this.communityList[y].id
       },
       onChange(picker) {
         this.tab0 = picker.getIndexes()[0]
@@ -187,12 +220,12 @@ export default {
           this.$toast('请填写手机号')
           return
         }
-        if(!this.region) {
-          this.$toast('请选择所在地')
-          return
-        }
         if(this.checkPhone(this.phone)){
           this.$toast('请输入正确的手机号码')
+          return
+        }
+        if(!this.region) {
+          this.$toast('请选择所在地')
           return
         }
         const data = {
@@ -202,6 +235,14 @@ export default {
           region: this.region,
           address: this.address,
           defcode: Number(this.defcode)
+        }
+        if(this.type==2){
+          if(!this.communityId){
+            this.$toast('请选择小区')
+            return
+          }
+          data.communityId = this.communityId
+          data.communityName = this.communityName
         }
         //修改
         if(this.id){
@@ -237,6 +278,9 @@ export default {
         })
       },
       deleteAddress() {
+        this.showAlert = true
+      },
+      deleteCertain() {
         const data = {
           id: this.id
         }
@@ -246,6 +290,7 @@ export default {
             this.updateList()
           }
         })
+
       },
       setDefault() {
         const data = {
@@ -256,7 +301,8 @@ export default {
       },
       updateList() {
         const params = {
-            userId: this.userId
+            userId: this.userId,
+            goodsType: this.type
         }
         this.$http.get('/user/findAddress',{params})
         .then(res=>{
@@ -266,13 +312,7 @@ export default {
                 this.$emit('hide')
             }
         })
-      },
-      getRegion() {
-        const params = {
-          parentId: 350100
-        }
-        this.$http.get('/user/findAreasByParent',{params})
-      }    
+      }   
     }
 };
 </script>
