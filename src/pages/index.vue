@@ -8,7 +8,17 @@
                 </div>
             </template>
             <template  v-slot:right>
-                <v-icon @click="showMsg=true">mdi-bell-outline</v-icon>
+                <v-badge 
+                :content="notRead" 
+                class="caption"
+                overlap
+                offset-x="15"
+                offset-y="10"
+                @click.native="showMsg=true" 
+                color="pink accent-3">
+                    <v-icon class="pa-0">mdi-bell-outline</v-icon>
+                </v-badge>
+                <!-- <v-icon @click="showMsg=true">mdi-bell-outline</v-icon> -->
             </template>
         </iHeader>
         <v-carousel 
@@ -40,7 +50,7 @@
             </div>
         </div>
         <!-- 热销 -->
-        <div class="title text-center py-2">
+        <div class="title text-center py-2 font-weight-bold">
             热销产品
         </div>
         <div class="d-flex flex-wrap justify-space-between mx-4">
@@ -113,7 +123,7 @@
             </div> 
         </div>
         <!-- 畅销 -->
-        <div class="title text-center py-2">
+        <div class="title text-center py-2 font-weight-bold">
             畅销单品
         </div>
         <div class="d-flex flex-wrap justify-space-between pb50 mx-4">
@@ -195,8 +205,7 @@ VueAMap.initAMapApiLoader({
     "AMap.MapType",
     "AMap.PolyEditor",
     "AMap.CircleEditor",
-    "AMap.Geocoder",
-    "AMap.DistrictSearch",
+    "AMap.Geocoder"
   ],
   v: "1.4.4"
 });
@@ -222,6 +231,7 @@ export default {
             showMsg: false,
             editId: 0,
             areasId: 0,
+            notRead: 0,
             nannyType: '',
             searchOption: {
                 city: '福州',
@@ -253,16 +263,6 @@ export default {
                 init: (map) => {
                     // console.log(view.zoom)
                     view.getLocation()
-                    // map.getCity(result => {
-                    //     console.log(result)
-                    //     const cityName = result.city
-                    //     console.log('event init')
-                    //     view.districtSearch(result.city, result.district)
-                    //     if(!cityName){
-                    //         view.showPositionDia = true
-                    //     }                        
-                    //     view.$store.commit('SET_SINGLE_STATE', ['positionCity', cityName])
-                    // })
                 },
             }
         }
@@ -305,34 +305,31 @@ export default {
     },
     methods: {
         getLocation() {
-            this.$nextTick(()=>{
+            console.log(AMap)
+            let that = this
+            let o = new AMap.Geolocation({
+                enableHighAccuracy: true,//是否使用高精度定位，默认:true
+                timeout: 10000,          //超过10秒后停止定位，默认：无穷大
+                maximumAge: 0,           //定位结果缓存0毫秒，默认：0
+                convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
+                showButton: true,        //显示定位按钮，默认：true
+                buttonPosition: 'LB',    //定位按钮停靠位置，默认：'LB'，左下角
+                buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+                showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
+                showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
+                panToLocation: true,     //定位成功后将定位到的位置作为地图中心点，默认：true
+                zoomToAccuracy:true      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+            }); 
+            o.getCityInfo((status,res)=>{
+                console.log(status,res)
+                if(res.type=='complete'){
 
-                console.log(AMap)
-                let that = this
-                let o = new AMap.Geolocation({
-                    enableHighAccuracy: true,//是否使用高精度定位，默认:true
-                    timeout: 10000,          //超过10秒后停止定位，默认：无穷大
-                    maximumAge: 0,           //定位结果缓存0毫秒，默认：0
-                    convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
-                    showButton: true,        //显示定位按钮，默认：true
-                    buttonPosition: 'LB',    //定位按钮停靠位置，默认：'LB'，左下角
-                    buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
-                    showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
-                    showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
-                    panToLocation: true,     //定位成功后将定位到的位置作为地图中心点，默认：true
-                    zoomToAccuracy:true      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
-                }); 
-                o.getCityInfo((status,res)=>{
-                    console.log(status,res)
-                    if(res.type=='complete'){
-
-                        that.$store.commit('SET_SINGLE_STATE', ['positionCity', res.city])
-                        that.postAdcode(res.adcode)
-                    }else{
-                        that.showPositionDia = true 
-                    }
-                }) 
-            })
+                    that.$store.commit('SET_SINGLE_STATE', ['positionCity', res.city])
+                    that.postAdcode(res.adcode)
+                }else{
+                    that.showPositionDia = true 
+                }
+            }) 
         },
         init() {
             console.log('init')
@@ -342,35 +339,13 @@ export default {
             this.findCommunitys()
             // this.getDefaultAddress()
         },
-        districtSearch(city,district) {
-            let that = this
-            console.log(city)
-            console.log(AMap)
-            let dSearch = new AMap.DistrictSearch({
-                level: 'city',
-                subdistrict: 1,   //返回下一级行政区
-                showbiz:false  //最后一级返回街道信息
-            })
-            dSearch.search(city,(status,res)=>{
-                console.log(status,res)
-                if(status=='complete'){
-
-                    let list = res.districtList[0].districtList
-                    list.forEach(res=>{
-                        if(res.name == district){
-                            that.postAdcode(res.adcode)
-                        }
-                    })
-                }
-            })
-        },
         postAdcode(adcode) {
             this.showAreaPicker=false
             this.areasId = adcode
             this.findCates()
             this.hotProduct()
             this.bestSelling()
-            console.log('***',adcode)
+            console.log('地区编码：',adcode)
         },
         appLogin() {
             //测试用
@@ -393,6 +368,15 @@ export default {
             //         this.$store.commit('SET_SINGLE_STATE', ['realName', obj.realName])
             //     }
             // })
+            this.findNotRead()
+        },
+        async findNotRead() {
+            const params = {
+                userId: this.userId
+            }
+            let res = await this.$http.get('/user/findNotReaderNumByUserId',{params})
+            this.notRead = res.data.obj
+
         },
         iconsClick(e) {
             this.nannyType = e

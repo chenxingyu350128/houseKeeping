@@ -92,10 +92,11 @@
             </div>
         </v-bottom-sheet>
         <v-bottom-sheet  v-model="showShare">
-            <div class="white d-flex justify-space-around py-2 subtitle-2 text--secondary">
+            <div class="white pa-2 text--secondary">分享到</div>
+            <div class="white d-flex justify-space-around py-4 subtitle-2 text--secondary">
                 <div @click="share(1)" class="d-flex flex-column align-center">
 
-                    <v-btn depressed dark fab small color="#50b674">
+                    <v-btn depressed dark fab small color="green accent-4">
 
                         <v-icon>mdi-wechat</v-icon>
                     </v-btn>
@@ -103,7 +104,7 @@
                 </div>
                 <div @click="share(2)" class="d-flex flex-column align-center">
 
-                    <v-btn depressed dark fab small color="#50b674">
+                    <v-btn depressed dark fab small color="green accent-4">
 
                         <v-icon>mdi-camera-iris</v-icon>
                     </v-btn>
