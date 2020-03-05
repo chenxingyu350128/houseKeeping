@@ -2,21 +2,25 @@
     <div class="reservationPage white">
         <iHeader @doSomething="$emit('hide')" text="预约详情"></iHeader>
         <div class="pa-4">
-            <div class="d-flex align-center justify-spave-between mb-2">
+            <div class="d-flex justify-space-between mb-2">
                 <span class="mr-4" style="min-width: 5em">预约时间:</span>
                 <v-text-field
                     name="name"
                     readonly
+                    outlined
+                    dense
                     @click="showPicker=true"
                     id="id"
                     v-model="dateTimeStr"
                     placeholder="请选择预约时间"
                 ></v-text-field>
             </div>
-            <div class="d-flex align-center justify-spave-between">
+            <div class="d-flex justify-space-between">
                 <span class="mr-4" style="min-width: 5em">面试方式:</span>
                 <v-select
                     :items="items"
+                    outlined
+                    dense
                     placeholder="请选择面试方式"
                     v-model="type"
                 ></v-select>

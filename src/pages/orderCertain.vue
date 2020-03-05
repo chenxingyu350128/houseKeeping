@@ -19,12 +19,12 @@
             <v-divider></v-divider>
             <div class="d-flex align-center justify-space-between py-4 subtitle-2">
                 <v-icon class="mr-4" color="primary">mdi-map-marker</v-icon>
-                <div @click="showAddress=true" v-if="defaultAddress||selectedAddress" class="d-flex flex-column text--secondary">
+                <div @click="showAddress=true" v-if="finalAddressItem" class="d-flex flex-column text--secondary">
                     <span>
-                        {{finalConsignee}}
-                        <span class="ml-4">{{finalTel}}</span>
+                        {{finalAddressItem.receiver}}
+                        <span class="ml-4">{{finalAddressItem.phone}}</span>
                     </span>
-                    <span>{{finalAddress}}</span>
+                    <span>{{finalAddressItem.address}}</span>
                 </div>
                 <div @click="showAddress=true" v-else class="flex-fill text-right text--secondary pr-6">+添加服务地址</div>
             </div>
@@ -171,44 +171,47 @@ export default {
         //     })
             
         },
-        finalConsignee() {
-            if(this.selectedAddress){
-
-                return this.selectedAddress.receiver
-            }
-            if(this.defaultAddress&&!this.selectedAddress){
-                return this.defaultAddress.receiver
-            }
+        finalAddressItem() {
+            return this.selectedAddress||this.defaultAddress
         },
-        finalTel() {
-            if(this.selectedAddress){
+        // finalConsignee() {
+        //     if(this.selectedAddress){
 
-                return this.selectedAddress.phone
-            }
-            if(this.defaultAddress&&!this.selectedAddress){
-                return this.defaultAddress.phone
-            }            
-        },
-        finalAddress() {
-            if(this.selectedAddress){
+        //         return this.selectedAddress.receiver
+        //     }
+        //     if(this.defaultAddress&&!this.selectedAddress){
+        //         return this.defaultAddress.receiver
+        //     }
+        // },
+        // finalTel() {
+        //     if(this.selectedAddress){
 
-                return this.selectedAddress.communityName + this.selectedAddress.address
-            }
-            if(this.defaultAddress&&!this.selectedAddress){
-                console.log(this.defaultAddress)
-                return this.defaultAddress.communityName + this.defaultAddress.address
-            }            
-        },
-        finalCommunityId() {
-            if(this.selectedAddress){
+        //         return this.selectedAddress.phone
+        //     }
+        //     if(this.defaultAddress&&!this.selectedAddress){
+        //         return this.defaultAddress.phone
+        //     }            
+        // },
+        // finalAddress() {
+        //     if(this.selectedAddress){
 
-                return this.selectedAddress.communityId
-            }
-            if(this.defaultAddress&&!this.selectedAddress){
-                console.log(this.defaultAddress)
-                return this.defaultAddress.communityId 
-            }            
-        },
+        //         return this.selectedAddress.communityName + this.selectedAddress.address
+        //     }
+        //     if(this.defaultAddress&&!this.selectedAddress){
+        //         console.log(this.defaultAddress)
+        //         return this.defaultAddress.communityName + this.defaultAddress.address
+        //     }            
+        // },
+        // finalCommunityId() {
+        //     if(this.selectedAddress){
+
+        //         return this.selectedAddress.communityId
+        //     }
+        //     if(this.defaultAddress&&!this.selectedAddress){
+        //         console.log(this.defaultAddress)
+        //         return this.defaultAddress.communityId 
+        //     }            
+        // },
         finalPrice(){
             return this.item.price - this.discount
         }
@@ -248,7 +251,7 @@ export default {
             this.selectedCouponId = e.couponId
         },
         payIt(){
-            if(!this.finalAddress){
+            if(!this.finalAddressItem){
                 this.$toast('请选择服务地址！')
                 return
             }
@@ -262,11 +265,18 @@ export default {
                 prices: this.item.price,
                 pics: this.item.attrPic,
                 nums: 1,
+                origin: 1,
+                orderType: this.type,
                 actualPayment: this.finalPrice,
                 dtIds: this.item.detailId,
                 itemId: this.item.itemId,
+                itemName: this.item.type,
                 names: this.item.type,
                 discounts: this.discount,
+                customer: this.finalAddressItem.receiver,
+                phone: this.finalAddressItem.phone,
+                region: this.finalAddressItem.region,
+                address: this.finalAddressItem.address
 
             }
             if(this.type){

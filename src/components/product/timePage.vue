@@ -38,6 +38,7 @@
              <v-bottom-sheet v-model="showBS">
                 <van-datetime-picker
                 type="time"
+                :formatter="formatter"
                 @cancel="showBS=false"
                 @confirm="onConfirm"
                 />                 
@@ -168,6 +169,24 @@ export default {
                 }
             })
         },
+        formatter(type, value) {
+            if (type === 'hour') {
+            return `${value}时`;
+            } 
+            else if (type === 'minute') {
+            return `${value}分`
+            }
+            else if (type === 'day') {
+            return `${value}日`
+            }
+            else if (type === 'month') {
+            return `${value}月`
+            }
+            else if (type === 'year') {
+            return `${value}年`
+            }
+            return value;
+        },        
         tabChange(i) {
             console.log(i)
             console.log(this.tab)

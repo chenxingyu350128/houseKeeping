@@ -2,7 +2,7 @@
     <div class="nannyDetails white subtitle-2">
         <iHeader @doSomething="$emit('hide')" :text="newName||nannyName">
             <template v-slot:right>
-                <v-icon color="purple accent-4" @click="changeCollectState">{{isCollect?'mdi-star':'mdi-star-outline'}}</v-icon>
+                <v-icon @click="changeCollectState">{{isCollect?'mdi-star':'mdi-star-outline'}}</v-icon>
                 <v-icon>mdi-share</v-icon>
             </template>
         </iHeader>
@@ -575,6 +575,7 @@ export default {
             this.$http.post(url,data)
             .then(res=>{
                 if(res.data.success){
+                    this.$toast(this.isCollect?'取消收藏':'添加收藏')
                     this.isCollect = !this.isCollect
                 }
             })
