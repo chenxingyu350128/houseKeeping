@@ -8,17 +8,20 @@
                 </div>
             </template>
             <template  v-slot:right>
-                <v-badge 
-                :content="notRead" 
-                class="caption"
-                overlap
-                offset-x="15"
-                offset-y="10"
-                @click.native="showMsg=true" 
-                color="pink accent-3">
-                    <v-icon class="pa-0">mdi-bell-outline</v-icon>
-                </v-badge>
-                <!-- <v-icon @click="showMsg=true">mdi-bell-outline</v-icon> -->
+                <div>
+                    <v-badge 
+                    v-if="notRead"
+                    :content="notRead" 
+                    class="caption"
+                    overlap
+                    offset-x="15"
+                    offset-y="10"
+                    @click.native="showMsg=true" 
+                    color="pink accent-3">
+                        <v-icon class="pa-0">mdi-bell-outline</v-icon>
+                    </v-badge>
+                    <v-icon v-else @click="showMsg=true">mdi-bell-outline</v-icon>
+                </div>
             </template>
         </iHeader>
         <v-carousel 
@@ -331,6 +334,19 @@ export default {
                 }
             }) 
         },
+        toMsgPage() {
+            this.setReaded()
+            this.showMsg = true
+        },
+        async setReaded() {
+            const data = {
+                userId: this.userId,
+            }
+            let res = await this.$http.post('/user/markRead',data)
+            if(res.data.success){
+                this.findNotRead()
+            }
+        },       
         init() {
             console.log('init')
             this.appLogin()

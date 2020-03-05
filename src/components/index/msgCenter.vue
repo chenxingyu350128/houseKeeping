@@ -30,10 +30,6 @@
                         <img :src="item.msgImg">
                     </v-avatar>
                     <span class="flex-fill ml-4 caption">{{item.msgContent}}</span>
-                    <div v-if="!item.reader" class="d-flex align-end justify-end">
-
-                        <v-btn @click="setReaded(item.msgId)" depressed rounded x-small dark color="pink lighten-3">标为已读</v-btn>
-                    </div>
                 </div>
             </div>
             <div v-if="!list.length" class="pa-6 d-flex flex-column align-center">
@@ -75,17 +71,6 @@ export default {
             let res = await this.$http.get('/user/findMsgsByUserId',{params})
             if(res.data.success){
                 this.list = res.data.obj
-            }
-        },
-        async setReaded(msgId) {
-            const data = {
-                userId: this.userId,
-                msgId
-            }
-            let res = await this.$http.post('/user/markRead',data)
-            if(res.data.success){
-                this.$toast('消息已标记为已读')
-                this.getMsg()
             }
         }
     }
