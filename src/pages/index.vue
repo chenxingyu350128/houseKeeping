@@ -148,6 +148,7 @@
         :amap-manager="amapManager" 
         :events="events"
         >
+            <!-- events事件中new AMap可用 -->
         </el-amap>   
         <v-dialog
             v-model="showPositionDia"
@@ -212,7 +213,6 @@ export default {
     data() {
         let view = this
         return {
-
             amapManager,
             notShow: false,
             showPositionDia: false,
@@ -252,16 +252,17 @@ export default {
             events: {
                 init: (map) => {
                     // console.log(view.zoom)
-                    map.getCity(result => {
-                        console.log(result)
-                        const cityName = result.city + result.district
-                        console.log('event init')
-                        view.districtSearch(result.city, result.district)
-                        if(!cityName){
-                            view.showPositionDia = true
-                        }                        
-                        view.$store.commit('SET_SINGLE_STATE', ['positionCity', cityName])
-                    })
+                    view.getLocation()
+                    // map.getCity(result => {
+                    //     console.log(result)
+                    //     const cityName = result.city
+                    //     console.log('event init')
+                    //     view.districtSearch(result.city, result.district)
+                    //     if(!cityName){
+                    //         view.showPositionDia = true
+                    //     }                        
+                    //     view.$store.commit('SET_SINGLE_STATE', ['positionCity', cityName])
+                    // })
                 },
             }
         }
@@ -299,9 +300,40 @@ export default {
         // },
     },
     mounted() {
+        // this.getLocation()
         this.init()
     },
     methods: {
+        getLocation() {
+            this.$nextTick(()=>{
+
+                console.log(AMap)
+                let that = this
+                let o = new AMap.Geolocation({
+                    enableHighAccuracy: true,//是否使用高精度定位，默认:true
+                    timeout: 10000,          //超过10秒后停止定位，默认：无穷大
+                    maximumAge: 0,           //定位结果缓存0毫秒，默认：0
+                    convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
+                    showButton: true,        //显示定位按钮，默认：true
+                    buttonPosition: 'LB',    //定位按钮停靠位置，默认：'LB'，左下角
+                    buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+                    showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
+                    showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
+                    panToLocation: true,     //定位成功后将定位到的位置作为地图中心点，默认：true
+                    zoomToAccuracy:true      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+                }); 
+                o.getCityInfo((status,res)=>{
+                    console.log(status,res)
+                    if(res.type=='complete'){
+
+                        that.$store.commit('SET_SINGLE_STATE', ['positionCity', res.city])
+                        that.postAdcode(res.adcode)
+                    }else{
+                        that.showPositionDia = true 
+                    }
+                }) 
+            })
+        },
         init() {
             console.log('init')
             this.appLogin()
@@ -313,6 +345,7 @@ export default {
         districtSearch(city,district) {
             let that = this
             console.log(city)
+            console.log(AMap)
             let dSearch = new AMap.DistrictSearch({
                 level: 'city',
                 subdistrict: 1,   //返回下一级行政区

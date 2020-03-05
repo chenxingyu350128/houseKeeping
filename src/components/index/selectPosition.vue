@@ -6,13 +6,13 @@
             outlined
             rounded
             dense
-            class="mt-4"
+            class="mt-4 mb-0"
             id="searchBox"
             prepend-inner-icon="mdi-magnify"
             @input="lodashInput"
             v-model="key"
         ></v-text-field>
-        <v-list>
+        <v-list class="pa-0">
             <v-list-item-group v-model="selected" color="primary">
                 <v-list-item
                 v-for="(item, i) in list"
@@ -23,7 +23,24 @@
                     </v-list-item-content>
                 </v-list-item>
             </v-list-item-group>
-        </v-list>        
+        </v-list> 
+        <!-- <el-amap 
+        v-show="notShow" 
+        ref="searchPage"
+        :amap-manager="amapManager" 
+        :events="events"
+        >
+        </el-amap>  -->
+        <div class="px-4 subtitle-2">
+            <div class="my-2">当前定位</div>
+            <div class="d-flex align-center justify-space-between">
+                <div class="d-flex align-center">
+                    <v-icon color="primary">mdi-map-marker</v-icon>
+                    <span>{{positionCity||'定位失败'}}</span>
+                </div>
+                <span @click="geolocation" class="primary--text">重新定位</span>
+            </div>
+        </div>       
                     <!-- @keypress.enter="searchInput(key)" -->
 
     </div>
@@ -31,6 +48,26 @@
 
 <script>
 import iHeader from '../public/header'
+// import VueAMap from 'vue-amap'
+// import { AMapManager } from 'vue-amap'
+// VueAMap.initAMapApiLoader({
+//   key: "71a4fe9e16a9e93d6653175b5f6693c8",
+//   plugin: [
+//     "AMap.Geolocation",
+//     "AMap.Autocomplete",
+//     "AMap.PlaceSearch",
+//     "AMap.Scale",
+//     "AMap.OverView",
+//     "AMap.ToolBar",
+//     "AMap.MapType",
+//     "AMap.PolyEditor",
+//     "AMap.CircleEditor",
+//     "AMap.Geocoder",
+//     "AMap.DistrictSearch",
+//   ],
+//   v: "1.4.4"
+// });
+// const amapManager = new VueAMap.AMapManager()
 export default {
     name: 'searchBox',
     components: {
@@ -38,6 +75,7 @@ export default {
     },
     data: ()=>({
         key: '',
+        // amapManager,
         searchOption: {
             city: '福州',
             citylimit: true
@@ -54,13 +92,16 @@ export default {
             }
         }, 
         list: [],
-        selected: null
+        selected: null,
+        notShow: false
     }),
     created() {
         this.lodashInput = this._.debounce(this.keyInput, 200)
     },
     computed: {
-
+        positionCity() {
+            return this.$store.state.app.positionCity
+        },        
     },
     mounted() {
 
@@ -79,6 +120,29 @@ export default {
                 console.log(status)
                 console.log(res)
             })
+        },
+        geolocation() {
+            let that = this
+            let o = new AMap.Geolocation({
+                enableHighAccuracy: true,//是否使用高精度定位，默认:true
+                timeout: 10000,          //超过10秒后停止定位，默认：无穷大
+                maximumAge: 0,           //定位结果缓存0毫秒，默认：0
+                convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
+                showButton: true,        //显示定位按钮，默认：true
+                buttonPosition: 'LB',    //定位按钮停靠位置，默认：'LB'，左下角
+                buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+                showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
+                showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
+                panToLocation: true,     //定位成功后将定位到的位置作为地图中心点，默认：true
+                zoomToAccuracy:true      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+            }); 
+            o.getCityInfo((status,res)=>{
+                console.log(status,res)
+                that.$store.commit('SET_SINGLE_STATE', ['positionCity', res.city])
+                // that.$emit('hide')
+                that.$emit('adcodeGet',res.adcode)
+                
+            })           
         },
         keyInput(){
             const autoOptions = {
@@ -104,8 +168,8 @@ export default {
                 (status,result)=>{
                     if (status === 'complete'&&result.regeocode) {
                         console.info(result)
-                        const area = result.regeocode.addressComponent.city + result.regeocode.addressComponent.district
-                        that.$store.commit('SET_SINGLE_STATE', ['positionCity', area])
+                        const city = result.regeocode.addressComponent.city
+                        that.$store.commit('SET_SINGLE_STATE', ['positionCity', city])
                         // that.$emit('hide')
                         that.$emit('adcodeGet',result.regeocode.addressComponent.adcode)
                     }else{

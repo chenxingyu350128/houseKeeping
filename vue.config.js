@@ -1,3 +1,8 @@
 module.exports = {
-  lintOnSave: false
+  lintOnSave: false,
+  // configureWebpack: {
+  //   externals: {
+  //    AMap: "window.AMap"
+  //   }
+  // }
 }
