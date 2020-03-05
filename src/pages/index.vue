@@ -168,7 +168,7 @@
         </v-dialog>    
         <msg @hide="showMsg=false" v-if="showMsg"/>
         <nurseList :type="nannyType" @hide="showNurse=false" v-if="showNurse"/>
-        <goodsDetails :id="editId" @hide="showDetails=false" v-if="showDetails"/>
+        <!-- <goodsDetails :id="editId" @hide="showDetails=false" v-if="showDetails"/> -->
         <position @adcodeGet="postAdcode" @hide="showAreaPicker=false" v-if="showAreaPicker"/>
     </div>
 </template>
@@ -176,7 +176,7 @@
 <script>
 import iHeader from '../components/public/header'
 import position from '../components/index/selectPosition'
-import goodsDetails from './productDetails'
+// import goodsDetails from './productDetails'
 import nurseList from './nurseList'
 import msg from '../components/index/msgCenter'
 import VueAMap from 'vue-amap'
@@ -206,7 +206,7 @@ export default {
         iHeader,
         position,
         msg,
-        goodsDetails,
+        // goodsDetails,
         nurseList
     },
     data() {
@@ -342,6 +342,7 @@ export default {
         appLogin() {
             //测试用
             this.$store.commit('SET_SINGLE_STATE', ['userId', 1])
+            this.$store.commit('SET_SINGLE_STATE', ['userName', 'cxx'])
             // if(this.userId){
             //     return
             // }
@@ -432,8 +433,14 @@ export default {
         //     console.log(res,'rrr')
         // },
         toDetail(id) {
-            this.editId = id
-            this.showDetails = true
+            // this.editId = id
+            // this.showDetails = true
+            this.$router.push({
+                path: '/productDetails',
+                query: {
+                    id
+                }
+            })
         }
     }
 };

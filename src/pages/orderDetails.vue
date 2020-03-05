@@ -49,6 +49,10 @@
             <div class="px-4 py-2">备注信息</div>
             <div class="px-4 py-2">{{remark}}</div>
           </div>
+          <div v-if="cancelCause" class="white text--primary mb-2">
+            <div class="px-4 py-2">订单取消原因：</div>
+            <div class="px-4 py-2">{{cancelCause}}</div>
+          </div>
           <div class="px-4 py-2 white text--secondary caption">
             <div>订单编号：{{orderNumber}}</div>
             <div>下单时间：{{createTime}}</div>
@@ -61,13 +65,16 @@
         <v-footer class="pa-0 ma-0 d-flex flex-row-reverse" fixed bottom>
           <v-row class="pa-0 ma-0">
             <v-col v-if="state==1" class="py-1" cols="6">
-              <v-btn dark outlined color="red" block depressed>取消订单</v-btn>
+              <v-btn @click="showAlert=true" dark outlined color="red" block depressed>取消订单</v-btn>
             </v-col>
             <v-col v-if="state==1" class="py-1" cols="6">
               <v-btn @click="toPay(orderServices[0])" dark color="primary" block depressed>去支付</v-btn>
             </v-col>
             <v-col v-if="state==3&&!evaluateTime" class="py-1" cols="6">
-              <v-btn dark color="primary" block depressed>去评价</v-btn>
+              <v-btn @click="toEvaluate(orderServices[0])" dark color="primary" block depressed>去评价</v-btn>
+            </v-col>
+            <v-col v-if="state>1&&compModel.servicePhone" class="py-1" cols="6">
+              <v-btn @click="toCall(compModel.servicePhone)" dark color="primary" block depressed>联系客服</v-btn>
             </v-col>
             <!-- <v-col class="py-1" cols="6">
               <v-btn dark color="primary" block depressed>去评价</v-btn>
@@ -77,13 +84,17 @@
             </v-col> -->
           </v-row>
         </v-footer>
-        <payPage @paySuccess="init" :price="totalMoney" :discount="discounts" :finalPrice="totalMoney-discounts" :obj="postObj" @hide="showPayPage" v-if="showPayPage"/>
+        <payPage @paySuccess="init" :price="totalMoney" :discount="discounts" :finalPrice="totalMoney-discounts" :obj="postObj" @hide="showPayPage=false" v-if="showPayPage"/>
+        <evaluation @evalSuccess="showEvaluate=false;init()" :obj="postObj" :auntId="auntId" :itemId="itemId" :nannyId="nannyId" @hide="showEvaluate=false" v-if="showEvaluate"/>
+        <alertBox title="确认取消该订单吗？" @certain="cancelOrder" @cancel="showAlert=false" :showIt="showAlert"/>
     </div>
 </template>
 
 <script>
 import iHeader from '../components/public/header'
+import alertBox from '../components/public/alertBox'
 import payPage from './payPage'
+import evaluation from './evaluation'
 export default {
     name: 'orderDetails',
     props: {
@@ -98,9 +109,11 @@ export default {
     },
     components: {
        iHeader,
-       payPage
+       payPage,
+       evaluation,
+       alertBox
     },
-    data: ()=>({
+    data: () => ({
       "actualPayment": 0.1,
       "address": "海西佰悦城15号楼1503",
       "attemperStatus": 0,
@@ -149,7 +162,9 @@ export default {
       "totalMoney": 0.1,
       "updateTime": "",
       "postObj": null,
-      "showPayPage": false
+      "showPayPage": false,
+      "showEvaluate": false,
+      "showAlert": false,
     }),
     created() {
 
@@ -192,9 +207,28 @@ export default {
       toPay(e) {
         this.postObj = e
         this.showPayPage = true
+      },
+      toEvaluate(e) {
+        this.postObj = e
+        this.showEvaluate = true
+      },
+      async cancelOrder() {
+        this.showAlert = false
+        const data = {
+          orderId: this.pOrderId,
+          cause: '不需要了'
+        }
+        let res = await this.$http.post('/order/cancelOrder',data)
+        if(res.data.success){
+          this.$toast('订单取消成功')
+          this.$emit('update')
+        }
+      },
+      toCall(e) {
+        location.href='tel:' + e
       }
     }
-};
+}
 </script>
 
 <style scoped lang="scss">
@@ -208,6 +242,6 @@ export default {
        height: 100vh;
        padding-top: 45px;
        overflow-y: auto;
-       z-index: 99; 
+       z-index: 5; 
    } 
 </style>

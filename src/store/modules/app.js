@@ -18,6 +18,7 @@ const app = {
       hotProduct: JSON.parse(localStorage.getItem('hotProduct')),
       evalsList: JSON.parse(localStorage.getItem('evalsList')),
       addressList: JSON.parse(localStorage.getItem('addressList')),
+      orderList: JSON.parse(localStorage.getItem('orderList')),
     },
     mutations: {
       SET_LOADING: (state, status) => {
@@ -38,6 +39,7 @@ const app = {
             'defaultAddress',
             'couponList',
             'evalsList',
+            'orderList',
             'addressList'   
           ]
         if (isObject.includes(x)) {

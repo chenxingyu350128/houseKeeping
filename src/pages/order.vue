@@ -1,6 +1,6 @@
 <template>
     <div class="orderPage grey lighten-2">
-        <iHeader @doSomething="$emit('hide')" text="我的订单"></iHeader>
+        <!-- <iHeader @doSomething="$emit('hide')" text="我的订单"></iHeader> -->
         <v-tabs
             v-model="tab"
             color="primary"
@@ -55,31 +55,34 @@
                     </div>
                     <v-divider></v-divider>
                     <div v-if="item.state==1||(item.state==3&&!item.evaluateTime)" class="px-4 py-2 d-flex flex-row-reverse">
-                        <v-btn v-if="item.state==3" depressed class="ml-4" dark color="primary">评价</v-btn>
+                        <v-btn @click.stop="toEvaluate(item)" v-if="item.state==3" depressed class="ml-4" dark color="primary">评价</v-btn>
                         <v-btn @click.stop="toPay(item)" v-if="item.state==1" depressed class="ml-4" dark color="primary">支付</v-btn>
                         <v-btn @click.stop="beforeCancel(item.orderId)" v-if="item.state==1" depressed class="ml-4" dark color="red" outlined>取消</v-btn>
                     </div>
                 </div>
             </van-list>           
         </v-tabs-items>  
-        <orderDetails :orderType="orderType" :pOrderId="orderId" @hide="showDetails=false" v-if="showDetails"/>     
+        <orderDetails @update="showDetails=false;tabChange()" :orderType="orderType" :pOrderId="orderId" @hide="showDetails=false" v-if="showDetails"/>     
         <payPage @paySuccess="tabChange" :obj="obj" :price="price" :discount="discount" :finalPrice="finalPrice" @hide="showPayPage=false" v-if="showPayPage"/>
         <alertBox @certain="cancelCertain" title="确认取消该订单吗？" @cancel="showAlert=false" :showIt="showAlert"/>
+        <evaluation @evalSuccess="showEvaluate=false;tabChange()" :obj="obj" :auntId="auntId" :itemId="itemId" :nannyId="nannyId" @hide="showEvaluate=false" v-if="showEvaluate"/>
     </div>
 </template>
 
 <script>
-import iHeader from '../components/public/header'
+// import iHeader from '../components/public/header'
 import alertBox from '../components/public/alertBox'
 import orderDetails from './orderDetails'
 import payPage from './payPage'
+import evaluation from './evaluation'
 export default {
     name: 'orderPage',
     components: {
-       iHeader,
+    //    iHeader,
        orderDetails,
        payPage,
-       alertBox
+       alertBox,
+       evaluation
     },
     data: () => ({
         tab: 0,
@@ -91,14 +94,18 @@ export default {
             '已完成',
             '已取消'
         ],
-        list: [],
+        // list: [],
         page: 1,
         rows: 10,
         allLoaded: false,
         showDetails: false,
         showPayPage: false,
+        showEvaluate: false,
         showAlert: false,
         orderId: 0,
+        nannyId: 0,
+        auntId: 0,
+        itemId: 0,
         orderType: 0,
         discount: 0,
         deleteId: 0,
@@ -112,7 +119,10 @@ export default {
     computed: {
         userId() {
             return this.$store.state.app.userId
-        }
+        },
+        list() {
+            return this.$store.state.app.orderList
+        },
     },
     mounted() {
         this.init()
@@ -129,8 +139,7 @@ export default {
             let rows = res.data.rows
             let pager = res.data.pager
             this.allLoaded = pager.currentPage===pager.totalPages
-            this.list = i?this.list.concat(rows):rows
-            this.list.forEach(res=>{
+            rows.forEach(res=>{
                 switch(res.state) {
                     case 0: 
                         this.$set(res,'status','交易关闭')
@@ -149,6 +158,9 @@ export default {
                         break;
                 }
             })
+            let list = i?this.list.concat(rows):rows
+            this.$store.commit('SET_SINGLE_STATE', ['orderList', list])
+
             
         },
         tabChange() {
@@ -163,6 +175,13 @@ export default {
             this.orderId = id
             this.orderType = type
             this.showDetails = true
+        },
+        toEvaluate(item) {
+            this.nannyId = item.nannyId
+            this.auntId = item.auntId
+            this.itemId = item.itemId
+            this.obj = item.orderServices[0]
+            this.showEvaluate = true
         },
         beforeCancel(id) {
             this.deleteId = id
@@ -195,7 +214,7 @@ export default {
 <style scoped lang="scss">
 
    .orderPage{
-       padding-top: 45px;
+    //    padding-top: 45px;
        height: 100vh;
        overflow: auto
    } 

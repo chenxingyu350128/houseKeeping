@@ -1,8 +1,8 @@
 <template>
     <div class="goodsDetail grey lighten-3">
-        <iHeader @doSomething="$emit('hide')" text="商品详情">
+        <iHeader @doSomething="$router.back()" text="商品详情">
             <template v-slot:right>
-                <v-icon>mdi-share</v-icon>
+                <v-icon @click="showShare=true">mdi-share</v-icon>
             </template>
         </iHeader>
         <v-carousel 
@@ -47,7 +47,6 @@
             </v-card>
         </div>
         <v-bottom-sheet
-         hide-overlay
          v-model="showBS">
             <div class="white pa-4">
                 <div class="d-flex align-center">
@@ -67,7 +66,7 @@
                     </div>
                 </div>
                 <v-divider></v-divider>
-                <div class="py-2 subtitle-1">请选择类别</div>
+                <!-- <div class="py-2 subtitle-1">请选择类别</div>
                 <v-row class="justify-space-between" no-gutters>
                     <v-col class="pa-2" cols="6">
                         <v-btn depressed block color="primary" dark>类型1</v-btn>
@@ -78,7 +77,7 @@
                     <v-col class="pa-2" cols="6">
                         <v-btn depressed block color="primary" dark>类型3</v-btn>
                     </v-col>
-                </v-row>
+                </v-row> -->
                 <div class="py-2 subtitle-1">请选择商品</div>
                 <v-row class="justify-space-between" no-gutters>
                     <v-col 
@@ -90,6 +89,26 @@
                         <v-btn v-text="item.type" depressed block color="primary" dark></v-btn>
                     </v-col>
                 </v-row>                
+            </div>
+        </v-bottom-sheet>
+        <v-bottom-sheet  v-model="showShare">
+            <div class="white d-flex justify-space-around py-2 subtitle-2 text--secondary">
+                <div @click="share(1)" class="d-flex flex-column align-center">
+
+                    <v-btn depressed dark fab small color="#50b674">
+
+                        <v-icon>mdi-wechat</v-icon>
+                    </v-btn>
+                    微信好友
+                </div>
+                <div @click="share(2)" class="d-flex flex-column align-center">
+
+                    <v-btn depressed dark fab small color="#50b674">
+
+                        <v-icon>mdi-camera-iris</v-icon>
+                    </v-btn>
+                    朋友圈
+                </div>
             </div>
         </v-bottom-sheet>
         <v-footer fixed bottom class="white d-flex align-center justify-space-around">
@@ -114,22 +133,23 @@ import goodsEvals from '../components/product/goodsEvals'
 import orderCertain from './orderCertain'
 export default {
     name: 'goodsDetail',
-    props: {
-        id: {
-            type: Number,
-            required: true
-        },
-        // obj: {
-        //     type: Object,
-        //     required: true
-        // }
-    },
+    // props: {
+    //     id: {
+    //         type: Number,
+    //         required: true
+    //     },
+    //     // obj: {
+    //     //     type: Object,
+    //     //     required: true
+    //     // }
+    // },
     components: {
        iHeader,
        orderCertain,
        goodsEvals
     },
     data: ()=>({
+        id: 0,
         details: [
             {type: '阿瑟东撒的'},
             {type: '撒旦发射点人'},
@@ -157,6 +177,7 @@ export default {
         showEvals: false,
         selectedAddress: '',
         collect: false,
+        showShare: false,
         showOrderCertain: false
 
 
@@ -187,7 +208,10 @@ export default {
         }
     },
     mounted() {
+        this.id = this.$route.query.id
         this.init()
+        console.log(location)
+
     },
     methods: {
         init() {
@@ -234,11 +258,11 @@ export default {
             })
         },
         toIndex() {
-            this.$emit('hide')
-            console.log(this.$route)
-            if(this.$route.path!='/index'){
-                this.$router.push('/index')
-            }
+            this.$router.push('/index')
+            // this.$emit('hide')
+            // console.log(this.$route)
+            // if(this.$route.path!='/index'){
+            // }
         },
         itemOrder(item,i) {
             this.index = i
@@ -268,6 +292,15 @@ export default {
                 return
             }
             this.showEvals = true
+        },
+        share(e) {
+            this.showShare = false
+            const shareInfo = {
+                url: location.href,
+                way: e
+            };
+            //这里发送数据到给app处理
+            webkit.messageHandlers.cordova_iab.postMessage(JSON.stringify(shareInfo))            
         }
     }
 };

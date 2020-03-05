@@ -1,6 +1,6 @@
 <template>
     <div class="catePage white">
-        <iHeader @doSomething="$emit('hide')" text="分类"></iHeader>
+        <!-- <iHeader @doSomething="$emit('hide')" text="分类"></iHeader> -->
         <v-tabs
             vertical
             @change="tabChange"
@@ -34,19 +34,19 @@
                 </v-row>
             </v-tab-item>
         </v-tabs>
-        <goodsDetails :id="editId" @hide="showDetails=false" v-if="showDetails"/>
+        <!-- <goodsDetails :id="editId" @hide="showDetails=false" v-if="showDetails"/> -->
     </div>
 </template>
 
 <script>
-import iHeader from '../components/public/header'
-import goodsDetails from './productDetails'
+// import iHeader from '../components/public/header'
+// import goodsDetails from './productDetails'
 
 export default {
     name: 'category',
     components: {
-        iHeader,
-        goodsDetails
+        // iHeader,
+        // goodsDetails
 
     },
     data: ()=>({
@@ -70,9 +70,15 @@ export default {
             console.log(e)
             window.scrollTo(0,0)
         },
-        toDetail(item) {
-            this.editItem = item
-            this.showDetails = true
+        toDetail(id) {
+            // this.editId = id
+            // this.showDetails = true
+            this.$router.push({
+                path: '/productDetails',
+                query: {
+                    id
+                }
+            })            
         }
     }
 };
@@ -82,7 +88,7 @@ export default {
 
    .catePage{
        overflow-y: auto;
-       padding-top: 45px;
+    //    padding-top: 45px;
        padding-bottom: 50px;
    } 
 </style>

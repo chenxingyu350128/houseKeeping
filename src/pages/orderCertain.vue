@@ -215,7 +215,7 @@ export default {
     },
     mounted() {
         this.findCoupon()
-        // this.getDefaultAddress()
+        this.getDefaultAddress()
     },
     methods: {
         getDefaultAddress() {
@@ -280,8 +280,39 @@ export default {
                 if(res.data.success){
                    this.postObj = res.data.obj.orderServices[0]
                    this.showPayPage = true
+                   this.updateOrderList()//keep-alive配合vuex，需要更新订单列表。
                 }
             })
+        },
+        async updateOrderList() {
+            const params = {
+                userId: this.userId,
+                state: -1,
+                page: 1,
+                rows: 10
+            }
+            let res = await this.$http.get('/order/findOrderByState',{params})
+            let rows = res.data.rows
+            rows.forEach(res=>{
+                switch(res.state) {
+                    case 0: 
+                        this.$set(res,'status','交易关闭')
+                        break;
+                    case 1: 
+                        this.$set(res,'status','待支付')
+                        break;
+                    case 2: 
+                        this.$set(res,'status','进行中')
+                        break;
+                    case 3: 
+                        this.$set(res,'status','已完成')
+                        break;
+                    case 4: 
+                        this.$set(res,'status','已取消')
+                        break;
+                }
+            })
+            this.$store.commit('SET_SINGLE_STATE', ['orderList', rows])            
         },
         toTimePage() {
             if(!this.selectedAddress&&!this.defaultAddress) {
