@@ -35,7 +35,7 @@
             <v-icon  class="mr-4">mdi-chevron-right</v-icon>
         </div>
         <div @click="showCouponPage=true" class="d-flex align-center px-4 py-3 mb-2 white">
-            <v-icon class="mdi-rotate-225" color="primary">mdi-label</v-icon>
+            <v-icon class="mdi-rotate-225" color="primary">mdi-tag</v-icon>
             <div class="flex-fill ml-3 text-right subtitle-2 text--secondary">{{discountStr||'请选择优惠方式'}}</div>
             <v-icon  class="mr-4">mdi-chevron-right</v-icon>
         </div>
