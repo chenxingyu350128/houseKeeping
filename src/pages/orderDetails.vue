@@ -1,10 +1,116 @@
 <template>
-    <div class="orderDetails grey lighten-2 subtitle-2 pb-44">
+    <div class="orderDetails grey lighten-3 subtitle-2">
         <iHeader @doSomething="$emit('hide')" text="订单详情"></iHeader>
         <!-- 抢单 -->
-        <div v-if="orderType==2"></div>
+        <div v-if="orderType!=2" key="qianddan">
+          <div class="ma-4">
+            <!-- 进度 -->
+            <v-stepper fab class="teal white--text lighten-3" v-model="attemperStatus">
+              <v-stepper-header style="height: 36px" alt-labels height="30">
+                <v-stepper-step class="py-0" :complete="attemperStatus>0" step="1">aaa</v-stepper-step>
+                <v-stepper-step class="py-0" :complete="attemperStatus>1" step="2">vStepperStepText</v-stepper-step>
+                <v-stepper-step class="py-0" :complete="attemperStatus>2" step="3">vStepperStepText</v-stepper-step>
+                <v-stepper-step class="py-0" :complete="attemperStatus>3" step="4">vStepperStepText</v-stepper-step>
+              </v-stepper-header>
+              <v-stepper-items>
+                <v-stepper-content class="py-5" step="1">我们已收到您的订单，正在处理</v-stepper-content>
+                <v-stepper-content class="py-5" step="2">订单已调度，请耐心等待</v-stepper-content>
+                <v-stepper-content class="py-5" step="3">服务正在进行，请等待</v-stepper-content>
+                <v-stepper-content class="py-5" step="4">服务完成，感谢您的支持</v-stepper-content>
+              </v-stepper-items>
+            </v-stepper>
+          </div>
+          <!-- 服务信息 -->
+          <div class="white px-4 py-2 mb-2 text--secondary my-2">
+            <div class="d-flex pb-2">
+              <v-avatar
+                tile
+                size="65"
+              >
+                <v-img :src="orderServices[0].pic"></v-img>
+              </v-avatar>
+              <div class="ml-2 flex-fill d-flex flex-column justify-space-between align-end">
+                <div class="d-flex justify-space-between">
+                  <span>{{itemName}}</span>
+                  <span>{{totalMoney}}</span>
+                </div>
+                <span>x1</span>
+              </div>
+            </div> 
+          </div> 
+          <div class="white subtitle-2 px-4 py-2 my-2">
+            <div class="my-2">
+              <span class="text--secondary">
+                预约时间：
+              </span>
+              {{serviceTime}}
+            </div>
+            <div class="my-2">
+              <span class="text--secondary">
+                联系人：
+              </span>
+              {{customer}}
+            </div>
+            <div class="my-2">
+              <span class="text--secondary">
+                联系电话：
+              </span>
+              {{phone}}
+            </div>
+            <div class="my-2">
+              <span class="text--secondary">
+                服务地址：
+              </span>
+              {{address}}
+            </div>
+            <div class="my-2">
+              <span class="text--secondary">
+                备注：
+              </span>
+              {{remark}}
+            </div>
+            <v-divider v-if="auntModel"></v-divider>
+            <div v-if="auntModel" class="my-2 d-flex align-center">
+              <span>保洁员</span>
+              <span class="ml-4 flex-fill">{{auntModel.trueName}}</span>
+              <v-icon color="primary" @click="toCall(auntModel.userName)">mdi-phone-in-talk</v-icon>
+            </div>
+          </div>        
+          <div class="white px-4 py-2">
+            <div class="my-2">
+              <span class="text--secondary">
+                订单编号：
+              </span>
+              {{orderNumber}}
+            </div>
+            <div class="my-2">
+              <span class="text--secondary">
+                下单时间：
+              </span>
+              {{createTime}}
+            </div>
+          </div>
+          <div class="white px-4 py-2 pb-11">
+            <div class="my-2 d-flex justify-space-between">
+              <span>
+                商品总额：
+              </span>
+              {{totalMoney}}
+            </div>
+            <div class="my-2 d-flex justify-space-between">
+              <span>
+                商品优惠：
+              </span>
+              {{discounts}}
+            </div>
+            <v-divider></v-divider>
+            <div class="py-2 text-right">
+              实付款：<span class="primary--text">￥{{actualPayment}}</span>
+            </div>
+          </div>
+        </div>
         <!-- 非抢单 -->
-        <div v-else>
+        <div v-else key="normal">
           <div v-if="state!==''" :class="state==1||state==2?'white--text cyan lighten-2':'red--text' " class="px-4 py-2 text-center">{{status}}</div>
           <div class="px-4 py-2 white text--secondary mb-2">
               <div>
@@ -49,9 +155,9 @@
             <div class="px-4 py-2">备注信息</div>
             <div class="px-4 py-2">{{remark}}</div>
           </div>
-          <div v-if="cancelCause" class="white text--primary mb-2">
+          <div v-if="cancelCause" class="white text--secondary mb-2">
             <div class="px-4 py-2">订单取消原因：</div>
-            <div class="px-4 py-2">{{cancelCause}}</div>
+            <div class="px-4 py-2 caption">{{cancelCause}}</div>
           </div>
           <div class="px-4 py-2 white text--secondary caption">
             <div>订单编号：{{orderNumber}}</div>
@@ -73,7 +179,7 @@
             <v-col v-if="state==3&&!evaluateTime" class="py-1" cols="6">
               <v-btn @click="toEvaluate(orderServices[0])" dark color="primary" block depressed>去评价</v-btn>
             </v-col>
-            <v-col v-if="state>1&&compModel.servicePhone" class="py-1" cols="6">
+            <v-col v-if="state>1&&compModel&&compModel.servicePhone" class="py-1" cols="6">
               <v-btn @click="toCall(compModel.servicePhone)" dark color="primary" block depressed>联系客服</v-btn>
             </v-col>
             <!-- <v-col class="py-1" cols="6">
