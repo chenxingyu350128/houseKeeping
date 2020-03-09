@@ -13,14 +13,14 @@ const api = Axios.create({
 // 请求拦截
 api.interceptors.request.use(
   function(config) {
-    let token = localStorage.getItem("token")
+    // let token = localStorage.getItem("token")
     if(process.env.NODE_ENV=='production'){
 
-      if (token) {
-        config.headers = {
-          token
-        };
-      }
+      // if (token) {
+      //   config.headers = {
+      //     token
+      //   };
+      // }
     }
     if (config.method === "post") {
       console.log(config.url);

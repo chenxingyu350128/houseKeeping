@@ -29,7 +29,7 @@ export default new VueRouter({
         {
             path: "/productDetails",
             name: "productDetails",
-            component: () => import("./pages/productDetails.vue"),
+            component: () => import("./pages/productDetails.vue")
         },
         {
             path: "/order",

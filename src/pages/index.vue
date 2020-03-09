@@ -365,25 +365,25 @@ export default {
         },
         appLogin() {
             //测试用
-            this.$store.commit('SET_SINGLE_STATE', ['userId', 1])
-            this.$store.commit('SET_SINGLE_STATE', ['userName', 'cxx'])
-            // if(this.userId){
-            //     return
-            // }
-            // const sessionId = window.location.hash.split('sessionId=')[1]
-            // const params = {
-            //     sessionId
-            // }
-            // this.$http.get('/user/applogin',{params})
-            // .then(res=>{
-            //     if (res.data.success&&res.data.obj) {
-            //         let obj = res.data.obj
-            //         this.$store.commit('SET_SINGLE_STATE', ['sex', obj.sex])
-            //         this.$store.commit('SET_SINGLE_STATE', ['userId', obj.userId])
-            //         this.$store.commit('SET_SINGLE_STATE', ['userName', obj.userName])
-            //         this.$store.commit('SET_SINGLE_STATE', ['realName', obj.realName])
-            //     }
-            // })
+            // this.$store.commit('SET_SINGLE_STATE', ['userId', 1])
+            // this.$store.commit('SET_SINGLE_STATE', ['userName', 'cxx'])
+            if(this.userId){
+                return
+            }
+            const sessionId = window.location.hash.split('sessionId=')[1]
+            const params = {
+                sessionId
+            }
+            this.$http.get('/user/applogin',{params})
+            .then(res=>{
+                if (res.data.success&&res.data.obj) {
+                    let obj = res.data.obj
+                    this.$store.commit('SET_SINGLE_STATE', ['sex', obj.sex])
+                    this.$store.commit('SET_SINGLE_STATE', ['userId', obj.userId])
+                    this.$store.commit('SET_SINGLE_STATE', ['userName', obj.userName])
+                    this.$store.commit('SET_SINGLE_STATE', ['realName', obj.realName])
+                }
+            })
             this.findNotRead()
         },
         async findNotRead() {
