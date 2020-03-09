@@ -60,7 +60,11 @@
                         <v-btn @click.stop="beforeCancel(item.orderId)" v-if="item.state==1" depressed class="ml-4" dark color="red" outlined>取消</v-btn>
                     </div>
                 </div>
-            </van-list>           
+            </van-list> 
+            <div v-else class="d-flex flex-column align-center py-12 grey lighten-2">
+                <v-img max-height="30vw" max-width="30vw" :src="emptyContent"></v-img>    
+                <span class="mt-2 text--secondary">暂无订单</span>
+            </div>          
         </v-tabs-items>  
         <orderDetails @update="showDetails=false;tabChange()" :orderType="orderType" :pOrderId="orderId" @hide="showDetails=false" v-if="showDetails"/>     
         <payPage @paySuccess="tabChange" :obj="obj" :price="price" :discount="discount" :finalPrice="finalPrice" @hide="showPayPage=false" v-if="showPayPage"/>
@@ -111,7 +115,8 @@ export default {
         deleteId: 0,
         price: 0,
         finalPrice: 0,
-        obj: null
+        obj: null,
+        emptyContent: require('../assets/img/emptyContent.png')
     }),
     created() {
         this.loadBottom = this._.debounce(this.loadmore,200)
