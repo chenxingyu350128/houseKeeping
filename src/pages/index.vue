@@ -1,6 +1,6 @@
 <template>
     <div class="indexPage white">
-        <iHeader @doSomething="$emit('hide')">
+        <iHeader @doSomething="backToApp">
             <template  v-slot:center>
                 <div @click="showAreaPicker=true">
                     {{positionCity||'地址位置获取失败'}}
@@ -307,6 +307,10 @@ export default {
         this.init()
     },
     methods: {
+        backToApp() {
+          let message ={backToApp: true}
+          webkit.messageHandlers.cordova_iab.postMessage(JSON.stringify(message));
+        },
         getLocation() {
             console.log(AMap)
             let that = this

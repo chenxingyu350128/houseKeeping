@@ -13,7 +13,7 @@ import "vant/lib/index.css";
 // import { createTable, addItem, selectItem, removeItem } from './plugins/sqlite'
 import VConsole from "vconsole";
 if (process.env.NODE_ENV === "production") {
-  VConsole();
+  new VConsole();
 }
 // import './mock/index'
 Vue.prototype.$http = http.api;
