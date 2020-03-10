@@ -35,6 +35,17 @@
   .pb50{
     padding-bottom: 50px;
   }
+  .center-header{
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 18;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 </style>
 <script>
 

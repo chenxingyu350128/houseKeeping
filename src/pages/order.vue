@@ -1,6 +1,7 @@
 <template>
     <div class="orderPage grey lighten-2">
         <!-- <iHeader @doSomething="$emit('hide')" text="我的订单"></iHeader> -->
+        <div class="center-header primary white--text">我的订单</div>
         <v-tabs
             v-model="tab"
             color="primary"
@@ -219,7 +220,7 @@ export default {
 <style scoped lang="scss">
 
    .orderPage{
-    //    padding-top: 45px;
+       padding-top: 45px;
        height: 100vh;
        overflow: auto
    } 

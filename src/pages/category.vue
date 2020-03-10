@@ -1,6 +1,7 @@
 <template>
     <div class="catePage white">
         <!-- <iHeader @doSomething="$emit('hide')" text="分类"></iHeader> -->
+        <div class="center-header primary white--text">商品分类</div>
         <v-tabs
             vertical
             @change="tabChange"
@@ -88,7 +89,7 @@ export default {
 
    .catePage{
        overflow-y: auto;
-    //    padding-top: 45px;
+       padding-top: 45px;
        padding-bottom: 50px;
    } 
 </style>
