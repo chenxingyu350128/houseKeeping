@@ -40,7 +40,7 @@
     left: 0;
     right: 0;
     top: 0;
-    z-index: 18;
+    z-index: 5;
     height: 45px;
     display: flex;
     align-items: center;

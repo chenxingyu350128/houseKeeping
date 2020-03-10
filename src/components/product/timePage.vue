@@ -41,6 +41,8 @@
                 :formatter="formatter"
                 @cancel="showBS=false"
                 @confirm="onConfirm"
+                :min-hour="minHour"
+                :min-minute="minMin"
                 />                 
              </v-bottom-sheet>
          </v-tabs-items>
@@ -129,7 +131,19 @@ export default {
             })
             console.log(arr)
             return arr
-        }
+        },
+        minHour(){
+            if(this.tab){
+                return 0
+            }
+            return new Date().getHours()
+        },
+        minMin(){
+            if(this.tab){
+                return 0
+            }
+            return new Date().getMinutes()
+        },
     },
     mounted() {
        this.init()

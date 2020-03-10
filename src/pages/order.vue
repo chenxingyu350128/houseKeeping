@@ -18,7 +18,7 @@
             >
                 <v-divider v-if="i" inset vertical></v-divider>       
                 <v-spacer></v-spacer>
-                <span v-html="tab"></span>
+                <span v-html="tab.text"></span>
                 <v-spacer></v-spacer>  
             </v-tab>
         </v-tabs> 
@@ -92,12 +92,10 @@ export default {
     data: () => ({
         tab: 0,
         tabs: [
-            '全&emsp;部',
-            '已关闭',
-            '待支付',
-            '进行中',
-            '已完成',
-            '已取消'
+            {text: '待支付',value: 1},
+            {text: '进行中',value: 2},
+            {text: '已完成',value: 3},
+            {text: '全&emsp;部',value: -1},
         ],
         // list: [],
         page: 1,
@@ -137,7 +135,7 @@ export default {
         async init(i) {
             const params = {
                 userId: this.userId,
-                state: this.tab-1,
+                state: this.tabs[this.tab].value,
                 page: this.page,
                 rows: this.rows
             }
