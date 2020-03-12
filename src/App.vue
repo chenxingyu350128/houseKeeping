@@ -17,6 +17,16 @@
      padding-left: 0;
    }
   }
+
+*{
+    -moz-user-select: -moz-none;
+    -moz-user-select: none;
+    -o-user-select:none;
+    -khtml-user-select:none;
+    -webkit-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+}
   .v-text-field__slot{
     >input{
       text-align: center!important;
