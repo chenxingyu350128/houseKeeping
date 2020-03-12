@@ -58,30 +58,7 @@ export default {
         rows: 10,
         page: 1,
         allLoaded: false,
-        list: [
-
-            {
-                "auntId": 0, //阿姨ID
-                "eval": 2, //评价星数
-                "evalId": 0, //评价ID
-                "goodsId": 0, //商品ID
-                "opinion": "还不错", //评价内容
-                "orderId": 0, //订单ID
-                "userId": 0, //用户ID
-                "userName": "阿斯蒂芬" //用户昵称
-            },
-            {
-                "auntId": 0,
-                "eval": 4,
-                "evalId": 0,
-                "goodsId": 0,
-                "opinion": "非常好",
-                "orderId": 0,
-                "userId": 0,
-                "userName": "梵蒂冈"
-            }
-            
-        ]
+        list: []
     }),
     created() {
         this.loadBottom = this._.debounce(this.loadmore,200)
