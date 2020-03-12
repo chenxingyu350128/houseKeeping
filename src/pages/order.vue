@@ -64,7 +64,7 @@
             </van-list> 
             <div v-else class="d-flex flex-column align-center py-12 grey lighten-2">
                 <v-img max-height="30vw" max-width="30vw" :src="emptyContent"></v-img>    
-                <span class="mt-2 text--secondary">暂无订单</span>
+                <span class="mt-2 text--secondary">暂无订单{{queryType}}</span>
             </div>          
         </v-tabs-items>  
         <orderDetails @update="showDetails=false;tabChange()" :orderType="orderType" :pOrderId="orderId" @hide="showDetails=false" v-if="showDetails"/>     
@@ -96,6 +96,7 @@ export default {
             {text: '进行中',value: 2},
             {text: '已完成',value: 3},
             {text: '全&emsp;部',value: -1},
+            {text: '预&emsp;约',value: 4},
         ],
         // list: [],
         page: 1,
@@ -126,10 +127,16 @@ export default {
         },
         list() {
             return this.$store.state.app.orderList
-        },
+        }
     },
     mounted() {
-        this.init()
+        if(this.$route.query.type){
+
+            this.tab = parseInt(this.$route.query.type)
+        }
+        // console.log(this.$route.query.type)
+        console.log('tab:',this.tab)
+        this.tabChange()
     },
     methods: {
         async init(i) {
@@ -168,8 +175,15 @@ export default {
             
         },
         tabChange() {
-            this.page = 1
-            this.init()
+            if(this.tab!=4){
+                this.page = 1
+                this.init()
+                return
+            }
+            this.getReserve()
+        },
+        getReserve(){//预约
+
         },
         loadmore() {
             this.page++

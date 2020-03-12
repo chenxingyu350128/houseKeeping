@@ -156,7 +156,13 @@ export default {
           .then(res=>{
               if(res.data.success){
                   this.$toast('预约成功')
-                  this.$emit('hide')
+                  this.$router.push({
+                      path: '/order',
+                      query: {
+                          type: 4
+                      }
+                  })
+                //   this.$emit('hide')
               }
           })
       }

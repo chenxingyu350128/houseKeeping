@@ -24,6 +24,7 @@
           <div class="white px-4 py-2 mb-2 text--secondary my-2">
             <div class="d-flex pb-2">
               <v-avatar
+                @click="toProductDetails"
                 tile
                 size="65"
               >
@@ -310,6 +311,15 @@ export default {
           this[x] = obj[x]
         }
         this.attemperStatus++
+      },
+      toProductDetails() {
+        let id = this.itemId||this.auntId||this.nannyId
+        this.$router.push({
+          path: '/productDetails',
+          query: {
+            id
+          }
+        })
       },
       toPay(e) {
         this.postObj = e
