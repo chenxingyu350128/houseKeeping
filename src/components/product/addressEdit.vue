@@ -255,9 +255,9 @@ export default {
             }
           }
           if(modified){
-            if(data.defcode){
-              this.setDefault()
-            }
+            // if(data.defcode){
+            //   this.setDefault()
+            // }
             console.log(data)
             this.editAddress(data)
           }else{
@@ -292,13 +292,13 @@ export default {
         })
 
       },
-      setDefault() {
-        const data = {
-          adId: this.id,
-          userId: this.userId
-        }
-        this.$http.post('/user/editDefaultAddr',data)
-      },
+      // setDefault() {
+      //   const data = {
+      //     adId: this.id,
+      //     userId: this.userId
+      //   }
+      //   this.$http.post('/user/editDefaultAddr',data)
+      // },
       updateList() {
         const params = {
             userId: this.userId,

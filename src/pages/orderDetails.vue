@@ -180,7 +180,7 @@
             <v-col v-if="state==3&&!evaluateTime" class="py-1" cols="6">
               <v-btn @click="toEvaluate(orderServices[0])" dark color="primary" block depressed>去评价</v-btn>
             </v-col>
-            <v-col v-if="state>1&&compModel&&compModel.servicePhone" class="py-1" cols="6">
+            <v-col v-if="compModel&&compModel.servicePhone" class="py-1" cols="6">
               <v-btn @click="toCall(compModel.servicePhone)" dark color="primary" block depressed>联系客服</v-btn>
             </v-col>
             <!-- <v-col class="py-1" cols="6">
@@ -221,52 +221,39 @@ export default {
        alertBox
     },
     data: () => ({
-      "actualPayment": 0.1,
-      "address": "海西佰悦城15号楼1503",
+      "actualPayment": 0,
+      "address": "",
       "attemperStatus": 0,
       "auntId": 0,
       "auntModel": null,
-      "beginTime": "2020-02-20 11:00:00",
+      "beginTime": "",
       "cancelCause": "",
-      "nannyId": 1,//保姆ID
+      "nannyId": 0,//保姆ID
       // "orderType": 1, //类型 0单次收费 1定金商品 2抢单
-      "compModel": {
-        "compId": 1, //公司ID
-        "compName": "中青家政服务",//公司名称
-        "servicePhone": "0591-33030033" //客服电话
-        },
+      "compModel": null,
       "completeTime": "", //完成时间
-      "createTime": "2020-02-19 16:15:22",
-      "customer": "张三",
+      "createTime": "",
+      "customer": "",
       "discounts": 0,
       "endTime": "",
       "evaluateTime": "",
-      "itemId": 16,
-      "itemName": "新测试商品",
-      "orderId": 354,
-      "orderNumber": "2002191615229486",
-      "orderServices": [{
-        "detailModel": null,
-        "dtId": 20,
-        "name": "卫生间",
-        "num": 1,
-        "orderId": 354,
-        "osId": 354,
-        "pic": "http://yinafimg.oss-cn-hangzhou.aliyuncs.com/201901/0315/1901031554246355.jpg",
-        "price": 0.1
-      }],
-      "origin": 3,
+      "itemId": 0,
+      "itemName": "",
+      "orderId": 0,
+      "orderNumber": "",
+      "orderServices": [],
+      "origin": 0,
       "payNum": "",
       "payStatus": false,
       "payTime": "",
       "payType": 0,
       "payWay": false,
-      "phone": "18120829818",
-      "region": "福建省福州市仓山区",
+      "phone": "",
+      "region": "",
       "remark": "",
-      "serviceTime": "2020-02-20 11:00:00",
+      "serviceTime": "",
       "state": '', //订单状态(0关闭 1待支付 2进行中 3已完成 4取消)
-      "totalMoney": 0.1,
+      "totalMoney": 0,
       "updateTime": "",
       "postObj": null,
       "showPayPage": false,
