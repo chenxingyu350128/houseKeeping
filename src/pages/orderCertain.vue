@@ -88,6 +88,10 @@ export default {
         type: {
             type: Number,
             required: true
+        },
+        compId: {
+            type: Number,
+            required: true
         }
     },
     components: {
@@ -266,6 +270,7 @@ export default {
                 pics: this.item.attrPic,
                 nums: 1,
                 origin: 1,
+                compId: this.compId,
                 orderType: this.type,
                 actualPayment: this.finalPrice,
                 dtIds: this.item.detailId,

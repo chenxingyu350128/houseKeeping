@@ -123,7 +123,7 @@
             </div>
             <v-btn @click="buyNow" depressed class="flex-fill" rounded dark color="primary">立即购买</v-btn>
         </v-footer>
-        <orderCertain :type="goodsType" :item="editItem" @hide="showOrderCertain=false" v-if="showOrderCertain"/>
+        <orderCertain :compId="compId" :type="goodsType" :item="editItem" @hide="showOrderCertain=false" v-if="showOrderCertain"/>
         <goodsEvals @hide="showEvals=false" v-if="showEvals" :id="id" />
     </div>
 </template>
@@ -173,6 +173,7 @@ export default {
         scope: '',
         shortIntro: '商品简介shortIntro',
         type: '',
+        compId: 0,
         choice: '',
         showBS: false,
         showEvals: false,
