@@ -49,11 +49,11 @@ import iHeader from '../public/header'
 export default {
     name: 'reservation',
     props: {
-        userId: {
+        nannyId: {
             type: Number,
             required: true
         },
-        nannyId: {
+        compId: {
             type: Number,
             required: true
         },
@@ -91,7 +91,9 @@ export default {
 
     },
     computed: {
-
+        userId () {
+            return this.$store.state.app.userId
+        }
     },
     mounted() {
 
@@ -147,6 +149,7 @@ export default {
           }
           const data = {
               userId: this.userId,
+              compId: this.compId,
               nannyId: this.nannyId,
               time: this.dateTimeStr,
               interviewType: this.type,

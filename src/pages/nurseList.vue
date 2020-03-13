@@ -54,11 +54,11 @@
                                 <img :src="item.headImg">
                             </v-avatar>
                             <v-list-item-content>
-                                <div class="subtitle-2 d-flex">
-                                    <span class="mr-1">{{item.name}}</span>
-                                    <span class="mr-1 caption">{{item.age}}岁</span>
-                                    <span class="orange--text caption flex-fill">{{item.salary}}/月</span>
-                                    <v-btn class="caption px-1" depressed x-small dark color="grey lighten-1">由{{item.company}}</v-btn>
+                                <div class="caption d-flex align-center">
+                                    <span class="flex-fill no-wrap mr-1">{{item.name}}</span>
+                                    <span class="flex-fill no-wrap mr-1">{{item.age}}岁</span>
+                                    <span class="flex-fill no-wrap mr-1 orange--text flex-fill">{{item.salary}}/月</span>
+                                    <span class="flex-fill px-1 grey lighten-1 white--text v-collips" v-text="item.company"></span>
                                 </div>
                                 <div class="d-flex">
                                     <v-btn 
@@ -273,4 +273,5 @@ export default {
        overflow-y: auto;
        z-index: 99; 
    } 
+
 </style>

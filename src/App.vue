@@ -27,6 +27,16 @@
     -ms-user-select:none;
     user-select:none;
 }
+.no-wrap{
+  white-space: nowrap;
+}
+.v-collips{
+    border-radius: 3px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 7em;
+}
   .v-text-field__slot{
     >input{
       text-align: center!important;

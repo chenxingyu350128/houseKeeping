@@ -4,6 +4,7 @@ import vuetify from "./plugins/vuetify";
 import router from "./router";
 import store from "./store";
 import http from "./http";
+import dateTimeFormat from './plugins/getDateTimeStr'
 import _ from 'lodash'
 // import AMapJS from "amap-js";
 import "@mdi/font/css/materialdesignicons.css";
@@ -17,6 +18,7 @@ if (process.env.NODE_ENV === "production") {
 }
 // import './mock/index'
 Vue.prototype.$http = http.api;
+Vue.prototype.$dateStr = dateTimeFormat;
 Vue.prototype._ = _
 // Vue.prototype.$createTable = createTable;
 // Vue.prototype.$addSqlite = addItem;

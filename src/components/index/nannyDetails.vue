@@ -150,11 +150,11 @@
                     <img :src="item.headImg">
                 </v-avatar>
                 <v-list-item-content>
-                    <div class="subtitle-2 d-flex">
+                    <div class="caption d-flex">
                         <span class="mr-1">{{item.name}}</span>
-                        <span class="mr-1 caption">{{item.age}}岁</span>
-                        <span class="orange--text caption flex-fill">{{item.salary}}/月</span>
-                        <v-btn class="caption px-1" depressed x-small dark color="grey lighten-1">由{{item.company}}</v-btn>
+                        <span class="mr-1">{{item.age}}岁</span>
+                        <span class="orange--text flex-fill">{{item.salary}}/月</span>
+                        <span class="flex-fill px-1 grey lighten-1 white--text v-collips" v-text="item.company"></span>
                     </div>
                     <div class="d-flex">
                         <v-btn 
@@ -203,7 +203,7 @@
             <v-btn @click="showReservation=true" depressed color="primary">立即预约</v-btn>
         </v-footer>      
         <evals nannyEval="Yo" :id="id" @hide="showEvals=false" v-if="showEvals"/>
-        <reservation :userId="userId" :nannyId="nannyId" @hide="showReservation=false" v-if="showReservation"/>
+        <reservation :compId="compId" :nannyId="nannyId" @hide="showReservation=false" v-if="showReservation"/>
     </div>
 </template>
 
@@ -233,230 +233,38 @@ export default {
         showReservation: false,
         showMore: false,
         showEvals: false,
-        age: 29,
+        age: 0,
         newName: '',
         nannyId: 0,
         compId: 0,
-        city: '福州',
-        collectCount: 3,
-        evalsList: [
-            {
-                "auntId": 0, //阿姨ID
-                "eval": 2, //评价星数
-                "evalId": 0, //评价ID
-                "goodsId": 0, //商品ID
-                "opinion": "还不错", //评价内容
-                "orderId": 0, //订单ID
-                "userId": 0, //用户ID
-                "userName": "阿斯蒂芬" //用户昵称
-            },
-            {
-                "auntId": 0,
-                "eval": 4,
-                "evalId": 0,
-                "goodsId": 0,
-                "opinion": "非常好",
-                "orderId": 0,
-                "userId": 0,
-                "userName": "梵蒂冈"
-            }            
-        ],
+        city: '',
+        collectCount: 0,
+        evalsList: [],
         similar: [
-            {
-                "age": 37, 
-                "city": "福州", 
-                "collectCount": 0, 
-                "company": "中青家政服务", 
-                "createTime": { 
-                    "date": 26,
-                    "day": 3,
-                    "hours": 11,
-                    "minutes": 41,
-                    "month": 1,
-                    "seconds": 22,
-                    "time": 1582688482000,
-                    "timezoneOffset": -480,
-                    "year": 120
-                },
-                "dataFlag": true, 
-                "education": "高中", 
-                "experience": 24, 
-                "goodEvalCount": 0, 
-                "headImg": "", 
-                "idCard": "350822198508235913", 
-                "labels": [ 
-                    {
-                        "label": "做事认真",
-                        "lableId": 1,
-                        "nannyId": 1
-                    },
-                    {
-                        "label": "责任心强",
-                        "lableId": 2,
-                        "nannyId": 1
-                    },
-                    {
-                        "label": "有耐心",
-                        "lableId": 3,
-                        "nannyId": 1
-                    }
-                ],
-                "marriage": true, 
-                "name": "兰阿姨", 
-                "nannyId": 1, 
-                "nation": "汉族", 
-                "nativePlace": "福建", 
-                "number": "35081298", 
-                "onDutyCount": 0, 
-                "phone": "18000000000", 
-                "salary": 3800, 
-                "state": 1, //状态 0待岗 1在岗 2不在岗
-                "subscribeCount": 0, //预约次数
-                "type": "0", //类型 0住家保姆 1非住家保姆 2月嫂 3护工 4育儿嫂
-                "updateTime": { //更新时间
-                    "date": 26,
-                    "day": 3,
-                    "hours": 11,
-                    "minutes": 41,
-                    "month": 1,
-                    "seconds": 27,
-                    "time": 1582688487000,
-                    "timezoneOffset": -480,
-                    "year": 120
-                }
-            },
-            {
-                "age": 37, 
-                "city": "福州", 
-                "collectCount": 0, 
-                "company": "中青家政服务", 
-                "createTime": { 
-                    "date": 26,
-                    "day": 3,
-                    "hours": 11,
-                    "minutes": 41,
-                    "month": 1,
-                    "seconds": 22,
-                    "time": 1582688482000,
-                    "timezoneOffset": -480,
-                    "year": 120
-                },
-                "dataFlag": true, 
-                "education": "高中", 
-                "experience": 24, 
-                "goodEvalCount": 0, 
-                "headImg": "", 
-                "idCard": "350822198508235913", 
-                "labels": [ 
-                    {
-                        "label": "做事认真",
-                        "lableId": 1,
-                        "nannyId": 1
-                    },
-                    {
-                        "label": "责任心强",
-                        "lableId": 2,
-                        "nannyId": 1
-                    },
-                    {
-                        "label": "有耐心",
-                        "lableId": 3,
-                        "nannyId": 1
-                    }
-                ],
-                "marriage": true, 
-                "name": "兰阿姨", 
-                "nannyId": 1, 
-                "nation": "汉族", 
-                "nativePlace": "福建", 
-                "number": "35081298", 
-                "onDutyCount": 0, 
-                "phone": "18000000000", 
-                "salary": 3800, 
-                "state": 1, //状态 0待岗 1在岗 2不在岗
-                "subscribeCount": 0, //预约次数
-                "type": "0", //类型 0住家保姆 1非住家保姆 2月嫂 3护工 4育儿嫂
-                "updateTime": { //更新时间
-                    "date": 26,
-                    "day": 3,
-                    "hours": 11,
-                    "minutes": 41,
-                    "month": 1,
-                    "seconds": 27,
-                    "time": 1582688487000,
-                    "timezoneOffset": -480,
-                    "year": 120
-                }
-            },            
+          
         ],
-        company: '中青家政服务',
-        createTime: {
-            "date": 26,
-            "day": 3,
-            "hours": 11,
-            "minutes": 41,
-            "month": 1,
-            "seconds": 22,
-            "time": 1582688482000,
-            "timezoneOffset": -480,
-            "year": 120
-        },
+        company: '',
+        createTime: {},
         dataFlag: true,
-        education: '高中',
+        education: '',
         experience: 23,
         goodEvalCount: 4,
         headImg: '',
-        idCard: '350822198508235913',
-        labels: [
-            {
-                "label": "做事认真",
-                "lableId": 1,
-                "id": 1
-            },
-            {
-                "label": "责任心强",
-                "lableId": 2,
-                "id": 1
-            },
-            {
-                "label": "有耐心",
-                "lableId": 3,
-                "id": 1
-            },
-            {
-                "label": "效率高",
-                "lableId": 3,
-                "id": 1
-            },
-            {
-                "label": "厨艺好",
-                "lableId": 3,
-                "id": 1
-            },
-        ],
+        idCard: '',
+        labels: [],
         marriage: true,
-        name: '兰阿姨',
-        nation: '汉族',
-        nativePlace: '福建',
-        number: '35081298',
-        onDutyCount: 12,
-        phone: '15080090143',
-        salary: 3589,
+        name: '',
+        nation: '',
+        nativePlace: '',
+        number: '',
+        onDutyCount: 0,
+        phone: '',
+        salary: 0,
         state: 0,
-        subscribeCount: 6,
+        subscribeCount: 0,
         type: 0,
         servicePhone: '',
-        updateTime: {
-            "date": 26,
-            "day": 3,
-            "hours": 11,
-            "minutes": 41,
-            "month": 1,
-            "seconds": 22,
-            "time": 1582688482000,
-            "timezoneOffset": -480,
-            "year": 2019            
-        },
+        updateTime: {},
         
     }),
     created() {
@@ -540,7 +348,6 @@ export default {
             const params = {
                 compId: this.compId
             }
-            console.info(params)
             this.$http.get('/nanny/findSimilarity',{params})
             .then(res=>{
                 if(res.data.success){

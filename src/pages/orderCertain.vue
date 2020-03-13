@@ -66,7 +66,7 @@
             @hide="showCouponPage=false" 
             v-if="showCouponPage"
         />
-        <timePage :type="type" @timeSelect="timeSelect" :id="finalCommunityId" @hide="showTimePage=false" v-if="showTimePage"/>
+        <timePage :type="type" @timeSelect="timeSelect" :id="finalAddressItem.communityId" @hide="showTimePage=false" v-if="showTimePage"/>
         <addressList :type="type" @addressSelect="addressSelect"  @hide="showAddress=false" v-if="showAddress"/>
         <payPage :fromAdd="isTrue" :price="item.price" :discount="discount" :finalPrice="finalPrice" :obj="postObj" @hide="showPayPage=false" v-if="showPayPage"/>
     </div>

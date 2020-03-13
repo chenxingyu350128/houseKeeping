@@ -40,6 +40,7 @@
                 type="time"
                 :formatter="formatter"
                 @cancel="showBS=false"
+                @change="onChange"
                 @confirm="onConfirm"
                 :min-hour="minHour"
                 :min-minute="minMin"
@@ -69,6 +70,7 @@ export default {
     },
     data: ()=>({
         tab: 0,
+        hourIndex: 0,
         times: null,
         fullDateTimes: null,
         timeIndex: null,
@@ -139,7 +141,7 @@ export default {
             return new Date().getHours()
         },
         minMin(){
-            if(this.tab){
+            if(this.tab||this.hourIndex){
                 return 0
             }
             return new Date().getMinutes()
@@ -214,6 +216,10 @@ export default {
             this.showBS = false
             this.timeStr= this.tabItems[this.tab].en+' '+e+':00'
             console.log(e)
+        },
+        onChange (x,y) {
+            console.log(x.getIndexes())
+            this.hourIndex = x.getIndexes()[0]
         },
         selectCertain() {
             if(!this.timeStr) {
