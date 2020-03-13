@@ -103,13 +103,13 @@
             </van-list> 
             <div v-if="!list.length" class="d-flex flex-column align-center py-12 grey lighten-2">
                 <v-img max-height="30vw" max-width="30vw" :src="emptyContent"></v-img>    
-                <span class="mt-2 text--secondary">暂无订单{{queryType}}</span>
+                <span class="mt-2 text--secondary">暂无订单</span>
             </div>          
         </v-tabs-items>  
         <orderDetails @update="showDetails=false;tabChange()" :orderType="orderType" :pOrderId="orderId" @hide="showDetails=false" v-if="showDetails"/>     
         <payPage @paySuccess="tabChange" :obj="obj" :price="price" :discount="discount" :finalPrice="finalPrice" @hide="showPayPage=false" v-if="showPayPage"/>
         <alertBox @certain="cancelCertain" title="确认取消该订单吗？" @cancel="showAlert=false" :showIt="showAlert"/>
-        <evaluation @evalSuccess="showEvaluate=false;tabChange()" :obj="obj" :auntId="auntId" :itemId="itemId" :nannyId="nannyId" @hide="showEvaluate=false" v-if="showEvaluate"/>
+        <evaluation :pOrderId="orderId" @evalSuccess="showEvaluate=false;tabChange()" @hide="showEvaluate=false" v-if="showEvaluate"/>
     </div>
 </template>
 
@@ -281,7 +281,7 @@ export default {
             this.nannyId = item.nannyId
             this.auntId = item.auntId
             this.itemId = item.itemId
-            this.obj = item.orderServices[0]
+            this.orderId = item.orderId
             this.showEvaluate = true
         },
         beforeCancel(id) {

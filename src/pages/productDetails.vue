@@ -298,7 +298,7 @@ export default {
                 way: e
             };
             //这里发送数据到给app处理
-            webkit.messageHandlers.cordova_iab.postMessage(JSON.stringify(shareInfo))            
+            window.webkit.messageHandlers.cordova_iab.postMessage(JSON.stringify(shareInfo))            
         }
     }
 };

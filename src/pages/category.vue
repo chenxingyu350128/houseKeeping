@@ -25,12 +25,13 @@
                     :key="index" 
                     cols="4">
                         <v-avatar
+                            v-if="item.pic"
                             size="50"
                             tile
                         >
                             <img :src="item.pic">
                         </v-avatar>
-                        <span class="caption">{{item.itemName}}</span>
+                        <span class="caption text--secondary v-collips">{{item.itemName}}</span>
                     </v-col>
                 </v-row>
             </v-tab-item>
@@ -62,16 +63,44 @@ export default {
         cateList() {
             return this.$store.state.app.cateList
         },
+        areasId() {
+            return this.$store.state.app.areasId
+        },
     },
     mounted() {
-
+        this.findCates()
     },
     methods: {
+        async findCates() {
+            // if(!this.cateList){
+            //     return
+            // }
+            let res = await this.$http.get('/service/findCates',{params: {areasId: this.areasId}})
+            if(res.data){
+                let obj = res.data.obj
+                obj.forEach(res=>{
+                    let items = res.items
+                    items.forEach(re=>{
+
+                        if(re.pic){
+                            let pic = re.pic.split(',')[0]
+                            re.pic = pic
+                        }
+                    })
+ 
+                })
+                this.$store.commit('SET_SINGLE_STATE', ['cateList', obj])
+            }
+            console.log(res,'rrr')
+        },
         tabChange(e) {
             console.log(e)
             window.scrollTo(0,0)
         },
         toDetail(id) {
+            if(!id){
+                return
+            }
             // this.editId = id
             // this.showDetails = true
             this.$router.push({

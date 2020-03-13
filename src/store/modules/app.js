@@ -5,6 +5,7 @@ const app = {
       token: localStorage.getItem('token'),
       positionCity: localStorage.getItem('positionCity'),
       userId: localStorage.getItem('userId'),
+      areasId: localStorage.getItem('areasId'),
       sex: localStorage.getItem('sex'),
       userName: localStorage.getItem('userName'),
       realName: localStorage.getItem('realName'),

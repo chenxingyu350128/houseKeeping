@@ -16,7 +16,7 @@
                     overlap
                     offset-x="15"
                     offset-y="10"
-                    @click.native="showMsg=true" 
+                    @click.native="toMsgPage" 
                     color="pink accent-3">
                         <v-icon class="pa-0">mdi-bell-outline</v-icon>
                     </v-badge>
@@ -25,7 +25,7 @@
             </template>
         </iHeader>
         <v-carousel 
-        class="pink"
+        class="pink lighten-4"
         hide-delimiter-background
         hide-delimiter
         height="183" 
@@ -84,7 +84,7 @@
                         width="100%" 
                         aspect-ratio="2" 
                         class="flex-fill mr-2" 
-                        :src="item.details[0].attrPic">
+                        :src="item.pics[0]">
                         </v-img>
                     </v-col>
                     <v-col v-if="item.details.length>1" class="pa-0 ma-0 pr-2" cols="8">
@@ -92,23 +92,23 @@
                         width="100%" 
                         aspect-ratio="2" 
                         class="flex-fill mr-2 fill-height" 
-                        :src="item.details[0].attrPic">
+                        :src="item.pics[0]">
                         </v-img>
                     </v-col>
-                    <v-col v-if="item.details.length>1" class="pa-0 ma-0" cols="4">
+                    <v-col v-if="item.pics.length>1" class="pa-0 ma-0" cols="4">
                         <v-img 
                         style="margin-bottom: 5%" 
                         width="100%" height="47.5%" 
                         aspect-ratio="2" 
                         class="flex-fill mr-2" 
-                        :src="item.details[1].attrPic">
+                        :src="item.pics[1]">
                         </v-img>
                         <v-img 
-                        v-if="item.details.length>2" 
+                        v-if="item.pics.length>2" 
                         width="100%" height="47.5%" 
                         aspect-ratio="2" 
                         class="flex-fill mr-2" 
-                        :src="item.details[2].attrPic">
+                        :src="item.pics[2]">
                         </v-img>
                     </v-col>
                 </v-row>
@@ -233,7 +233,7 @@ export default {
             showDetails: false,
             showMsg: false,
             editId: 0,
-            areasId: 0,
+            // areasId: 0,
             notRead: 0,
             nannyType: '',
             searchOption: {
@@ -280,6 +280,9 @@ export default {
         userId() {
             return this.$store.state.app.userId
         },
+        areasId() {
+            return this.$store.state.app.areasId
+        },
         communityList() {
             return this.$store.state.app.communityList
         },
@@ -306,10 +309,15 @@ export default {
         // this.getLocation()
         this.init()
     },
+    activated(){
+         this.findNotRead()
+        this.hotProduct()
+        this.bestSelling()
+    },
     methods: {
         backToApp() {
           let message ={backToApp: true}
-          webkit.messageHandlers.cordova_iab.postMessage(JSON.stringify(message));
+          window.webkit.messageHandlers.cordova_iab.postMessage(JSON.stringify(message));
         },
         getLocation() {
             console.log(AMap)
@@ -361,8 +369,9 @@ export default {
         },
         postAdcode(adcode) {
             this.showAreaPicker=false
-            this.areasId = adcode
-            this.findCates()
+            this.$store.commit('SET_SINGLE_STATE', ['areasId', adcode])
+            // this.areasId = adcode
+            // this.findCates()
             this.hotProduct()
             this.bestSelling()
             console.log('地区编码：',adcode)
@@ -375,6 +384,7 @@ export default {
                 return
             }
             const sessionId = window.location.hash.split('sessionId=')[1]
+            // const sessionId = '4F020823F072702A'
             const params = {
                 sessionId
             }
@@ -425,25 +435,40 @@ export default {
             }
             console.log(res,'rrr')
         },
-        async findCates() {
-            // if(!this.cateList){
-            //     return
-            // }
-            let res = await this.$http.get('/service/findCates',{params: {areasId: this.areasId}})
-            if(res.data){
+        // async findCates() {
+        //     // if(!this.cateList){
+        //     //     return
+        //     // }
+        //     let res = await this.$http.get('/service/findCates',{params: {areasId: this.areasId}})
+        //     if(res.data){
+        //         let obj = res.data.obj
+        //         obj.forEach(res=>{
+        //             let items = res.items
+        //             items.forEach(re=>{
 
-                this.$store.commit('SET_SINGLE_STATE', ['cateList', res.data.obj])
-            }
-            console.log(res,'rrr')
-        },
+        //                 if(re.pic){
+        //                     let pic = re.pic.split(',')[0]
+        //                     re.pic = pic
+        //                 }
+        //             })
+ 
+        //         })
+        //         this.$store.commit('SET_SINGLE_STATE', ['cateList', obj])
+        //     }
+        //     console.log(res,'rrr')
+        // },
         async bestSelling() {
             // if(!this.indexCates){
             //     return
             // }
             let res = await this.$http.get('/service/findCxiao',{params: {areasId: this.areasId}})
             if(res.data){
-
-                this.$store.commit('SET_SINGLE_STATE', ['bestSelling', res.data.obj])
+                let obj = res.data.obj
+                obj.forEach(re=>{
+                   this.$set(re,'pic',re.pic.split(',')[0])
+ 
+                })
+                this.$store.commit('SET_SINGLE_STATE', ['bestSelling', obj])
             }
             console.log(res,'rrr')
         },
@@ -453,8 +478,13 @@ export default {
             // }
             let res = await this.$http.get('/service/findHot',{params: {areasId: this.areasId}})
             if(res.data){
-
-                this.$store.commit('SET_SINGLE_STATE', ['hotProduct', res.data.obj])
+                let obj = res.data.obj
+                obj.forEach(re=>{
+                   this.$set(re,'pics',re.pic.split(','))
+ 
+                })
+                console.log(obj)
+                this.$store.commit('SET_SINGLE_STATE', ['hotProduct', obj])
             }
             console.log(res,'rrr')
         },

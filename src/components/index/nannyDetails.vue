@@ -11,7 +11,7 @@
                 size="75"
                 tile
             >
-                <img src="headImg">
+                <img :src="headImg">
             </v-avatar>
             <div class="d-flex flex-column flex-fill justify-space-around ml-2">
                 <span class="d-flex">
@@ -247,8 +247,8 @@ export default {
         createTime: {},
         dataFlag: true,
         education: '',
-        experience: 23,
-        goodEvalCount: 4,
+        experience: 0,
+        goodEvalCount: 0,
         headImg: '',
         idCard: '',
         labels: [],

@@ -2,7 +2,7 @@
     <div class="orderDetails grey lighten-3 subtitle-2">
         <iHeader @doSomething="$emit('hide')" text="订单详情"></iHeader>
         <!-- 抢单 -->
-        <div v-if="orderType!=2" key="qianddan">
+        <div v-if="orderType===2" key="qianddan">
           <div class="ma-4">
             <!-- 进度 -->
             <v-stepper class="teal white--text lighten-3" v-model="attemperStatus">
@@ -28,7 +28,7 @@
                 tile
                 size="65"
               >
-                <v-img :src="orderServices[0].pic"></v-img>
+                <v-img :src="pic"></v-img>
               </v-avatar>
               <div class="ml-2 flex-fill d-flex flex-column justify-space-between align-end">
                 <div class="d-flex justify-space-between">
@@ -126,7 +126,7 @@
                 tile
                 size="65"
               >
-                <v-img :src="orderServices[0].pic"></v-img>
+                <v-img :src="pic"></v-img>
               </v-avatar>
               <div class="ml-2 flex-fill d-flex flex-column justify-space-between align-end">
                 <div class="d-flex justify-space-between">
@@ -255,6 +255,7 @@ export default {
       "state": '', //订单状态(0关闭 1待支付 2进行中 3已完成 4取消)
       "totalMoney": 0,
       "updateTime": "",
+      pic:'',
       "postObj": null,
       "showPayPage": false,
       "showEvaluate": false,
@@ -297,6 +298,7 @@ export default {
         for(let x in obj) {
           this[x] = obj[x]
         }
+        this.pic = this.orderServices[0].pic
         this.attemperStatus++
       },
       toProductDetails() {

@@ -7,12 +7,12 @@
             tile
             color="pink lighten-3"
           >
-            <v-img :src="obj.pic"></v-img>
+            <v-img :src="obj_f.pic"></v-img>
           </v-avatar>
           <div class="d-flex flex-fill ml-2 flex-column justify-space-between">
-            <div>{{obj.name}}</div>
+            <div>{{obj_f.name}}</div>
             <div class="d-flex justify-space-between">
-              <span class="pink--text text--accent-2">￥{{obj.price}}</span>
+              <span class="pink--text text--accent-2">￥{{obj_f.price}}</span>
               <span>x1</span>
             </div>
           </div>
@@ -50,6 +50,10 @@ export default {
           return null
         }
       },
+      pOrderId: {
+        type: Number,
+        default: 0
+      },
       auntId: {
         type: Number,
         default: 0
@@ -68,7 +72,11 @@ export default {
     },
     data: ()=>({
       rating: 5,
-      desc: ''
+      desc: '',
+      auntId0: 0,
+      itemId0: 0,
+      nannyId0: 0,
+      obj0: null,
 
     }),
     created() {
@@ -81,11 +89,43 @@ export default {
       userName() {
         return this.$store.state.app.userName
       },
+      auntId_f () {
+        return this.auntId0||this.auntId
+      },
+      itemId_f () {
+        return this.itemId0||this.itemId
+      },
+      nannyId_f () {
+        return this.nannyId0||this.nannyId
+      },
+      orderId_f () {
+        return this.pOrderId||this.obj_f.orderId
+      },
+      obj_f () {
+        return this.obj||this.obj0
+      },
     },
     mounted() {
-
+      if(this.pOrderId){
+        this.getDetails()
+      }
     },
     methods: {
+      async getDetails () {
+        const params = {
+          orderId: this.pOrderId
+        }
+        let res = await this.$http.get('/order/findOrderById',{params})
+        if(res.data&&res.data.success){
+          let obj = res.data.obj
+          this.auntId0 = obj.auntId
+          this.itemId0 = obj.itemId
+          this.nannyId0 = obj.nannyId
+          this.obj0 = obj.orderServices[0]
+
+        }
+        
+      },
       async commit() {
         // if(!this.rating) {
         //   this.$toast('请进行星级评价')
@@ -99,17 +139,17 @@ export default {
           userId: this.userId,
           userName: this.userName,
           eval: this.rating,
-          orderId: this.obj.orderId,
+          orderId: this.orderId_f,
           option: this.desc
         }
-        if(this.auntId){
-          data.auntId = this.auntId
+        if(this.auntId_f){
+          data.auntId = this.auntId_f
         }
-        if(this.nannyId){
-          data.auntId = this.nannyId
+        if(this.nannyId_f){
+          data.auntId = this.nannyId_f
         }
-        if(this.itemId){
-          data.goodsId = this.itemId
+        if(this.itemId_f){
+          data.goodsId = this.itemId_f
         }
         let res = await this.$http.post('/order/addEvaluation',data)
         if(res.data.success) {
