@@ -228,6 +228,7 @@ export default {
         },
         tabChange() {
             this.page = 1
+            this.$store.commit('SET_SINGLE_STATE', ['orderList', []])
             this.init()
             // if(this.tab!=4){
             //     return
