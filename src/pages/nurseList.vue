@@ -106,13 +106,13 @@
             </v-tab-item>
             
         </v-tabs-items>
-        <nannyDetails :nannyName="detailName" :id="detailId" @hide="showDetails=false" v-if="showDetails"/>
+        <!-- <nannyDetails :nannyName="detailName" :id="detailId" @hide="showDetails=false" v-if="showDetails"/> -->
     </div>
 </template>
 
 <script>
 import iHeader from '../components/public/header'
-import nannyDetails from '../components/index/nannyDetails'
+// import nannyDetails from '../components/index/nannyDetails'
 export default {
     name: 'nannyList',
     props: {
@@ -122,8 +122,8 @@ export default {
         }
     },
     components: {
-       iHeader,
-       nannyDetails
+       iHeader
+    //    nannyDetails
     },
     data: ()=>({
         tab: 0,
@@ -251,10 +251,17 @@ export default {
 
         },
         toDetails(name,id){
-            this.detailName = name
-            this.detailId = id
-            console.log('showDetail')
-            this.showDetails = true
+            this.$router.push({
+                path: '/nannyDetails',
+                query: {
+                    name,
+                    id
+                }
+            })
+            // this.detailName = name
+            // this.detailId = id
+            // console.log('showDetail')
+            // this.showDetails = true
         }
     }
 };

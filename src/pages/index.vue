@@ -56,7 +56,7 @@
         <div class="title text-center py-2 font-weight-bold">
             热销产品
         </div>
-        <div class="d-flex flex-wrap justify-space-between mx-4">
+        <div v-if="hotProducts.length" class="d-flex flex-wrap justify-space-between mx-4">
 
             <div 
             class="d-flex flex-column pa-2" 
@@ -116,7 +116,7 @@
                     <div class="d-flex flex-column">
 
                         <span class="mt-1 px-1 subtitle-1 text--primary">{{item.itemName}}</span>
-                        <span class="px-1 caption text--secondary">{{item.intro}}</span>
+                        <span class="px-1 caption text--secondary">{{item.shortIntro}}</span>
                     </div>
                     <span class="px-1 subtitle-2 orange--text">{{item.currentPrice}}元</span>
                 </div>
@@ -129,7 +129,7 @@
         <div class="title text-center py-2 font-weight-bold">
             畅销单品
         </div>
-        <div class="d-flex flex-wrap justify-space-between pb50 mx-4">
+        <div v-if="bestSellings.length" class="d-flex flex-wrap justify-space-between pb50 mx-4">
 
             <div 
             class="d-flex flex-column pa-2" 
@@ -155,11 +155,11 @@
         </div>
         <!-- <el-amap-search-box :events="searchEvents" ref="searchBox" style="max-width: 100%" class="search-box mt-2 caption" :search-option="searchOption" :on-search-result="onSearchResult"></el-amap-search-box> -->
         <el-amap 
-        v-show="notShow" 
-        class="indexMap" 
-        ref="mapIndex"
-        :amap-manager="amapManager" 
-        :events="events"
+            v-show="notShow" 
+            class="indexMap" 
+            ref="mapIndex"
+            :amap-manager="amapManager" 
+            :events="events"
         >
             <!-- events事件中new AMap可用 -->
         </el-amap>   
@@ -265,6 +265,7 @@ export default {
             events: {
                 init: (map) => {
                     // console.log(view.zoom)
+                    console.log('event ')
                     view.getLocation()
                 },
             }
@@ -387,11 +388,11 @@ export default {
             //测试用
             // this.$store.commit('SET_SINGLE_STATE', ['userId', 1])
             // this.$store.commit('SET_SINGLE_STATE', ['userName', 'cxx'])
-            if(this.userId){
-                return
-            }
-            const sessionId = window.location.hash.split('sessionId=')[1]
-            // const sessionId = '4F020823F072702A'
+            // if(this.userId){
+            //     return
+            // }
+            // const sessionId = window.location.hash.split('sessionId=')[1]
+            const sessionId = '4F020823F072702A'
             const params = {
                 sessionId
             }

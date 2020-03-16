@@ -68,7 +68,7 @@
         />
         <timePage :type="type" @timeSelect="timeSelect" :id="finalAddressItem.communityId" @hide="showTimePage=false" v-if="showTimePage"/>
         <addressList :type="type" @addressSelect="addressSelect"  @hide="showAddress=false" v-if="showAddress"/>
-        <payPage :fromAdd="isTrue" :price="item.price" :discount="discount" :finalPrice="finalPrice" :obj="postObj" @hide="showPayPage=false" v-if="showPayPage"/>
+        <payPage :pOrderId="orderId" @hide="showPayPage=false" v-if="showPayPage"/>
     </div>
 </template>
 
@@ -105,6 +105,7 @@ export default {
         selectedAddress: null,
         selectedCoupon: null,
         selectedCouponId: 15,
+        orderId: 0,
         // discount: 0.01,
         // discountStr: '',
         dateStr: '',
@@ -256,7 +257,7 @@ export default {
         },
         payIt(){
             if(!this.finalAddressItem){
-                this.$toast('请选择服务地址！')
+                this.$toast.error('请选择服务地址！')
                 return
             }
             if(this.type&&!this.dateStr){
@@ -293,7 +294,7 @@ export default {
             this.$http.post('/order/addOrder',data)
             .then(res=>{
                 if(res.data.success){
-                   this.postObj = res.data.obj.orderServices[0]
+                   this.orderId = res.data.obj.orderId
                    this.showPayPage = true
                    this.updateOrderList()//keep-alive配合vuex，需要更新订单列表。
                 }

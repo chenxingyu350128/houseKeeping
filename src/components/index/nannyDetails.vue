@@ -1,20 +1,20 @@
 <template>
     <div class="nannyDetails white subtitle-2">
-        <iHeader @doSomething="$emit('hide')" :text="newName||nannyName">
+        <iHeader @doSomething="$router.back()" :text="name">
             <template v-slot:right>
                 <v-icon @click="changeCollectState">{{isCollect?'mdi-star':'mdi-star-outline'}}</v-icon>
-                <v-icon>mdi-share</v-icon>
+                <v-icon @click="showShare=true">mdi-share</v-icon>
             </template>
         </iHeader>
-        <div class="d-flex pa-2 caption">
+        <div class="d-flex py-2 px-1 caption">
             <v-avatar
-                size="75"
+                size="70"
                 tile
             >
                 <img :src="headImg">
             </v-avatar>
             <div class="d-flex flex-column flex-fill justify-space-around ml-2">
-                <span class="d-flex">
+                <span class="d-flex no-wrap">
                     编号：{{number}}
                     <span class="ml-2 flex-fill">{{goodEvalCount}}个好评</span>
                     <span>{{salary}}元/月</span>
@@ -110,12 +110,12 @@
         <v-divider></v-divider>
         <div @click="toShowEvals" class="subtitle-2 px-4 py-2 my-2 d-flex align-center">
             <span class="flex-fill">雇主评价</span>
-            <span>共有{{goodEvalCount}}次好评，好评率{{percent}}%</span>
+            <span>共有{{evals.length}}次好评，好评率{{percent}}%</span>
             <v-icon>mdi-chevron-right</v-icon>
         </div>
         <v-divider></v-divider>
-        <v-card color="#daf5ec" class="mx-4 my-2">
-            <div v-for="(item,i) in evalsList" :key="i">
+        <v-card v-if="evals.length" color="#daf5ec" class="mx-4 my-2">
+            <div v-for="(item,i) in evals" :key="i">
 
                 <div class="pa-2" >
                     <div class="d-flex justify-space-between">
@@ -197,12 +197,33 @@
             </v-list-item>
             <v-divider></v-divider>                     
         </v-list>  
+        <v-bottom-sheet  v-model="showShare">
+            <div class="white pa-2 text--secondary">分享到</div>
+            <div class="white d-flex justify-space-around py-4 subtitle-2 text--secondary">
+                <div @click="share(1)" class="d-flex flex-column align-center">
+
+                    <v-btn depressed dark fab small color="green accent-4">
+
+                        <v-icon>mdi-wechat</v-icon>
+                    </v-btn>
+                    微信好友
+                </div>
+                <div @click="share(2)" class="d-flex flex-column align-center">
+
+                    <v-btn depressed dark fab small color="green accent-4">
+
+                        <v-icon>mdi-camera-iris</v-icon>
+                    </v-btn>
+                    朋友圈
+                </div>
+            </div>
+        </v-bottom-sheet>        
         <v-footer class="white py-6">
             <v-btn @click="callService" depressed color="primary">联系客服</v-btn>
             <v-spacer></v-spacer>
             <v-btn @click="showReservation=true" depressed color="primary">立即预约</v-btn>
         </v-footer>      
-        <evals nannyEval="Yo" :id="id" @hide="showEvals=false" v-if="showEvals"/>
+        <evals nannyEval="Yo" :id="nannyId" @hide="showEvals=false" v-if="showEvals"/>
         <reservation :compId="compId" :nannyId="nannyId" @hide="showReservation=false" v-if="showReservation"/>
     </div>
 </template>
@@ -213,16 +234,6 @@ import evals from '../product/goodsEvals'
 import reservation from '../product/reservation'
 export default {
     name: 'nannyDetail',
-    props: {
-        nannyName: {
-            type: String,
-            required: true
-        },
-        id: {
-            type: Number,
-            required: true
-        }
-    },
     components: {
        iHeader,
        evals,
@@ -233,13 +244,14 @@ export default {
         showReservation: false,
         showMore: false,
         showEvals: false,
+        showShare: false,
         age: 0,
-        newName: '',
+        name: '',
         nannyId: 0,
         compId: 0,
         city: '',
         collectCount: 0,
-        evalsList: [],
+        evals: [],
         similar: [
           
         ],
@@ -281,7 +293,7 @@ export default {
         //     return this.$state.state.app.nannyEvals
         // },
         updateStr() {
-            return this.updateTime.year+'-'+this.updateTime.month+'-'+this.updateTime.date+' '+this.updateTime.hours+':'+this.updateTime.minutes+':'+this.updateTime.seconds
+            return this.$dateStr(new Date(this.createTime.time))
         },
         percent(){
             if(!this.onDutyCount){
@@ -292,8 +304,10 @@ export default {
         
     },
     mounted() {
+        let id = this.$route.query.id
+        // let name = this.$route.query.name
         const params = {
-            id: this.id
+            id
         }
         this.findNanny(params)
         // this.findEvalsByNanny()
@@ -309,7 +323,7 @@ export default {
                     }
                     this.findSimilarity()
                     this.saveOrNot()
-                    this.findEvalsList()
+                    // this.findEvalsList()
                 }
             })   
         },
@@ -318,32 +332,32 @@ export default {
             location.href='tel: ' + this.servicePhone
         },
         toSimilar(name,id) {
-            this.newName = name
+            // this.newName = name
             const params = {
                 id
             }
             this.findNanny(params)
         },
         toShowEvals() {
-            if(!this.onDutyCount){
+            if(!this.evals.length){
                 this.$toast('暂无评价')
                 return
             }
             this.showEvals = true
         },
-        findEvalsList() {
-            const params = {
-                nannyId: this.nannyId,
-                type: 1//好评
-            }
-            // const url = this.type?
-            this.$http.get('/service/findEvalsByNanny',{params})
-            .then(res=>{
-                if(res.data.success){
-                    this.evalsList = res.data.obj
-                }
-            })
-        },
+        // findEvalsList() {
+        //     const params = {
+        //         nannyId: this.nannyId,
+        //         type: 1//好评
+        //     }
+        //     // const url = this.type?
+        //     this.$http.get('/service/findEvalsByNanny',{params})
+        //     .then(res=>{
+        //         if(res.data.success){
+        //             this.evalsList = res.data.obj
+        //         }
+        //     })
+        // },
         findSimilarity() {
             const params = {
                 compId: this.compId
@@ -368,6 +382,15 @@ export default {
                 }
             })
         },
+        share(e) {
+            this.showShare = false
+            const shareInfo = {
+                url: location.href,
+                way: e
+            };
+            //这里发送数据到给app处理
+            window.webkit.messageHandlers.cordova_iab.postMessage(JSON.stringify(shareInfo))            
+        },        
         changeCollectState() {
             let url = this.isCollect?'/nanny/delNannyCollect':'/nanny/addNannyCollect'
             const data = {

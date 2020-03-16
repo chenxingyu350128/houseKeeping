@@ -2,11 +2,12 @@ import Vue from "vue";
 import Vuetify from "vuetify";
 import "vuetify/dist/vuetify.min.css";
 import VuetifySnackbar from "vuetify-toast-snackbar";
+// import vuetifyToast from "vuetify-toast"
 Vue.use(Vuetify);
 Vue.use(VuetifySnackbar, {
   x: "right", // default
   y: "bottom", // default
-color: "grey darken-1", // default
+  color: "grey lighten-2", // default
   icon: "mdi-information",
   classes: ["body-2"],
   dismissable: true, // default

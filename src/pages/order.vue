@@ -55,10 +55,10 @@
                         </div>
                     </div>
                     <v-divider></v-divider>
-                    <div v-if="item.state==1||(item.state==3&&!item.evaluateTime)" class="px-4 py-2 d-flex flex-row-reverse">
-                        <v-btn @click.stop="toEvaluate(item)" v-if="item.state==3" depressed class="ml-4" dark color="primary">评价</v-btn>
-                        <v-btn @click.stop="toPay(item)" v-if="item.state==1" depressed class="ml-4" dark color="primary">支付</v-btn>
-                        <v-btn @click.stop="beforeCancel(item.orderId)" v-if="item.state==1" depressed class="ml-4" dark color="red" outlined>取消</v-btn>
+                    <div v-if="item.state&&item.state<=3" class="px-4 py-2 d-flex flex-row-reverse">
+                        <v-btn @click.stop="toEvaluate(item)" v-if="item.state==3&&!item.evaluateTime" depressed class="ml-4" dark color="primary">评价</v-btn>
+                        <v-btn @click.stop="toPay(item.orderId)" v-if="item.state==1" depressed class="ml-4" dark color="primary">支付</v-btn>
+                        <v-btn @click.stop="beforeCancel(item.orderId)" v-if="item.state&&item.state<3" depressed class="ml-4" dark color="red" outlined>取消</v-btn>
                     </div>
                 </div>
             </van-list> 
@@ -107,7 +107,7 @@
             </div>          
         </v-tabs-items>  
         <orderDetails @update="showDetails=false;tabChange()" :orderType="orderType" :pOrderId="orderId" @hide="showDetails=false" v-if="showDetails"/>     
-        <payPage @paySuccess="tabChange" :obj="obj" :price="price" :discount="discount" :finalPrice="finalPrice" @hide="showPayPage=false" v-if="showPayPage"/>
+        <payPage :pOrderId="orderId" @paySuccess="tabChange"  @hide="showPayPage=false" v-if="showPayPage"/>
         <alertBox @certain="cancelCertain" title="确认取消该订单吗？" @cancel="showAlert=false" :showIt="showAlert"/>
         <evaluation :pOrderId="orderId" @evalSuccess="showEvaluate=false;tabChange()" @hide="showEvaluate=false" v-if="showEvaluate"/>
     </div>
@@ -296,16 +296,13 @@ export default {
             }
             let res = await this.$http.post('/order/cancelOrder',data)
             if(res.data.success){
-                this.$toast('订单取消成功')
+                this.$toast.success('订单取消成功')
                 this.page = 1
                 this.init()
             }
         },
         toPay(e) {
-            this.discount = e.discounts
-            this.obj = e.orderServices[0]
-            this.price = e.totalMoney
-            this.finalPrice = e.actualPayment
+            this.orderId = e
             this.showPayPage = true
         }
     }

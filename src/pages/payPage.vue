@@ -7,12 +7,12 @@
             tile
             color="pink lighten-3"
           >
-            <v-img :src="obj.pic"></v-img>
+            <v-img :src="pic"></v-img>
           </v-avatar>
           <div class="d-flex flex-fill ml-2 flex-column justify-space-between">
-            <div>{{obj.name}}</div>
+            <div>{{name}}</div>
             <div class="d-flex justify-space-between">
-              <span class="pink--text text--accent-2">￥{{price}}</span>
+              <span class="pink--text text--accent-2">￥{{totalMoney}}</span>
               <span>x1</span>
             </div>
           </div>
@@ -20,14 +20,14 @@
         <v-divider></v-divider>
         <div class="px-4 py-2 d-flex justify-space-between white">
           <span>商品总额</span>
-          <span>￥{{price}}</span>
+          <span>￥{{totalMoney}}</span>
         </div>
         <div class="px-4 py-2 d-flex justify-space-between white">
           <span>商品优惠</span>
-          <span>￥{{discount}}</span>
+          <span>￥{{discounts}}</span>
         </div>
         <v-divider></v-divider>
-        <div class="px-4 py-2 text-right mb-2 white">实付款：<span class="pink--text text--accent-2">￥{{finalPrice}}</span></div>
+        <div class="px-4 py-2 text-right mb-2 white">实付款：<span class="pink--text text--accent-2">￥{{actualPayment}}</span></div>
         <div class="px-4 py-2 white">支付方式</div>
         <div @click="payWay=0" class="px-4 py-2 d-flex align-center justify-space-between white">
           <div class="d-flex align-center">
@@ -67,33 +67,26 @@ import iHeader from '../components/public/header'
 export default {
     name: 'payPage',
     props: {
-      obj: {
-        type: Object,
-        required: true
-      },
-      fromAdd: {
-        type: Boolean,
-        required: false
-      },
-      price: {
+      pOrderId: {
         type: Number,
         required: true
-      },
-      discount: {
-        type: Number,
-        required: true
-      },
-      finalPrice: {
-        type: Number,
-        required: true
-      },
+      }
     },
     components: {
        iHeader
     },
     data: ()=>({
       payWay: 0,
-      payInfo: null
+      payInfo: null,
+      auntId: 0,
+      itemId: 0,
+      nannyId: 0,
+      obj: null, 
+      totalMoney: 0,     
+      discounts: 0,     
+      actualPayment: 0,
+      pic: '',
+      name: ''   
     }),
     created(){
       let that = this
@@ -106,9 +99,26 @@ export default {
 
     },
     mounted() {
-
+      if(this.pOrderId){
+        this.init()
+      }
     },
     methods: {
+      async init(){
+        const params = {
+          orderId: this.pOrderId
+        }
+        let res = await this.$http.get('/order/findOrderById',{params})
+        if(res.data&&res.data.success){
+          let obj = res.data.obj
+          for(let x in obj) {
+            this[x] = obj[x]
+          }
+          this.pic = obj.orderServices[0].pic
+          this.name = obj.orderServices[0].name
+
+        }        
+      },
       async commit() {
         const data = {
           orderId: this.obj.orderId,

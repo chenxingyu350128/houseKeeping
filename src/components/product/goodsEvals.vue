@@ -1,5 +1,5 @@
 <template>
-    <div class="xxx-cpnt grey lighten-3">
+    <div class="goodsEvals grey lighten-3">
         <iHeader @doSomething="$emit('hide')" :text="nannyEval?'雇主评价':'商品评价'"></iHeader>
         <div class="d-flex px-2 py-2 justify-space-between">
             <v-btn 
@@ -73,7 +73,7 @@ export default {
         init(e) {
             let url = this.nannyEval?'/service/findEvalsByNanny':'/service/findEvalsByGoods'
             const params = {
-                type: this.nannyEval?this.type:this.type-1
+                type: this.type-1
             }
             if(this.nannyEval){
                 params.nannyId = this.id
@@ -84,7 +84,7 @@ export default {
             .then(res=>{
                 if(res.data.success){
                     this.allLoaded = res.data.obj.currentPage === res.data.obj.totalPages
-                    // this.list = e?this.list.concat(res.data.obj):res.data.obj
+                    this.list = e?this.list.concat(res.data.obj):res.data.obj
                 }
             })
         },
@@ -106,7 +106,7 @@ export default {
 
 <style scoped lang="scss">
 
-   .xxx-cpnt{
+   .goodsEvals{
        position: fixed;
        left: 0;
        right: 0;

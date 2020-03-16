@@ -32,6 +32,11 @@ export default new VueRouter({
             component: () => import("./pages/productDetails.vue")
         },
         {
+            path: "/nannyDetails",
+            name: "nannyDetails",
+            component: () => import("./components/index/nannyDetails.vue")
+        },
+        {
             path: "/order",
             name: "order",
             component: () => import("./pages/order.vue"),

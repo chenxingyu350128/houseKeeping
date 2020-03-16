@@ -10,21 +10,21 @@
         hide-delimiters
         hide-delimiter-background
         height="200">
-            
             <v-carousel-item
-                v-for="(item,i) in details"
+                v-for="(item,i) in images"
                 :key="i"
-                :src="item.attrPic"
+                :src="item"
             ></v-carousel-item>
         </v-carousel>
         <div class="pa-4 mb-2 white">
             <div class="red--text caption pb-4">
                 ￥
-                <span class="headline">{{currentPrice}}</span>
-                <span style="text-decoration: line-through" class="text--secondary ml-6">{{originalPrice}}</span>
+                <span class="headline">{{currentPrice}} <span v-if="notYetChoose" class="caption">起</span>  </span>
+                
+                <span style="text-decoration: line-through" class="text--secondary ml-6">￥{{originalPrice}}</span>
             </div>
             <div class="title font-weight-bold pb-2">{{itemName}}</div>
-            <div class="caption text--secondary">{{intro}}</div>
+            <div class="caption text--secondary">{{shortIntro}}</div>
         </div>
         <div @click="showBS=true" class="px-4 py-2 d-flex align-center justify-space-between subtitle-2 white mb-2">
             <div class="d-flex align-center">
@@ -33,16 +33,16 @@
             <v-icon>mdi-chevron-right</v-icon>
         </div>
         <div @click="getAllEvals" class="px-4 py-2 d-flex align-center justify-space-between subtitle-2 white">
-            <div>全部评价({{goodsSales}})</div>
+            <div>全部评价({{evalCount}})</div>
             <v-icon>mdi-chevron-right</v-icon>
         </div>
-        <div class="pa-4">
-            <div class="px-12 d-flex align-center justify-center subtitle-1">
+        <div v-if="goodsDetails">
+            <div class="px-12 d-flex align-center justify-center subtitle-1 white mt-2 py-2">
                 <v-divider color="grey" width="35%"></v-divider>
-                <span class="mx-4">商品详情</span>
+                <span class="mx-4 text--secondary font-weight-bold">商品详情</span>
                 <v-divider color="grey" width="100"></v-divider>
             </div>
-            <v-card v-for="(item,i) in images" :key="i" flat class="pa-2 subtitle-2">
+            <v-card tile v-for="(item,i) in goodsDetails.split(',')" :key="i">
                 <v-img :src="item"></v-img>
             </v-card>
         </div>
@@ -81,11 +81,11 @@
                 <div class="py-2 subtitle-1">请选择商品</div>
                 <v-row class="justify-space-between" no-gutters>
                     <v-col 
-                    v-for="(item,i) in details" 
-                    @click="itemOrder(item,i)"
-                    :key="i" 
-                    class="pa-2" 
-                    cols="6">
+                        v-for="(item,i) in details" 
+                        @click="itemOrder(item,i)"
+                        :key="i" 
+                        class="pa-2" 
+                        cols="6">
                         <v-btn v-text="item.type" depressed block color="primary" dark></v-btn>
                     </v-col>
                 </v-row>                
@@ -124,7 +124,7 @@
             <v-btn @click="buyNow" depressed class="flex-fill" rounded dark color="primary">立即购买</v-btn>
         </v-footer>
         <orderCertain :compId="compId" :type="goodsType" :item="editItem" @hide="showOrderCertain=false" v-if="showOrderCertain"/>
-        <goodsEvals @hide="showEvals=false" v-if="showEvals" :id="id" />
+        <goodsEvals @hide="showEvals=false" v-if="showEvals" :id="itemId" />
     </div>
 </template>
 
@@ -158,7 +158,9 @@ export default {
         goodsSales: 0,//测试评价数据时，设置大于0
         goodsDetails: '',
         goodsState: true,
+        notYetChoose: true,
         goodsType: 0,
+        evalCount: 0,
         indexType: '',
         intro: '',
         itemName: '',
@@ -226,9 +228,13 @@ export default {
                         this[x] = obj[x]
                     }
                     this.ifCollected()
+                    this.getEval()
                     // this.images = this.pic.split(',')
                 }
             })
+        },
+        getEval(){
+
         },
         ifCollected() {
             const params = {
@@ -264,8 +270,11 @@ export default {
         },
         itemOrder(item,i) {
             this.index = i
+            // this.originalPrice = item.originalPrice
+            this.currentPrice = item.price
             this.choice = item.type
             this.editItem = item
+            this.notYetChoose = false
             this.showBS = false
         },
         buyNow() {
@@ -285,7 +294,7 @@ export default {
             this.showOrderCertain = true
         },
         getAllEvals() {
-            if(!this.goodsSales){
+            if(!this.evalCount){
                 this.$toast('暂无评价！')
                 return
             }

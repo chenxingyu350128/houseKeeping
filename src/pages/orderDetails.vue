@@ -191,7 +191,7 @@
             </v-col> -->
           </v-row>
         </v-footer>
-        <payPage @paySuccess="init" :price="totalMoney" :discount="discounts" :finalPrice="totalMoney-discounts" :obj="postObj" @hide="showPayPage=false" v-if="showPayPage"/>
+        <payPage @paySuccess="init" :pOrderId="orderId" @hide="showPayPage=false" v-if="showPayPage"/>
         <evaluation @evalSuccess="showEvaluate=false;init()" :obj="postObj" :auntId="auntId" :itemId="itemId" :nannyId="nannyId" @hide="showEvaluate=false" v-if="showEvaluate"/>
         <alertBox title="确认取消该订单吗？" @certain="cancelOrder" @cancel="showAlert=false" :showIt="showAlert"/>
     </div>
