@@ -166,7 +166,7 @@ export default {
            return this.couponList
            .filter(res=>{
                 let state1 = res.state==1
-                let state2 = res.pull<this.price
+                let state2 = res.pull<=this.price
                 let timeFit = Date.parse(new Date())>Date.parse(res.beginTime)&&Date.parse(new Date())<Date.parse(res.endTime)
                 return state1&&state2&&timeFit
             })
