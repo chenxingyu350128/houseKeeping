@@ -78,7 +78,7 @@
                     </div>
                 </div> -->
                 <v-row no-gutters>
-                    <v-col v-if="item.details.length==1" class="pa-0 ma-0" cols="12">
+                    <v-col v-if="item.pics.length==1" class="pa-0 ma-0" cols="12">
                         <v-img 
                         height="110" 
                         width="100%" 
@@ -87,7 +87,7 @@
                         :src="item.pics[0]">
                         </v-img>
                     </v-col>
-                    <v-col v-if="item.details.length>1" class="pa-0 ma-0 pr-2" cols="8">
+                    <v-col v-if="item.pics.length>1" class="pa-0 ma-0 pr-2" cols="8">
                         <v-img 
                         width="100%" 
                         aspect-ratio="2" 
@@ -310,9 +310,16 @@ export default {
         this.init()
     },
     activated(){
-         this.findNotRead()
-        this.hotProduct()
-        this.bestSelling()
+        console.log('actived')
+        if(this.userId){
+
+            this.findNotRead()
+        }
+        if(this.areasId){
+
+            this.hotProduct()
+            this.bestSelling()
+        }
     },
     methods: {
         backToApp() {
@@ -396,9 +403,9 @@ export default {
                     this.$store.commit('SET_SINGLE_STATE', ['userId', obj.userId])
                     this.$store.commit('SET_SINGLE_STATE', ['userName', obj.userName])
                     this.$store.commit('SET_SINGLE_STATE', ['realName', obj.realName])
+                    this.findNotRead()
                 }
             })
-            this.findNotRead()
         },
         async findNotRead() {
             const params = {

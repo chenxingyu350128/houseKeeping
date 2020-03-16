@@ -149,30 +149,30 @@ export default {
             return 0
         },
         availabelCoupons() {
-            return [
-            {
-                "beginTime": "2020-01-12 08:20:00", //有效期开始时间
-                "couponId": 14, 
-                "couponName": "通用券", //名称
-                "createTime": "2020-01-12 08:20:00", //创建时间
-                "endTime": "2020-05-12 08:20:00", //有效期结束时间
-                "goodsId": 0, //商品ID
-                "money": 30, //优惠券金额
-                "pull": 50, //优惠券满减条件(满50-30)
-                "state": 1, //状态 0无效 1有效 2已使用
-                "userId": 1 //用户ID
-            },                
-            ]
-        //    return this.couponList
-        //    .filter(res=>{
-        //         let state1 = res.state==1
-        //         let state2 = res.pull<this.price
-        //         let timeFit = Date.parse(new Date())>Date.parse(res.beginTime)&&Date.parse(new Date())<Date.parse(res.endTime)
-        //         return state1&&state2&&timeFit
-        //     })
-        //     .sort((a,b)=>{
-        //         return a.pull - b.pull
-        //     })
+            // return [
+            // {
+            //     "beginTime": "2020-01-12 08:20:00", //有效期开始时间
+            //     "couponId": 14, 
+            //     "couponName": "通用券", //名称
+            //     "createTime": "2020-01-12 08:20:00", //创建时间
+            //     "endTime": "2020-05-12 08:20:00", //有效期结束时间
+            //     "goodsId": 0, //商品ID
+            //     "money": 30, //优惠券金额
+            //     "pull": 50, //优惠券满减条件(满50-30)
+            //     "state": 1, //状态 0无效 1有效 2已使用
+            //     "userId": 1 //用户ID
+            // },                
+            // ]
+           return this.couponList
+           .filter(res=>{
+                let state1 = res.state==1
+                let state2 = res.pull<this.price
+                let timeFit = Date.parse(new Date())>Date.parse(res.beginTime)&&Date.parse(new Date())<Date.parse(res.endTime)
+                return state1&&state2&&timeFit
+            })
+            .sort((a,b)=>{
+                return a.pull - b.pull
+            })
             
         },
         finalAddressItem() {

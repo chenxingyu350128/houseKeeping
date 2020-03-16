@@ -93,6 +93,7 @@ export default {
     },
     data: ()=>({
       payWay: 0,
+      payInfo: null
     }),
     created(){
       let that = this
@@ -116,29 +117,36 @@ export default {
         let res = await this.$http.post('/order/payAttestation',data)
         if(res.data.success){
           console.log(res.data.obj)
-          const payInfo = {
+          this.payInfo = {
             obj: res.data.obj,
             payway: this.payWay+1
           };
+          if(this.payWay){//微信支付，检测微信安装
+            const msg = {wxInstalled: 'Yo!'}
+            webkit.messageHandlers.cordova_iab.postMessage(JSON.stringify(msg));
+            return
+          }
+          //支付宝
           //这里发送数据到给app处理
-          window.webkit.messageHandlers.cordova_iab.postMessage(JSON.stringify(payInfo));
+          window.webkit.messageHandlers.cordova_iab.postMessage(JSON.stringify(this.payInfo));
         }
       },
       setItemEvent(e){
         if(e.key=='wxInstalled'){
           if(e.newVal){
-            this.submit(this.propPrice)
+            window.webkit.messageHandlers.cordova_iab.postMessage(JSON.stringify(this.payInfo));
+          }else{
+            this.toast('请先安装微信')
           }
           // that.wxInstalled = true
         }
         if(e.key=='paySucceed'){
           if(e.newVal){
-            if(this.fromAdd){
-              this.$router.push('/order')
-              this.$toast('支付成功,请在订单页查看详情')
-              return
-            }
-            this.$emit('paySuccess')
+            this.$toast('支付成功,可在订单列表中查看详情')
+            this.$router.push({
+              path: '/order',
+              query: {type: 2}
+            })
           }else{
             this.$toast('支付失败，请重试')
           }
