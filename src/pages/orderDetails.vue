@@ -6,7 +6,7 @@
           <div class="ma-4">
             <!-- 进度 -->
             <v-stepper class="teal white--text lighten-3" v-model="attemperStatus">
-              <v-stepper-header style="height: 36px" alt-labels height="30">
+              <v-stepper-header style="height: 36px" height="30">
                 <v-stepper-step class="py-0" :complete="attemperStatus>0" step="1">aaa</v-stepper-step>
                 <v-stepper-step class="py-0" :complete="attemperStatus>1" step="2">vStepperStepText</v-stepper-step>
                 <v-stepper-step class="py-0" :complete="attemperStatus>2" step="3">vStepperStepText</v-stepper-step>

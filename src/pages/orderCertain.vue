@@ -8,7 +8,7 @@
                     size="70"
                     tile
                 >
-                    <img :src="pic" alt="alt">
+                    <img :src="pic">
                 </v-avatar>
                 <div class="ml-2 d-flex flex-column justify-space-around">
                     <span>{{item.type}}</span>

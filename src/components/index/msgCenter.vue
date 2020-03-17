@@ -22,13 +22,6 @@
                     <span>{{item.createTime}}</span>
                 </div>
                 <div class="d-flex">
-                    <!-- <v-avatar
-                        size="55"
-                        tile
-                        color="pink lighten-3"
-                    >
-                        <img :src="item.msgImg">
-                    </v-avatar> -->
                     <span class="flex-fill ml-4 caption">{{item.msgContent}}</span>
                 </div>
             </div>

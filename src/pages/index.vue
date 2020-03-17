@@ -25,7 +25,7 @@
             </template>
         </iHeader>
         <v-carousel 
-        class="pink lighten-4"
+        class="grey lighten-4"
         hide-delimiter-background
         hide-delimiter
         height="183" 

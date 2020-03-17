@@ -5,7 +5,7 @@
           <v-avatar
             size="70"
             tile
-            color="pink lighten-3"
+            color="grey lighten-3"
           >
             <v-img :src="obj_f.pic"></v-img>
           </v-avatar>

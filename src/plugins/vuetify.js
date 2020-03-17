@@ -7,7 +7,7 @@ Vue.use(Vuetify);
 Vue.use(VuetifySnackbar, {
   x: "right", // default
   y: "bottom", // default
-  color: "grey lighten-2", // default
+  color: "grey", // default
   icon: "mdi-information",
   classes: ["body-2"],
   dismissable: true, // default
