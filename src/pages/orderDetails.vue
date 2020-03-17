@@ -298,7 +298,7 @@ export default {
         for(let x in obj) {
           this[x] = obj[x]
         }
-        this.pic = this.orderServices[0].pic
+        // this.pic = this.orderServices[0].pic
         this.attemperStatus++
       },
       toProductDetails() {
