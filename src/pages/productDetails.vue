@@ -123,7 +123,7 @@
             </div>
             <v-btn @click="buyNow" depressed class="flex-fill" rounded dark color="primary">立即购买</v-btn>
         </v-footer>
-        <orderCertain :compId="compId" :type="goodsType" :item="editItem" @hide="showOrderCertain=false" v-if="showOrderCertain"/>
+        <orderCertain :pic="images[0]" :compId="compId" :type="goodsType" :item="editItem" @hide="showOrderCertain=false" v-if="showOrderCertain"/>
         <goodsEvals @hide="showEvals=false" v-if="showEvals" :id="itemId" />
     </div>
 </template>

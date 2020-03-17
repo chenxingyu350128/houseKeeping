@@ -8,7 +8,7 @@
                     size="70"
                     tile
                 >
-                    <img :src="item.attrPic" alt="alt">
+                    <img :src="pic" alt="alt">
                 </v-avatar>
                 <div class="ml-2 d-flex flex-column justify-space-around">
                     <span>{{item.type}}</span>
@@ -83,6 +83,10 @@ export default {
     props: {
         item: {
             type: Object,
+            required: true
+        },
+        pic: {
+            type: String,
             required: true
         },
         type: {

@@ -391,8 +391,8 @@ export default {
             // if(this.userId){
             //     return
             // }
-            // const sessionId = window.location.hash.split('sessionId=')[1]
-            const sessionId = '4F020823F072702A'
+            const sessionId = window.location.hash.split('sessionId=')[1]
+            // const sessionId = '4F020823F072702A'
             const params = {
                 sessionId
             }
