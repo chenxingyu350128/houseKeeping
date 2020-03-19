@@ -6,7 +6,7 @@
       </keep-alive>
       <router-view v-if="!keepAlive"/>
       <bottomNav/> 
-      <loading/> 
+      <loading v-if="showLoading"/> 
     </v-content>
   </v-app>
 </template>
@@ -70,7 +70,7 @@
 <script>
 
 import bottomNav from './components/public/bottomNav';
-import loading from './components/public/RequestLoading'
+import loading from './components/public/heart-loading'
 // import { Promise } from 'q';
 export default {
   name: 'App',
@@ -86,6 +86,9 @@ export default {
   computed: {
     keepAlive(){
       return this.$route.meta.keepAlive
+    },
+    showLoading(){
+      return this.$store.state.app.requestLoading
     }
   }
 };

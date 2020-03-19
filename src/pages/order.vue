@@ -45,7 +45,7 @@
                     <v-divider></v-divider>
                     <div class="px-6 py-4 d-flex flex-column">
                         <div class="font-weight-bold">{{item.itemName}}</div>
-                        <div class="d-flex">
+                        <div v-if="item.serviceTime" class="d-flex">
                             <span style="min-width: 6em" class="font-weight-bold">预约时间：</span>
                             {{item.serviceTime}}
                         </div>

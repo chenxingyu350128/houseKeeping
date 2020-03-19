@@ -5,8 +5,8 @@ import vuetifyToast from "vuetify-toast"
 import router from './router'
 
 const api = Axios.create({
-  baseURL : 'http://192.168.1.101:8078/',
-  // baseURL: 'http://mobile.yinaf.com',
+  // baseURL : 'http://192.168.1.101:8078/',
+  baseURL: 'http://jiazheng.yinaf.com',
   // baseURL: "http://112.124.203.87:8080",
   timeout: 5000
 });

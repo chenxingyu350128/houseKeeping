@@ -251,7 +251,7 @@ export default {
           for(let x in this.item){
             if(this.item[x]!=this[x]){
               modified = true
-              this.$toast('modified')
+              // this.$toast('modified')
             }
           }
           if(modified){

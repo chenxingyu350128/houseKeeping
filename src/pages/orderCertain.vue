@@ -272,7 +272,7 @@ export default {
                 userId: this.userId,
                 totalMoney: this.item.price,
                 prices: this.item.price,
-                pics: this.item.attrPic,
+                pics: this.pic,
                 nums: 1,
                 origin: 1,
                 compId: this.compId,

@@ -121,7 +121,7 @@ export default {
       },
       async commit() {
         const data = {
-          orderId: this.obj.orderId,
+          orderId: this.pOrderId,
           payWay: this.payWay+1
         }
         let res = await this.$http.post('/order/payAttestation',data)

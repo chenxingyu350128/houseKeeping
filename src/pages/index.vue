@@ -388,9 +388,9 @@ export default {
             //测试用
             // this.$store.commit('SET_SINGLE_STATE', ['userId', 1])
             // this.$store.commit('SET_SINGLE_STATE', ['userName', 'cxx'])
-            // if(this.userId){
-            //     return
-            // }
+            if(this.userId){
+                return
+            }
             const sessionId = window.location.hash.split('sessionId=')[1]
             // const sessionId = '4F020823F072702A'
             const params = {

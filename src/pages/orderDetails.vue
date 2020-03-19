@@ -30,12 +30,12 @@
               >
                 <v-img :src="pic"></v-img>
               </v-avatar>
-              <div class="ml-2 flex-fill d-flex flex-column justify-space-between align-end">
-                <div class="d-flex justify-space-between">
+              <div class="ml-2 flex-fill d-flex flex-column justify-space-between">
+                <div style="width: 100%" class="d-flex justify-space-between">
                   <span>{{itemName}}</span>
                   <span>{{totalMoney}}</span>
                 </div>
-                <span>x1</span>
+                <span class="text-right">x1</span>
               </div>
             </div> 
           </div> 
@@ -128,12 +128,12 @@
               >
                 <v-img :src="pic"></v-img>
               </v-avatar>
-              <div class="ml-2 flex-fill d-flex flex-column justify-space-between align-end">
+              <div class="ml-2 flex-fill d-flex flex-column justify-space-between">
                 <div class="d-flex justify-space-between">
                   <span>{{itemName}}</span>
                   <span>{{totalMoney}}</span>
                 </div>
-                <span>x1</span>
+                <span class="text-right">x1</span>
               </div>
             </div>
             <v-divider></v-divider>
@@ -298,7 +298,7 @@ export default {
         for(let x in obj) {
           this[x] = obj[x]
         }
-        // this.pic = this.orderServices[0].pic
+        this.pic = this.orderServices[0].pic
         this.attemperStatus++
       },
       toProductDetails() {
