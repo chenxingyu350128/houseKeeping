@@ -1,25 +1,28 @@
 <template>
     <div class="searchBox-cpnt white px-2">
-        <iHeader @doSomething="$emit('hide')" text="搜索地址"></iHeader>
-        <v-text-field
-            name="name"
-            outlined
-            rounded
-            dense
-            class="mt-4 mb-0"
-            id="searchBox"
-            prepend-inner-icon="mdi-magnify"
-            @input="lodashInput"
-            v-model="key"
-        ></v-text-field>
-        <v-list class="pa-0">
+        <iHeader @doSomething="$emit('hide')" text="选择所在城市"></iHeader>
+        <v-btn outlined @click="showProvinces=!showProvinces" class="mt-2" block color="primary" dark>{{province||'--请选择省份--'}}</v-btn>
+        <v-list v-if="showProvinces" class="pa-0">
             <v-list-item-group v-model="selected" color="primary">
                 <v-list-item
                 v-for="(item, i) in list"
                 :key="i"
                 >
                     <v-list-item-content>
-                        <v-list-item-title @click.stop="getArea(item.location)" v-text="item.name"></v-list-item-title>
+                        <v-list-item-title @click.stop="getDistrict(item.adcode, item.name)" v-text="item.name"></v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+            </v-list-item-group>
+        </v-list> 
+        <v-btn outlined v-if="province" @click="showCities=true" class="mt-2" block color="primary" dark>{{city||'--请选择城市--'}}</v-btn>
+        <v-list v-if="showCities" class="pa-0">
+            <v-list-item-group v-model="selected" color="primary">
+                <v-list-item
+                v-for="(item, i) in cityList"
+                :key="i"
+                >
+                    <v-list-item-content>
+                        <v-list-item-title @click.stop="getCity(item.adcode, item.name)" v-text="item.name"></v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
             </v-list-item-group>
@@ -31,6 +34,7 @@
         :events="events"
         >
         </el-amap>  -->
+        <v-divider class="mt-2"></v-divider>
         <div class="px-4 subtitle-2">
             <div class="my-2">当前定位</div>
             <div class="d-flex align-center justify-space-between">
@@ -41,7 +45,6 @@
                 <span @click="geolocation" class="primary--text">重新定位</span>
             </div>
         </div>       
-                    <!-- @keypress.enter="searchInput(key)" -->
 
     </div>
 </template>
@@ -76,10 +79,10 @@ export default {
     data: ()=>({
         key: '',
         // amapManager,
-        searchOption: {
-            city: '福州',
-            citylimit: true
-        },            
+        opts: {
+            subdistrict: 1,   //返回下一级行政区
+            showbiz:false  //最后一级返回街道信息
+        },          
         searchEvents: {
             init: (auto, place) => {
                 // console.log(view.zoom)
@@ -92,34 +95,53 @@ export default {
             }
         }, 
         list: [],
+        cityList: [],
+        province: '',
+        city: '',
         selected: null,
-        notShow: false
+        notShow: false,
+        showProvinces: false,
+        showCities: false,
     }),
-    created() {
-        this.lodashInput = this._.debounce(this.keyInput, 200)
-    },
     computed: {
         positionCity() {
             return this.$store.state.app.positionCity
         },        
     },
     mounted() {
-
+        this.getProvince()
     },
     methods: {
-        onSearchResult(pois) {
-            console.log(pois)
-            console.log(this.$refs.searchBox)
-        },
-        searchInput(e){
-            const autoOptions = {
-                city: '福州'
-            }
-            let autoComplete = new AMap.Autocomplete(autoOptions)
-            autoComplete.search(e,(status,res) => {
-                console.log(status)
-                console.log(res)
+        getProvince () {
+            let that = this
+            //行政区查询
+            //按照adcode进行查询可以保证数据返回的唯一性
+            let district = new AMap.DistrictSearch(this.opts)
+            district.search('中国', function(status, result) {
+                if(status=='complete'){
+                console.log(result.districtList[0])
+                    that.list = result.districtList[0].districtList
+                    // getData(result.districtList[0]);
+                }
             })
+        },
+        getDistrict (adcode, name) {
+            let that = this
+            this.province = name 
+            this.showProvinces = false
+            let district = new AMap.DistrictSearch(this.opts)
+            district.search(adcode, function(status, result) {
+                if(status === 'complete'){
+                    console.log(result.districtList[0].districtList);
+                    that.cityList = result.districtList[0].districtList
+                }
+            });
+        },
+        getCity (adcode, name) {
+            this.city = name 
+            this.showCities = false
+            this.$store.commit('SET_SINGLE_STATE', ['positionCity', name])
+            this.$emit('adcodeGet', adcode)
         },
         geolocation() {
             let that = this
@@ -143,40 +165,6 @@ export default {
                 that.$emit('adcodeGet',res.adcode)
                 
             })           
-        },
-        keyInput(){
-            const autoOptions = {
-                city: '福州'
-            }
-            let autoComplete = new AMap.Autocomplete(autoOptions)
-            autoComplete.search(this.key, (status,res) => {
-                console.log(status)
-                console.log(res)
-                this.list = res.tips
-            })            
-        },
-        getArea(e){
-            let that = this
-            console.log('sff')
-            let center = [
-                e.O,
-                e.P
-            ]
-            let geoCoder = new AMap.Geocoder()
-            geoCoder.getAddress(
-                center,
-                (status,result)=>{
-                    if (status === 'complete'&&result.regeocode) {
-                        console.info(result)
-                        const city = result.regeocode.addressComponent.city
-                        that.$store.commit('SET_SINGLE_STATE', ['positionCity', city])
-                        // that.$emit('hide')
-                        that.$emit('adcodeGet',result.regeocode.addressComponent.adcode)
-                    }else{
-                        console.error('根据经纬度查询地址失败')
-                    }              
-                }
-            )
         }
     }
 };

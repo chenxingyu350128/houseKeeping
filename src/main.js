@@ -12,10 +12,10 @@ import VueAMap from "vue-amap";
 import { Picker, DatetimePicker, List, IndexBar, IndexAnchor, Cell, PasswordInput, NumberKeyboard } from "vant";
 import "vant/lib/index.css";
 // import { createTable, addItem, selectItem, removeItem } from './plugins/sqlite'
-import VConsole from "vconsole";
-if (process.env.NODE_ENV === "production") {
-  new VConsole();
-}
+// import VConsole from "vconsole";
+// if (process.env.NODE_ENV === "production") {
+//   new VConsole();
+// }
 // import './mock/index'
 Vue.prototype.$http = http.api;
 Vue.prototype.$dateStr = dateTimeFormat;

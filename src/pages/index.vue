@@ -28,11 +28,13 @@
         class="grey lighten-4"
         hide-delimiter-background
         hide-delimiter
-        height="183" 
+        height="134" 
         >
             <v-carousel-item
                 v-for="(banner,i) in banners"
                 :key="i"
+                contain
+                aspect-ratio="2" 
                 :src="banner.pic"
             ></v-carousel-item>
         </v-carousel>
@@ -78,7 +80,10 @@
                     </div>
                 </div> -->
                 <v-row no-gutters>
-                    <v-col v-if="item.pics.length==1" class="pa-0 ma-0" cols="12">
+                    <v-col 
+                    v-if="item.pics.length==1" 
+                    class="pa-0 ma-0" 
+                    cols="12">
                         <v-img 
                         height="110" 
                         width="100%" 
@@ -87,7 +92,10 @@
                         :src="item.pics[0]">
                         </v-img>
                     </v-col>
-                    <v-col v-if="item.pics.length>1" class="pa-0 ma-0 pr-2" cols="8">
+                    <v-col 
+                    v-if="item.pics.length>1" 
+                    class="pa-0 ma-0 pr-2" 
+                    cols="8">
                         <v-img 
                         width="100%" 
                         aspect-ratio="2" 
@@ -98,27 +106,26 @@
                     <v-col v-if="item.pics.length>1" class="pa-0 ma-0" cols="4">
                         <v-img 
                         style="margin-bottom: 5%" 
-                        width="100%" height="47.5%" 
                         aspect-ratio="2" 
-                        class="flex-fill mr-2" 
+                        class="flex-fill" 
                         :src="item.pics[1]">
                         </v-img>
                         <v-img 
                         v-if="item.pics.length>2" 
-                        width="100%" height="47.5%" 
+                        width="100%" 
                         aspect-ratio="2" 
-                        class="flex-fill mr-2" 
+                        class="flex-fill" 
                         :src="item.pics[2]">
                         </v-img>
                     </v-col>
                 </v-row>
-                <div class="d-flex align-center justify-space-between">
+                <div class="d-flex justify-space-between">
                     <div class="d-flex flex-column">
 
                         <span class="mt-1 px-1 subtitle-1 text--primary">{{item.itemName}}</span>
                         <span class="px-1 caption text--secondary">{{item.shortIntro}}</span>
                     </div>
-                    <span class="px-1 subtitle-2 orange--text">{{item.currentPrice}}元</span>
+                    <span class="py-2 subtitle-2 orange--text no-wrap font-weight-bold">{{item.currentPrice}}元</span>
                 </div>
                 <v-divider class="mt-2"></v-divider>
                 <!-- <v-img cover max-height="100" :src="item.pic"></v-img> -->
@@ -201,6 +208,7 @@ VueAMap.initAMapApiLoader({
   plugin: [
     "AMap.Geolocation",
     "AMap.Autocomplete",
+    "AMap.DistrictSearch",
     "AMap.PlaceSearch",
     "AMap.Scale",
     "AMap.OverView",
@@ -209,6 +217,7 @@ VueAMap.initAMapApiLoader({
     "AMap.PolyEditor",
     "AMap.CircleEditor",
     "AMap.Geocoder"
+    
   ],
   v: "1.4.4"
 });

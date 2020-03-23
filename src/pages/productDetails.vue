@@ -9,10 +9,11 @@
         class="green lighten-3"
         hide-delimiters
         hide-delimiter-background
-        height="200">
+        height="134">
             <v-carousel-item
                 v-for="(item,i) in images"
                 :key="i"
+                contain
                 :src="item"
             ></v-carousel-item>
         </v-carousel>
@@ -60,7 +61,7 @@
                         <span>{{itemName}}</span>
                         <span class="caption text--secondary">{{shortIntro}}</span>
                         <span>
-                            <span class="red--text title mr-2">￥{{currentPrice}}</span>
+                            <span class="red--text title mr-2">￥{{currentPrice}} <span class="overine">起</span> </span>
                             <span class="text--secondary" style="text-decoration: line-through">￥{{originalPrice}}</span>
                         </span>
                     </div>
@@ -82,11 +83,13 @@
                 <v-row class="justify-space-between" no-gutters>
                     <v-col 
                         v-for="(item,i) in details" 
-                        @click="itemOrder(item,i)"
+                        
                         :key="i" 
                         class="pa-2" 
-                        cols="6">
-                        <v-btn v-text="item.type" depressed block color="primary" dark></v-btn>
+                        cols="12">
+                        <v-btn outlined depressed small color="primary" dark>
+                            <span @click="itemOrder(item,i)" title="1234"  class="v-collips-15 caption">{{item.type}}</span>
+                        </v-btn>
                     </v-col>
                 </v-row>                
             </div>

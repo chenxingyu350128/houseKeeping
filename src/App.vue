@@ -37,6 +37,13 @@
     overflow: hidden;
     max-width: 7em;
 }
+.v-collips-15{
+    border-radius: 3px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 15em;
+}
   .v-text-field__slot{
     >input{
       text-align: center!important;
