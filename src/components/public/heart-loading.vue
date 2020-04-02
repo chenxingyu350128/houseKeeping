@@ -1,9 +1,14 @@
 <template>
-	<div class="heart-loading flex-ct-x">
-		<ul style="--line-count: 9">
-			<li v-for="v in 9" :key="v" :class="`line-${v}`" :style="`--line-index: ${v}`"></li>
-		</ul>
-	</div>
+  <div class="heart-loading flex-ct-x">
+    <ul style="--line-count: 9">
+      <li
+        v-for="v in 9"
+        :key="v"
+        :class="`line-${v}`"
+        :style="`--line-index: ${v}`"
+      />
+    </ul>
+  </div>
 </template>
 
 <style lang="scss">
@@ -125,6 +130,6 @@
 
 <script>
 export default {
-	name: "heart-loading"
+	name: "HeartLoading"
 };
 </script>

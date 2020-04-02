@@ -1,17 +1,35 @@
 <!-- navBar -->
 <template>
-  <v-card class="header-cpnt" dark flat tile :color="bgc">
+  <v-card
+    class="header-cpnt"
+    dark
+    flat
+    tile
+    :color="bgc"
+  >
     <v-layout align-center>
-      <v-flex @click="doSth" xs3>
-        <v-icon large>mdi-chevron-left</v-icon>
+      <v-flex
+        xs3
+        @click="doSth"
+      >
+        <v-icon large>
+          mdi-chevron-left
+        </v-icon>
       </v-flex>
-      <v-flex xs6 class="d-flex justify-center subtitle-1">
-        <slot name="center"></slot>
-        {{text}}
+      <v-flex
+        xs6
+        class="d-flex justify-center subtitle-1"
+      >
+        <slot name="center" />
+        {{ text }}
       </v-flex>
-      <v-flex class="subtitle-2 text-center v-rating fill-height d-flex align-center justify-end pr-2"  @click="edit" xs3>
-        <slot name="right"></slot>
-        {{rightText}}
+      <v-flex
+        class="subtitle-2 text-center v-rating fill-height d-flex align-center justify-end pr-2"
+        xs3
+        @click="edit"
+      >
+        <slot name="right" />
+        {{ rightText }}
       </v-flex>
     </v-layout>
   </v-card>

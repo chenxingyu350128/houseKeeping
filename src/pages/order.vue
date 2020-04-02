@@ -1,116 +1,203 @@
 <template>
-    <div class="orderPage grey lighten-2">
-        <!-- <iHeader @doSomething="$emit('hide')" text="我的订单"></iHeader> -->
-        <div class="center-header primary white--text">我的订单</div>
-        <v-tabs
-            v-model="tab"
-            color="primary"
-            height="35"
-            @change="tabChange"
-            slider-color="primary"
-            grow
+  <div class="orderPage grey lighten-2">
+    <!-- <iHeader @doSomething="$emit('hide')" text="我的订单"></iHeader> -->
+    <div class="center-header primary white--text">
+      我的订单
+    </div>
+    <v-tabs
+      v-model="tab"
+      color="primary"
+      height="35"
+      slider-color="primary"
+      grow
+      @change="tabChange"
+    >
+      <v-tab 
+        v-for="(tab,i) in tabs" 
+        :key="i" 
+        style="min-width: unset!important" 
+        class="px-0 caption transparent"
+      >
+        <v-divider
+          v-if="i"
+          inset
+          vertical
+        />       
+        <v-spacer />
+        <!-- eslint-disable-next-line vue/no-v-html -->
+        <span v-html="tab.text" />
+        <v-spacer />  
+      </v-tab>
+    </v-tabs> 
+    <v-tabs-items v-model="tab">
+      <van-list 
+        v-if="tab!==4"
+        ref="loadmore"
+        class="grey lighten-2 pb-12"
+        :immediate-check="false" 
+        :finished="allLoaded" 
+        loading-text="加载中..." 
+        finished-text="已全部加载完"  
+        @load="loadBottom"
+      > 
+        <div 
+          v-for="(item,i) in list" 
+          :key="i" 
+          class="mt-2 white subtitle-2 text--secondary"
+          @click="toDetails(item.orderId,item.orderType)"
         >
-            <v-tab 
-            style="min-width: unset!important" 
-            class="px-0 caption transparent" 
-            v-for="(tab,i) in tabs" 
-            :key="i"
+          <div class="d-flex justify-space-between px-6 py-2">
+            <span>{{ item.createTime }}</span>
+            <span :class="item.state==1?'primary--text':'red--text'">{{ item.status }}</span>
+          </div>
+          <v-divider />
+          <div class="px-6 py-4 d-flex flex-column">
+            <div class="font-weight-bold">
+              {{ item.itemName }}
+            </div>
+            <div
+              v-if="item.serviceTime"
+              class="d-flex"
             >
-                <v-divider v-if="i" inset vertical></v-divider>       
-                <v-spacer></v-spacer>
-                <span v-html="tab.text"></span>
-                <v-spacer></v-spacer>  
-            </v-tab>
-        </v-tabs> 
-        <v-tabs-items v-model="tab">
-            <van-list 
-            v-if="tab!==4"
-            class="grey lighten-2 pb-12"
-            :immediate-check="false"
-            @load="loadBottom" 
-            :finished="allLoaded" 
-            loading-text="加载中..." 
-            finished-text="已全部加载完"  
-            ref="loadmore"> 
-                <div 
-                    v-for="(item,i) in list" 
-                    :key="i" 
-                    @click="toDetails(item.orderId,item.orderType)"
-                    class="mt-2 white subtitle-2 text--secondary"
-                >
-                    <div class="d-flex justify-space-between px-6 py-2">
-                        <span>{{item.createTime}}</span>
-                        <span :class="item.state==1?'primary--text':'red--text'">{{item.status}}</span>
-                    </div>
-                    <v-divider></v-divider>
-                    <div class="px-6 py-4 d-flex flex-column">
-                        <div class="font-weight-bold">{{item.itemName}}</div>
-                        <div v-if="item.serviceTime" class="d-flex">
-                            <span style="min-width: 6em" class="font-weight-bold">预约时间：</span>
-                            {{item.serviceTime}}
-                        </div>
-                        <div class="d-flex">
-                            <span style="min-width: 6em" class="font-weight-bold">服务地址：</span>
-                            {{item.address}}
-                        </div>
-                    </div>
-                    <v-divider></v-divider>
-                    <div v-if="item.state&&item.state<=3" class="px-4 py-2 d-flex flex-row-reverse">
-                        <v-btn @click.stop="toEvaluate(item)" v-if="item.state==3&&!item.evaluateTime" depressed class="ml-4" dark color="primary">评价</v-btn>
-                        <v-btn @click.stop="toPay(item.orderId)" v-if="item.state==1" depressed class="ml-4" dark color="primary">支付</v-btn>
-                        <v-btn @click.stop="beforeCancel(item.orderId)" v-if="item.state&&item.state<3" depressed class="ml-4" dark color="red" outlined>取消</v-btn>
-                    </div>
-                </div>
-            </van-list> 
-            <!-- 保姆预约 -->
-            <van-list
-            v-else
-            class="grey lighten-2 pb-12"
-            :immediate-check="false"
-            @load="loadBottom" 
-            :finished="allLoaded" 
-            loading-text="加载中..." 
-            finished-text="已全部加载完"  
-            ref="loadmore"> 
-                <div 
-                    v-for="(item,i) in list" 
-                    :key="i" 
-                    class="mt-2 white subtitle-2 text--secondary"
-                >
-                    <div class="d-flex justify-space-between px-6 py-2">
-                        <span>创建时间：</span>
-                        <span>{{item.ctime}}</span>
-                    </div>
-                    <v-divider></v-divider>
-                    <div class="px-6 py-4 d-flex flex-column">
-                        <div class="font-weight-bold">{{item.itemName}}</div>
-                        <div class="d-flex">
-                            <span style="min-width: 6em" class="font-weight-bold">预约时间：</span>
-                            {{item.rtime}}
-                        </div>
-                        <div class="d-flex">
-                            <span style="min-width: 6em" class="font-weight-bold">备注：</span>
-                            {{item.remark}}
-                        </div>
-                    </div>
-                    <!-- <v-divider></v-divider>
+              <span
+                style="min-width: 6em"
+                class="font-weight-bold"
+              >预约时间：</span>
+              {{ item.serviceTime }}
+            </div>
+            <div class="d-flex">
+              <span
+                style="min-width: 6em"
+                class="font-weight-bold"
+              >服务地址：</span>
+              {{ item.address }}
+            </div>
+          </div>
+          <v-divider />
+          <div
+            v-if="item.state&&item.state<=3"
+            class="px-4 py-2 d-flex flex-row-reverse"
+          >
+            <v-btn
+              v-if="item.state==3&&!item.evaluateTime"
+              depressed
+              class="ml-4"
+              dark
+              color="primary"
+              @click.stop="toEvaluate(item)"
+            >
+              评价
+            </v-btn>
+            <v-btn
+              v-if="item.state==1"
+              depressed
+              class="ml-4"
+              dark
+              color="primary"
+              @click.stop="toPay(item.orderId)"
+            >
+              支付
+            </v-btn>
+            <v-btn
+              v-if="item.state&&item.state<3"
+              depressed
+              class="ml-4"
+              dark
+              color="red"
+              outlined
+              @click.stop="beforeCancel(item.orderId)"
+            >
+              取消
+            </v-btn>
+          </div>
+        </div>
+      </van-list> 
+      <!-- 保姆预约 -->
+      <van-list
+        v-else
+        ref="loadmore"
+        class="grey lighten-2 pb-12"
+        :immediate-check="false" 
+        :finished="allLoaded" 
+        loading-text="加载中..." 
+        finished-text="已全部加载完"  
+        @load="loadBottom"
+      > 
+        <div 
+          v-for="(item,i) in list" 
+          :key="i" 
+          class="mt-2 white subtitle-2 text--secondary"
+        >
+          <div class="d-flex justify-space-between px-6 py-2">
+            <span>创建时间：</span>
+            <span>{{ item.ctime }}</span>
+          </div>
+          <v-divider />
+          <div class="px-6 py-4 d-flex flex-column">
+            <div class="font-weight-bold">
+              {{ item.itemName }}
+            </div>
+            <div class="d-flex">
+              <span
+                style="min-width: 6em"
+                class="font-weight-bold"
+              >预约时间：</span>
+              {{ item.rtime }}
+            </div>
+            <div class="d-flex">
+              <span
+                style="min-width: 6em"
+                class="font-weight-bold"
+              >备注：</span>
+              {{ item.remark }}
+            </div>
+          </div>
+          <!-- <v-divider></v-divider>
                     <div v-if="item.state==1||(item.state==3&&!item.evaluateTime)" class="px-4 py-2 d-flex flex-row-reverse">
                         <v-btn @click.stop="toEvaluate(item)" v-if="item.state==3" depressed class="ml-4" dark color="primary">评价</v-btn>
                         <v-btn @click.stop="toPay(item)" v-if="item.state==1" depressed class="ml-4" dark color="primary">支付</v-btn>
                         <v-btn @click.stop="beforeCancel(item.orderId)" v-if="item.state==1" depressed class="ml-4" dark color="red" outlined>取消</v-btn>
                     </div> -->
-                </div>
-            </van-list> 
-            <div v-if="!list.length" class="d-flex flex-column align-center py-12 grey lighten-2">
-                <v-img max-height="30vw" max-width="30vw" :src="emptyContent"></v-img>    
-                <span class="mt-2 text--secondary">暂无订单</span>
-            </div>          
-        </v-tabs-items>  
-        <orderDetails @update="showDetails=false;tabChange()" :orderType="orderType" :pOrderId="orderId" @hide="showDetails=false" v-if="showDetails"/>     
-        <payPage :pOrderId="orderId" @paySuccess="tabChange"  @hide="showPayPage=false" v-if="showPayPage"/>
-        <alertBox @certain="cancelCertain" title="确认取消该订单吗？" @cancel="showAlert=false" :showIt="showAlert"/>
-        <evaluation :pOrderId="orderId" @evalSuccess="showEvaluate=false;tabChange()" @hide="showEvaluate=false" v-if="showEvaluate"/>
-    </div>
+        </div>
+      </van-list> 
+      <div
+        v-if="!list.length"
+        class="d-flex flex-column align-center py-12 grey lighten-2"
+      >
+        <v-img
+          max-height="30vw"
+          max-width="30vw"
+          :src="emptyContent"
+        />    
+        <span class="mt-2 text--secondary">暂无订单</span>
+      </div>          
+    </v-tabs-items>  
+    <orderDetails
+      v-if="showDetails"
+      :order-type="orderType"
+      :p-order-id="orderId"
+      @update="showDetails=false;tabChange()"
+      @hide="showDetails=false"
+    />     
+    <payPage
+      v-if="showPayPage"
+      :p-order-id="orderId"
+      @paySuccess="tabChange"
+      @hide="showPayPage=false"
+    />
+    <alertBox
+      title="确认取消该订单吗？"
+      :show-it="showAlert"
+      @certain="cancelCertain"
+      @cancel="showAlert=false"
+    />
+    <evaluation
+      v-if="showEvaluate"
+      :p-order-id="orderId"
+      @evalSuccess="showEvaluate=false;tabChange()"
+      @hide="showEvaluate=false"
+    />
+  </div>
 </template>
 
 <script>
@@ -120,7 +207,7 @@ import orderDetails from './orderDetails'
 import payPage from './payPage'
 import evaluation from './evaluation'
 export default {
-    name: 'orderPage',
+    name: 'OrderPage',
     components: {
     //    iHeader,
        orderDetails,
@@ -131,11 +218,11 @@ export default {
     data: () => ({
         tab: 0,
         tabs: [
-            {text: '待支付',value: 1},
-            {text: '进行中',value: 2},
-            {text: '已完成',value: 3},
-            {text: '全&emsp;部',value: -1},
-            {text: '预&emsp;约',value: 4},
+            { text: '待支付', value: 1 },
+            { text: '进行中', value: 2 },
+            { text: '已完成', value: 3 },
+            { text: '全&emsp;部', value: -1 },
+            { text: '预&emsp;约', value: 4 }
         ],
         // list: [],
         page: 1,
@@ -157,9 +244,6 @@ export default {
         obj: null,
         emptyContent: require('../assets/img/emptyContent.png')
     }),
-    created() {
-        this.loadBottom = this._.debounce(this.loadmore,200)
-    },
     computed: {
         userId() {
             return this.$store.state.app.userId
@@ -168,13 +252,15 @@ export default {
             return this.$store.state.app.orderList
         }
     },
+    created() {
+        this.loadBottom = this._.debounce(this.loadmore, 200)
+    },
     mounted() {
-        if(this.$route.query.type){
-
+        if (this.$route.query.type) {
             this.tab = parseInt(this.$route.query.type)
         }
         // console.log(this.$route.query.type)
-        console.log('tab:',this.tab)
+        console.log('tab:', this.tab)
         this.tabChange()
     },
     methods: {
@@ -184,47 +270,44 @@ export default {
                 page: this.page,
                 rows: this.rows
             }
-            if (this.tab!==4) {
+            if (this.tab !== 4) {
                 params.state = this.tabs[this.tab].value
             }
-            const url = this.tab !== 4?'/order/findOrderByState':'/nanny/findNannySubscribes'
-            let res = await this.$http.get(url,{params})
-            let rows = res.data.rows
-            let pager = res.data.pager
-            this.allLoaded = pager.currentPage===pager.totalPages
-            if(this.tab !== 4){
-
-                rows.forEach(res=>{
-                    switch(res.state) {
+            const url = this.tab !== 4 ? '/order/findOrderByState' : '/nanny/findNannySubscribes'
+            const res = await this.$http.get(url, { params })
+            const rows = res.data.rows
+            const pager = res.data.pager
+            this.allLoaded = pager.currentPage === pager.totalPages
+            if (this.tab !== 4) {
+                rows.forEach(res => {
+                    switch (res.state) {
                         case 0: 
-                            this.$set(res,'status','交易关闭')
+                            this.$set(res, 'status', '交易关闭')
                             break;
                         case 1: 
-                            this.$set(res,'status','待支付')
+                            this.$set(res, 'status', '待支付')
                             break;
                         case 2: 
-                            this.$set(res,'status','进行中')
+                            this.$set(res, 'status', '进行中')
                             break;
                         case 3: 
-                            this.$set(res,'status','已完成')
+                            this.$set(res, 'status', '已完成')
                             break;
                         case 4: 
-                            this.$set(res,'status','已取消')
+                            this.$set(res, 'status', '已取消')
                             break;
                     }
                 })
             } else {
-                rows.forEach(res=>{
-                    let ctime = this.$dateStr(new Date(res.createTime.time)) 
-                    let time = this.$dateStr(new Date(res.time.time)) 
-                    this.$set(res,'ctime',ctime)
-                    this.$set(res,'rtime',time)
+                rows.forEach(res => {
+                    const ctime = this.$dateStr(new Date(res.createTime.time)) 
+                    const time = this.$dateStr(new Date(res.time.time)) 
+                    this.$set(res, 'ctime', ctime)
+                    this.$set(res, 'rtime', time)
                 })
             }
-            let list = i?this.list.concat(rows):rows
+            const list = i ? this.list.concat(rows) : rows
             this.$store.commit('SET_SINGLE_STATE', ['orderList', list])
-
-            
         },
         tabChange() {
             this.page = 1
@@ -235,38 +318,37 @@ export default {
             // }
             // this.getReserve(e)
         },
-        async getReserve(i){//预约
+        async getReserve(i) { // 预约
             const params = {
                 userId: this.userId,
                 rows: this.rows,
                 page: this.page
             }
-            let res = await this.$http.get('/nanny/findNannySubscribes',{params})
-            let rows = res.data.rows
-            let pager = res.data.pager
-            this.allLoaded = pager.currentPage===pager.totalPages
-            rows.forEach(res=>{
-                switch(res.state) {
+            const res = await this.$http.get('/nanny/findNannySubscribes', { params })
+            const rows = res.data.rows
+            const pager = res.data.pager
+            this.allLoaded = pager.currentPage === pager.totalPages
+            rows.forEach(res => {
+                switch (res.state) {
                     case 0: 
-                        this.$set(res,'status','交易关闭')
+                        this.$set(res, 'status', '交易关闭')
                         break;
                     case 1: 
-                        this.$set(res,'status','待支付')
+                        this.$set(res, 'status', '待支付')
                         break;
                     case 2: 
-                        this.$set(res,'status','进行中')
+                        this.$set(res, 'status', '进行中')
                         break;
                     case 3: 
-                        this.$set(res,'status','已完成')
+                        this.$set(res, 'status', '已完成')
                         break;
                     case 4: 
-                        this.$set(res,'status','已取消')
+                        this.$set(res, 'status', '已取消')
                         break;
                 }
             })
-            let list = i?this.list.concat(rows):rows
+            const list = i ? this.list.concat(rows) : rows
             this.$store.commit('SET_SINGLE_STATE', ['orderList', list])
-
         },
         loadmore() {
             this.page++
@@ -286,7 +368,7 @@ export default {
         },
         beforeCancel(id) {
             this.deleteId = id
-            this.showAlert=true
+            this.showAlert = true
         },
         async cancelCertain() {
             this.showAlert = false
@@ -294,8 +376,8 @@ export default {
                 orderId: this.deleteId,
                 cause: '不需要了'
             }
-            let res = await this.$http.post('/order/cancelOrder',data)
-            if(res.data.success){
+            const res = await this.$http.post('/order/cancelOrder', data)
+            if (res.data.success) {
                 this.$toast.success('订单取消成功')
                 this.page = 1
                 this.init()

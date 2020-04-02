@@ -1,12 +1,26 @@
-<template >
-  <transition name="fade-transform" mode="out-in">
-    <div class="loadingShell" v-if="requestLoading">
-       
-      <v-avatar class="request-loading-component" size="100">
-        <v-img  class="mdi-spin" src="../../assets/img/loading_out.png"></v-img>
+<template>
+  <transition
+    name="fade-transform"
+    mode="out-in"
+  >
+    <div
+      v-if="requestLoading"
+      class="loadingShell"
+    >
+      <v-avatar
+        class="request-loading-component"
+        size="100"
+      >
+        <v-img
+          class="mdi-spin"
+          src="../../assets/img/loading_out.png"
+        />
       </v-avatar>
       <v-avatar size="60">
-        <v-img  class="mdi-spin-reverse" src="../../assets/img/loading_inner.png"></v-img>
+        <v-img
+          class="mdi-spin-reverse"
+          src="../../assets/img/loading_inner.png"
+        />
       </v-avatar>
       <!-- <v-progress-circular :size="50" color="blue" indeterminate></v-progress-circular> -->
     </div>

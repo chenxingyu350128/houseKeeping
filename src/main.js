@@ -51,9 +51,9 @@ Vue.config.productionTip = false;
 //   v: "1.4.4"
 // });
 
-//重定义sessionStorage.setItem()，用来接收app的数据
+// 重定义sessionStorage.setItem()，用来接收app的数据
 sessionStorage.setItem = function (key, newVal) {
-  let setItemEvent = new Event('setItemEvent')
+  const setItemEvent = new Event('setItemEvent')
   setItemEvent.key = key
   setItemEvent.newVal = newVal
   console.log(key, newVal);

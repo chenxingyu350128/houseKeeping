@@ -13,23 +13,23 @@ const app = {
       communityList: JSON.parse(localStorage.getItem('communityList')),
       indexBanners: JSON.parse(localStorage.getItem('indexBanners')),
       cateList: JSON.parse(localStorage.getItem('cateList')),
-      couponList: JSON.parse(localStorage.getItem('couponList'))||[],
-      indexCates: JSON.parse(localStorage.getItem('indexCates'))||[],
-      bestSelling: JSON.parse(localStorage.getItem('bestSelling'))||[],
-      hotProduct: JSON.parse(localStorage.getItem('hotProduct'))||[],
-      evalsList: JSON.parse(localStorage.getItem('evalsList'))||[],
-      addressList: JSON.parse(localStorage.getItem('addressList'))||[],
-      orderList: JSON.parse(localStorage.getItem('orderList'))||[],
+      couponList: JSON.parse(localStorage.getItem('couponList')) || [],
+      indexCates: JSON.parse(localStorage.getItem('indexCates')) || [],
+      bestSelling: JSON.parse(localStorage.getItem('bestSelling')) || [],
+      hotProduct: JSON.parse(localStorage.getItem('hotProduct')) || [],
+      evalsList: JSON.parse(localStorage.getItem('evalsList')) || [],
+      addressList: JSON.parse(localStorage.getItem('addressList')) || [],
+      orderList: JSON.parse(localStorage.getItem('orderList')) || []
     },
     mutations: {
       SET_LOADING: (state, status) => {
         state.requestLoading = !!status
       },
       SET_SINGLE_STATE: (state, status) => {
-        let x = status[0]
-        let y = status[1]
+        const x = status[0]
+        const y = status[1]
         state[x] = y
-        let isObject = [
+        const isObject = [
             // 'memberList',
             'communityList',
             'indexBanners',
@@ -45,12 +45,12 @@ const app = {
           ]
         if (isObject.includes(x)) {
           localStorage.setItem(x, JSON.stringify(y))
-        }else{
-          localStorage.setItem(x,y)
+        } else {
+          localStorage.setItem(x, y)
         }
       },
       CLEAR_SINGLE_STATE: (state, name) => {
-        let isObject = [
+        const isObject = [
           // 'memberList',
           'cityHistory',
           'noticeList',
@@ -61,31 +61,27 @@ const app = {
           'appList',
           'expBanners'
         ]
-        let defaultZero = [
+        const defaultZero = [
           'rankAgeStart',
           'houseIndex'
         ]      
         if (isObject.includes(name)) {
           state[name] = []
-        }
-        else if (defaultZero.includes(name)) {
+        } else if (defaultZero.includes(name)) {
           state[name] = 0
-        }
-        else if (name == 'positionCity') {
+        } else if (name === 'positionCity') {
           state[name] = '正在定位'
-        }
-        else if (name == 'currentColor') {
+        } else if (name === 'currentColor') {
           state[name] = '#00aaef'
-        }
-        else if (name == 'rankAgeEnd') {
+        } else if (name === 'rankAgeEnd') {
           state[name] = 99
         } else {
           state[name] = ''
         }
-        localStorage.setItem(name,'')
+        localStorage.setItem(name, '')
       },
       CLEAR_STATE: (state) => {
-        let isObject = [
+        const isObject = [
           // 'memberList',
           'cityHistory',
           'noticeList',
@@ -96,37 +92,33 @@ const app = {
           'propertyHL',
           'expBanners'        
         ]
-        let defaultZero = [
+        const defaultZero = [
           'rankAgeStart',
           'houseIndex'
         ]
   
-        for(let x in state){
+        for (const x in state) {
           localStorage.clear()
   
-          if (isObject.includes(x)){
+          if (isObject.includes(x)) {
             state[x] = []
-          }
-          else if (defaultZero.includes(x)){
+          } else if (defaultZero.includes(x)) {
             state[x] = 0
-          }
-          else if (x =='positionCity'){
+          } else if (x === 'positionCity') {
             state[x] = '正在定位'
-          }
-          else if (x =='currentColor'){
+          } else if (x === 'currentColor') {
             state[x] = '#00aaef'
-          }
-          else if (x =='rankAgeEnd'){
+          } else if (x === 'rankAgeEnd') {
             state[x] = 99
-          }else{
+          } else {
             state[x] = ''
           }
         }
         state.guideOver = true
         localStorage.setItem('guideOver', true)
       },
-      SET_EACH_STATE: (state,status) => {
-        let isObject = [
+      SET_EACH_STATE: (state, status) => {
+        const isObject = [
           // 'memberList',
           'cityHistory',
           'noticeList',
@@ -137,7 +129,7 @@ const app = {
           'appList',
           'expBanners'
         ]
-        for (let x in status) {
+        for (const x in status) {
           state[x] = status[x]
           if (isObject.includes(x)) {
             localStorage.setItem(x, JSON.stringify(state[x]))
@@ -155,14 +147,14 @@ const app = {
       SetLoading({ commit }, status) {
         commit('SET_LOADING', status)
       },
-      setSingleState({ commit }, status){
+      setSingleState({ commit }, status) {
         commit('SET_SINGLE_STATE', status)
       },
-      setEachState({ commit }, status){
+      setEachState({ commit }, status) {
         commit('SET_EACH_STATE', status)
-      },
+      }
     }
   }
   
   export default app
-  //this.$store.commit('SET_SINGLE_STATE',['',])
+  // this.$store.commit('SET_SINGLE_STATE',['',])

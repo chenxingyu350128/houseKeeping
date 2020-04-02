@@ -1,38 +1,57 @@
 <template>
   <div class="wrap">
-    <div v-if="state==1" class="base-coupons white--text py-2 d-flex">
+    <div
+      v-if="state==1"
+      class="base-coupons white--text py-2 d-flex"
+    >
       <div class="left-side d-flex flex-column align-center">
-        <span class="headline font-weight-bold">￥{{money}}</span>
-        <span class="caption mt-2">满{{pull}}可用</span>
+        <span class="headline font-weight-bold">￥{{ money }}</span>
+        <span class="caption mt-2">满{{ pull }}可用</span>
       </div>
       <div class="right-side flex-fill ml-1 pa-2 d-flex flex-column">
         <div class="d-flex align-center justify-space-between">
-          <span>{{scope}}</span>
-          <v-icon  v-if="!!checked" color="pink lighten-2">mdi-check-circle</v-icon>
+          <span>{{ scope }}</span>
+          <v-icon
+            v-if="!!checked"
+            color="pink lighten-2"
+          >
+            mdi-check-circle
+          </v-icon>
         </div>
-        <div class="caption mt-2">有效期至：{{endTime}}</div>
+        <div class="caption mt-2">
+          有效期至：{{ endTime }}
+        </div>
       </div>
     </div>
-    <div v-else class="disable-coupons white--text py-2 d-flex">
+    <div
+      v-else
+      class="disable-coupons white--text py-2 d-flex"
+    >
       <div class="left-side d-flex flex-column align-center">
-        <span class="headline font-weight-bold">￥{{money}}</span>
-        <span class="caption mt-2">满{{pull}}可用</span>
+        <span class="headline font-weight-bold">￥{{ money }}</span>
+        <span class="caption mt-2">满{{ pull }}可用</span>
       </div>
       <div class="right-side flex-fill ml-1 pa-2 d-flex flex-column">
         <div class="d-flex align-center justify-space-between">
-          <span>{{scope}}</span>
-          <v-icon v-if="!!checked" color="pink lighten-2">mdi-check-circle</v-icon>
+          <span>{{ scope }}</span>
+          <v-icon
+            v-if="!!checked"
+            color="pink lighten-2"
+          >
+            mdi-check-circle
+          </v-icon>
         </div>
-        <div class="caption mt-2">有效期至：{{endTime}}</div>
+        <div class="caption mt-2">
+          有效期至：{{ endTime }}
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import iHeader from '../public/header'
 export default {
-    name: 'coupon-cpnt',
+    name: 'CouponCpnt',
     props: {
       checked: {
         type: Boolean,
@@ -57,18 +76,15 @@ export default {
       pull: {
         type: Number,
         required: true
-      },
+      }
     },
-    components: {
-       iHeader
-    },
-    data: ()=>({
+    data: () => ({
       haha: '啊是的请问'
     }),
-    created() {
+    computed: {
 
     },
-    computed: {
+    created() {
 
     },
     mounted() {
@@ -132,4 +148,3 @@ export default {
     background-size: 5px 15px;
   }
 </style>
-

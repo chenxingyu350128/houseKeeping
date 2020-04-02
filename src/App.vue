@@ -1,12 +1,15 @@
 <template>
-  <v-app ref="app" id="App">
+  <v-app
+    id="App"
+    ref="app"
+  >
     <v-content>
       <keep-alive v-if="keepAlive">
-        <router-view/>
+        <router-view />
       </keep-alive>
-      <router-view v-if="!keepAlive"/>
-      <bottomNav/> 
-      <loading v-if="showLoading"/> 
+      <router-view v-if="!keepAlive" />
+      <bottomNav /> 
+      <loading v-if="showLoading" /> 
     </v-content>
   </v-app>
 </template>
@@ -85,16 +88,16 @@ export default {
       bottomNav,
       loading
   },
-  data(){
-    return{
+  data() {
+    return {
       exitState: 0
     }
   },
   computed: {
-    keepAlive(){
+    keepAlive() {
       return this.$route.meta.keepAlive
     },
-    showLoading(){
+    showLoading() {
       return this.$store.state.app.requestLoading
     }
   }

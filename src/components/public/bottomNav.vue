@@ -1,17 +1,17 @@
 <template>
   <v-bottom-navigation
+    v-if="active"
     fixed
     height="48"
     grow
-    v-if="active"
     color="#04c0af"
   >
-    <v-btn to='/index'>
+    <v-btn to="/index">
       <span>首页</span>
       <v-icon>mdi-home-outline</v-icon>
     </v-btn>
 
-    <v-btn to='/category'>
+    <v-btn to="/category">
       <span>分类</span>
       <v-icon>mdi-store</v-icon>
     </v-btn>
@@ -25,7 +25,7 @@
 
 <script>
     export default {
-        data:()=>({
+        data:() => ({
             active: true
         })
     }

@@ -1,75 +1,153 @@
 <template>
-    <div class="orderCertain grey lighten-3">
-        <iHeader @doSomething="$emit('hide')" text="订单确认"></iHeader>
-        <div class="px-4 white mb-2">
-
-            <div class="py-2 d-flex">
-                <v-avatar
-                    size="70"
-                    tile
-                >
-                    <img :src="pic">
-                </v-avatar>
-                <div class="ml-2 d-flex flex-column justify-space-around">
-                    <span>{{item.type}}</span>
-                    <span class="text--secondary">数量:1</span>
-                </div>
-                <div class="red--text flex-fill d-flex justify-end">{{item.price}}元</div>
-            </div>
-            <v-divider></v-divider>
-            <div class="d-flex align-center justify-space-between py-4 subtitle-2">
-                <v-icon class="mr-4" color="primary">mdi-map-marker</v-icon>
-                <div @click="showAddress=true" v-if="finalAddressItem" class="d-flex flex-column text--secondary">
-                    <span>
-                        {{finalAddressItem.receiver}}
-                        <span class="ml-4">{{finalAddressItem.phone}}</span>
-                    </span>
-                    <span>{{finalAddressItem.address}}</span>
-                </div>
-                <div @click="showAddress=true" v-else class="flex-fill text-right text--secondary pr-6">+添加服务地址</div>
-            </div>
+  <div class="orderCertain grey lighten-3">
+    <iHeader
+      text="订单确认"
+      @doSomething="$emit('hide')"
+    />
+    <div class="px-4 white mb-2">
+      <div class="py-2 d-flex">
+        <v-avatar
+          size="70"
+          tile
+        >
+          <img :src="pic">
+        </v-avatar>
+        <div class="ml-2 d-flex flex-column justify-space-around">
+          <span>{{ item.type }}</span>
+          <span class="text--secondary">数量:1</span>
         </div>
-        <div v-if="type" @click="toTimePage" class="d-flex align-center px-4 py-3 mb-2 white subtitle-2">
-            <v-icon class="mdi-rotate-225" color="primary">mdi-clock-outline</v-icon>
-            <div class="flex-fill ml-3 text--secondary text-right">{{dateStr||'请选择服务时间'}}</div>
-            <v-icon  class="mr-4">mdi-chevron-right</v-icon>
+        <div class="red--text flex-fill d-flex justify-end">
+          {{ item.price }}元
         </div>
-        <div @click="showCouponPage=true" class="d-flex align-center px-4 py-3 mb-2 white">
-            <v-icon class="mdi-rotate-225" color="primary">mdi-tag</v-icon>
-            <div class="flex-fill ml-3 text-right subtitle-2 text--secondary">{{discountStr||'请选择优惠方式'}}</div>
-            <v-icon  class="mr-4">mdi-chevron-right</v-icon>
+      </div>
+      <v-divider />
+      <div class="d-flex align-center justify-space-between py-4 subtitle-2">
+        <v-icon
+          class="mr-4"
+          color="primary"
+        >
+          mdi-map-marker
+        </v-icon>
+        <div
+          v-if="finalAddressItem"
+          class="d-flex flex-column text--secondary"
+          @click="showAddress=true"
+        >
+          <span>
+            {{ finalAddressItem.receiver }}
+            <span class="ml-4">{{ finalAddressItem.phone }}</span>
+          </span>
+          <span>{{ finalAddressItem.address }}</span>
         </div>
-        <v-card tile flat>
-            <div class="pa-4">备注信息</div>
-            <v-textarea
-            outlined
-            auto-grow
-            class="pa-0 ma-0 px-2 white"
-            ></v-textarea>  
-            <div class="caption px-4 pb-2 text--secondary">服务人员由系统自动分配</div>      
-        </v-card>
-        <v-footer fixed bottom class="pa-0 ma-0 d-flex flex-row-reverse white">
-            <v-btn @click="payIt" depressed tile large color="primary">立即支付</v-btn>
-            <div class="d-flex flex-column justify-space-around subtitle-2 mr-2">
-                <span>
-                    待支付
-                    <span class="ml-2 red--text">￥{{finalPrice}}</span>
-                </span>
-                <span class="caption text--secondary">已优惠：￥{{discount}}</span>
-            </div>
-        </v-footer>
-        <couponsPage 
-            :selectedId="selectedCouponId" 
-            :price="item.price" 
-            @unset="showCouponPage=false;couponUnset=true"
-            @couponGet="selectCoupon"
-            @hide="showCouponPage=false" 
-            v-if="showCouponPage"
-        />
-        <timePage :type="type" @timeSelect="timeSelect" :id="finalAddressItem.communityId" @hide="showTimePage=false" v-if="showTimePage"/>
-        <addressList :type="type" @addressSelect="addressSelect"  @hide="showAddress=false" v-if="showAddress"/>
-        <payPage :pOrderId="orderId" @hide="showPayPage=false" v-if="showPayPage"/>
+        <div
+          v-else
+          class="flex-fill text-right text--secondary pr-6"
+          @click="showAddress=true"
+        >
+          +添加服务地址
+        </div>
+      </div>
     </div>
+    <div
+      v-if="type"
+      class="d-flex align-center px-4 py-3 mb-2 white subtitle-2"
+      @click="toTimePage"
+    >
+      <v-icon
+        class="mdi-rotate-225"
+        color="primary"
+      >
+        mdi-clock-outline
+      </v-icon>
+      <div class="flex-fill ml-3 text--secondary text-right">
+        {{ dateStr||'请选择服务时间' }}
+      </div>
+      <v-icon class="mr-4">
+        mdi-chevron-right
+      </v-icon>
+    </div>
+    <div
+      class="d-flex align-center px-4 py-3 mb-2 white"
+      @click="showCouponPage=true"
+    >
+      <v-icon
+        class="mdi-rotate-225"
+        color="primary"
+      >
+        mdi-tag
+      </v-icon>
+      <div class="flex-fill ml-3 text-right subtitle-2 text--secondary">
+        {{ discountStr||'请选择优惠方式' }}
+      </div>
+      <v-icon class="mr-4">
+        mdi-chevron-right
+      </v-icon>
+    </div>
+    <v-card
+      tile
+      flat
+    >
+      <div class="pa-4">
+        备注信息
+      </div>
+      <v-textarea
+        outlined
+        auto-grow
+        class="pa-0 ma-0 px-2 white"
+      />  
+      <div class="caption px-4 pb-2 text--secondary">
+        服务人员由系统自动分配
+      </div>      
+    </v-card>
+    <v-footer
+      fixed
+      bottom
+      class="pa-0 ma-0 d-flex flex-row-reverse white"
+    >
+      <v-btn
+        depressed
+        tile
+        large
+        color="primary"
+        @click="payIt"
+      >
+        立即支付
+      </v-btn>
+      <div class="d-flex flex-column justify-space-around subtitle-2 mr-2">
+        <span>
+          待支付
+          <span class="ml-2 red--text">￥{{ finalPrice }}</span>
+        </span>
+        <span class="caption text--secondary">已优惠：￥{{ discount }}</span>
+      </div>
+    </v-footer>
+    <couponsPage 
+      v-if="showCouponPage" 
+      :selected-id="selectedCouponId" 
+      :price="item.price"
+      @unset="showCouponPage=false;couponUnset=true"
+      @couponGet="selectCoupon" 
+      @hide="showCouponPage=false"
+    />
+    <timePage
+      v-if="showTimePage"
+      :id="finalAddressItem.communityId"
+      :type="type"
+      @timeSelect="timeSelect"
+      @hide="showTimePage=false"
+    />
+    <addressList
+      v-if="showAddress"
+      :type="type"
+      @addressSelect="addressSelect"
+      @hide="showAddress=false"
+    />
+    <payPage
+      v-if="showPayPage"
+      :p-order-id="orderId"
+      @hide="showPayPage=false"
+    />
+  </div>
 </template>
 
 <script>
@@ -79,7 +157,14 @@ import timePage from '../components/product/timePage'
 import addressList from '../components/product/addressList'
 import payPage from './payPage'
 export default {
-    name: 'orderCertain',
+    name: 'OrderCertain',
+    components: {
+       iHeader,
+       couponsPage,
+       timePage,
+       addressList,
+       payPage
+    },
     props: {
         item: {
             type: Object,
@@ -98,14 +183,7 @@ export default {
             required: true
         }
     },
-    components: {
-       iHeader,
-       couponsPage,
-       timePage,
-       addressList,
-       payPage
-    },
-    data: ()=>({
+    data: () => ({
         selectedAddress: null,
         selectedCoupon: null,
         selectedCouponId: 15,
@@ -121,9 +199,6 @@ export default {
         isTrue: true,
         postObj: null
     }),
-    created() {
-
-    },
     computed: {
         defaultAddress() {
             return this.$store.state.app.defaultAddress
@@ -135,20 +210,19 @@ export default {
             return this.$store.state.app.couponList
         },
         finalCoupon() {
-            if(this.couponUnset){
+            if (this.couponUnset) {
                 return null
             }
-            return this.selectedCoupon||this.availabelCoupons[0]
+            return this.selectedCoupon || this.availabelCoupons[0]
         },
+        // eslint-disable-next-line vue/return-in-computed-property
         discountStr() {
-            if(this.finalCoupon){
-
-                return this.finalCoupon.couponName+'满'+this.finalCoupon.pull+'减'+this.finalCoupon.money
+            if (this.finalCoupon) {
+                return this.finalCoupon.couponName + '满' + this.finalCoupon.pull + '减' + this.finalCoupon.money
             }
         },
         discount() {
-            if(this.finalCoupon){
-
+            if (this.finalCoupon) {
                 return this.finalCoupon.money
             }
             return 0
@@ -169,19 +243,18 @@ export default {
             // },                
             // ]
            return this.couponList
-           .filter(res=>{
-                let state1 = res.state==1
-                let state2 = res.pull<=this.price
-                let timeFit = Date.parse(new Date())>Date.parse(res.beginTime)&&Date.parse(new Date())<Date.parse(res.endTime)
-                return state1&&state2&&timeFit
+           .filter(res => {
+                const state1 = res.state === 1
+                const state2 = res.pull <= this.price
+                const timeFit = Date.parse(new Date()) > Date.parse(res.beginTime) && Date.parse(new Date()) < Date.parse(res.endTime)
+                return state1 && state2 && timeFit
             })
-            .sort((a,b)=>{
+            .sort((a, b) => {
                 return a.pull - b.pull
             })
-            
         },
         finalAddressItem() {
-            return this.selectedAddress||this.defaultAddress
+            return this.selectedAddress || this.defaultAddress
         },
         // finalConsignee() {
         //     if(this.selectedAddress){
@@ -221,9 +294,12 @@ export default {
         //         return this.defaultAddress.communityId 
         //     }            
         // },
-        finalPrice(){
+        finalPrice() {
             return this.item.price - this.discount
         }
+    },
+    created() {
+
     },
     mounted() {
         this.findCoupon()
@@ -231,9 +307,9 @@ export default {
     },
     methods: {
         getDefaultAddress() {
-            this.$http.get('/user/findDefaultAddrByUserId',{params: {userId: this.userId}})
-            .then(res=>{
-                if(res.data.success){
+            this.$http.get('/user/findDefaultAddrByUserId', { params: { userId: this.userId } })
+            .then(res => {
+                if (res.data.success) {
                     this.$store.commit('SET_SINGLE_STATE', ['defaultAddress', res.data.obj])
                 }
             })
@@ -243,12 +319,12 @@ export default {
                 userId: this.userId,
                 goodsId: this.item.detailId
             }
-            this.$http.get('/user/findCoupon',{params})
-            .then(res=>{
-                if(res.data.success){
+            this.$http.get('/user/findCoupon', { params })
+            .then(res => {
+                if (res.data.success) {
                     this.$store.commit('SET_SINGLE_STATE', ['couponList', res.data.obj])
-                    //computed结果availabelCoupons的第一项为最大的优惠券
-                    //将其作为页面的显示参数
+                    // computed结果availabelCoupons的第一项为最大的优惠券
+                    // 将其作为页面的显示参数
                     // this.selectedCouponId = this.availabelCoupons[0].couponId
                 }
             })
@@ -259,12 +335,12 @@ export default {
             this.selectedCoupon = e
             this.selectedCouponId = e.couponId
         },
-        payIt(){
-            if(!this.finalAddressItem){
+        payIt() {
+            if (!this.finalAddressItem) {
                 this.$toast.error('请选择服务地址！')
                 return
             }
-            if(this.type&&!this.dateStr){
+            if (this.type && !this.dateStr) {
                 this.$toast('请选择服务时间！')
                 return
             }
@@ -289,18 +365,18 @@ export default {
                 address: this.finalAddressItem.address
 
             }
-            if(this.type){
+            if (this.type) {
                 data.serviceTime = this.dateStr
             }
-            if(this.remark) {
+            if (this.remark) {
                 data.remark = this.remark
             }
-            this.$http.post('/order/addOrder',data)
-            .then(res=>{
-                if(res.data.success){
+            this.$http.post('/order/addOrder', data)
+            .then(res => {
+                if (res.data.success) {
                    this.orderId = res.data.obj.orderId
                    this.showPayPage = true
-                   this.updateOrderList()//keep-alive配合vuex，需要更新订单列表。
+                   this.updateOrderList()// keep-alive配合vuex，需要更新订单列表。
                 }
             })
         },
@@ -311,35 +387,35 @@ export default {
                 page: 1,
                 rows: 10
             }
-            let res = await this.$http.get('/order/findOrderByState',{params})
-            let rows = res.data.rows
-            rows.forEach(res=>{
-                switch(res.state) {
+            const res = await this.$http.get('/order/findOrderByState', { params })
+            const rows = res.data.rows
+            rows.forEach(res => {
+                switch (res.state) {
                     case 0: 
-                        this.$set(res,'status','交易关闭')
+                        this.$set(res, 'status', '交易关闭')
                         break;
                     case 1: 
-                        this.$set(res,'status','待支付')
+                        this.$set(res, 'status', '待支付')
                         break;
                     case 2: 
-                        this.$set(res,'status','进行中')
+                        this.$set(res, 'status', '进行中')
                         break;
                     case 3: 
-                        this.$set(res,'status','已完成')
+                        this.$set(res, 'status', '已完成')
                         break;
                     case 4: 
-                        this.$set(res,'status','已取消')
+                        this.$set(res, 'status', '已取消')
                         break;
                 }
             })
             this.$store.commit('SET_SINGLE_STATE', ['orderList', rows])            
         },
         toTimePage() {
-            if(!this.selectedAddress&&!this.defaultAddress) {
+            if (!this.selectedAddress && !this.defaultAddress) {
                 this.$toast('请先选择服务地址')
                 return
             }
-            this.showTimePage=true
+            this.showTimePage = true
         },
         timeSelect(e) {
             this.showTimePage = false

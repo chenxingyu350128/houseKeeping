@@ -2,7 +2,7 @@ import Axios from "axios"
 import qs from "querystring"
 import store from './store'
 import vuetifyToast from "vuetify-toast"
-import router from './router'
+// import router from './router'
 
 const api = Axios.create({
   // baseURL : 'http://192.168.1.101:8078/',
@@ -14,7 +14,7 @@ const api = Axios.create({
 api.interceptors.request.use(
   function(config) {
     // let token = localStorage.getItem("token")
-    if(process.env.NODE_ENV=='production'){
+    if (process.env.NODE_ENV === 'production') {
 
       // if (token) {
       //   config.headers = {
@@ -24,26 +24,23 @@ api.interceptors.request.use(
     }
     if (config.method === "post") {
       console.log(config.url);
-      console.log(config.baseURL +'/mobile/user/sendMessage');
-      if (config.url != "/mobile/user/sendMessage"){
-        
+      console.log(config.baseURL + '/mobile/user/sendMessage');
+      if (config.url !== "/mobile/user/sendMessage") {
         config.data = qs.stringify(config.data)
-        config.headers['Content-Type']='application/x-www-form-urlencoded'
-      }
-      else{
+        config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+      } else {
         console.log('form-dataform-dataform-data');
         
         config.headers['Content-Type'] = 'multipart/form-data'
       }
       console.warn(config);
-      
     }
     store.dispatch('SetLoading', true)
     // console.log(config);
     // console.log(config.url);
     return config;
   },
-  function(err){
+  function(err) {
     // setTimeout(() => {
       // store.dispatch('SetLoading', false)
     // }, 300);
@@ -52,16 +49,16 @@ api.interceptors.request.use(
     return err;
   }
 );
-//响应处理,带token
+// 响应处理,带token
 api.interceptors.response.use(
   response => {
-    if (response.data.code==5107){
+    if (response.data.code === '5107') {
       store.commit('CLEAR_STATE')
     }
-    if (response.data.code==5120){
+    if (response.data.code === '5120') {
       store.commit('CLEAR_STATE')
     }
-    if (!response.data.success&&response.data.code!='2019') {
+    if (!response.data.success && response.data.code !== '2019') {
       vuetifyToast.show({
         text: response.data.msg
       });      
